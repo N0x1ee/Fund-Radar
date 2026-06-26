@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>FundRadar — Funding Opportunity Intelligence</title>
+<style>
+  :root{
+    --bg:#f5f7fa; --card:#ffffff; --ink:#1f2937; --muted:#6b7280; --line:#e5e7eb;
+    --brand:#1d4ed8; --brand-d:#1e3a8a; --open:#047857; --open-bg:#d1fae5;
+    --closed:#6b7280; --closed-bg:#f3f4f6; --unk:#b45309; --unk-bg:#fef3c7;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);color:var(--ink);font-size:14px;line-height:1.45}
+  header{background:linear-gradient(135deg,var(--brand),var(--brand-d));color:#fff;
+    padding:22px 28px}
+  header h1{margin:0;font-size:21px;letter-spacing:.2px}
+  header p{margin:4px 0 0;opacity:.85;font-size:13px}
+  .wrap{max-width:1180px;margin:0 auto;padding:22px 20px 60px}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:-44px 0 22px}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:16px 18px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+  .stat .n{font-size:26px;font-weight:700}
+  .stat .l{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+  .tabs{display:flex;gap:8px;margin-bottom:14px}
+  .tab{padding:8px 16px;border:1px solid var(--line);background:#fff;border-radius:8px;
+    cursor:pointer;font-weight:600;color:var(--muted)}
+  .tab.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+  .controls{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+  .controls input,.controls select{padding:9px 12px;border:1px solid var(--line);
+    border-radius:8px;font-size:14px;background:#fff}
+  .controls input{flex:1;min-width:220px}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;
+    box-shadow:0 1px 3px rgba(0,0,0,.05)}
+  table{width:100%;border-collapse:collapse}
+  th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{background:#f9fafb;font-size:11px;text-transform:uppercase;letter-spacing:.5px;
+    color:var(--muted);cursor:pointer;user-select:none;position:sticky;top:0}
+  th:hover{color:var(--ink)}
+  tbody tr:hover{background:#f9fbff}
+  td.prog{font-weight:600;max-width:340px}
+  td.prog a{color:var(--brand);text-decoration:none;font-weight:600;font-size:12px}
+  td.prog a:hover{text-decoration:underline}
+  td .area{color:var(--muted);font-size:12px;margin-top:2px}
+  .badge{display:inline-block;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:700}
+  .b-open{background:var(--open-bg);color:var(--open)}
+  .b-closed{background:var(--closed-bg);color:var(--closed)}
+  .b-unknown{background:var(--unk-bg);color:var(--unk)}
+  .amt{font-variant-numeric:tabular-nums;white-space:nowrap}
+  .muted{color:var(--muted)}
+  .empty{padding:40px;text-align:center;color:var(--muted)}
+  footer{max-width:1180px;margin:0 auto;padding:0 20px 30px;color:var(--muted);font-size:12px}
+  @media(max-width:760px){.stats{grid-template-columns:repeat(2,1fr)}}
+
+  .chatbox{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:18px}
+  .chat-row{display:flex;gap:10px}
+  .chat-row input{flex:1;padding:9px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px}
+  .chat-row button{padding:9px 18px;border:none;background:var(--brand);color:#fff;border-radius:8px;font-weight:600;cursor:pointer}
+  .chat-row button:hover{background:var(--brand-d)}
+  .chat-title{font-weight:700;font-size:13px;color:var(--brand-d);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+  .chatout{margin-top:12px;white-space:pre-wrap;font-size:13px;color:var(--ink);line-height:1.55}
+  .chatout:empty{display:none}
+
+  .chat-sub{font-size:12px;color:var(--muted);margin-bottom:10px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .chip{font-size:12px;padding:6px 12px;background:#eef2ff;color:var(--brand-d);border:1px solid #dbe3ff;
+    border-radius:999px;cursor:pointer;user-select:none}
+  .chip:hover{background:#e0e8ff}
+  .chatout{margin-top:14px;white-space:pre-wrap;font-size:13px;color:var(--ink);line-height:1.6;
+    background:#f8fafc;border:1px solid var(--line);border-left:3px solid var(--brand);
+    border-radius:8px;padding:12px 14px}
+  .chatout:empty{display:none}
+</style>
+</head>
+<body>
+<header>
+  <h1>FundRadar</h1>
+  <p>Funding Opportunity Intelligence Platform · live view of the database</p>
+</header>
+<div class="wrap">
+  <div class="stats" id="stats"></div>
+
+  <div class="chatbox">
+    <div class="chat-title">Ask FundRadar</div>
+    <div class="chat-sub">Ask in plain English — answers come straight from the live funding database.</div>
+    <div class="chat-row">
+      <input id="chatq" placeholder="Type a question, or tap an example below…" onkeydown="if(event.key==='Enter')askBot()"/>
+      <button onclick="askBot()">Ask</button>
+    </div>
+    <div class="chips">
+      <span class="chip" onclick="ask('What grants are open now?')">What grants are open now?</span>
+      <span class="chip" onclick="ask('Fellowships for PhD students')">Fellowships for PhD students</span>
+      <span class="chip" onclick="ask('Funding above 10 lakh')">Funding above 10 lakh</span>
+      <span class="chip" onclick="ask('Opportunities in Germany')">Opportunities in Germany</span>
+      <span class="chip" onclick="ask('Biotech startup funding')">Biotech startup funding</span>
+    </div>
+    <div id="chatout" class="chatout"></div>
+  </div>
+
+
+  <div class="tabs">
+    <div class="tab active" data-view="opps" onclick="switchView('opps')">Opportunities</div>
+    <div class="tab" data-view="agencies" onclick="switchView('agencies')">Agencies</div>
+  </div>
+
+  <div class="controls">
+    <input id="search" placeholder="Search…" oninput="render()"/>
+    <select id="statusFilter" onchange="render()">
+      <option value="">All statuses</option>
+      <option value="open">Open</option>
+      <option value="closed">Closed</option>
+      <option value="unknown">Unknown</option>
+    </select>
+    <select id="countryFilter" onchange="render()"><option value="">All countries</option></select>
+  </div>
+
+  <div class="panel"><div id="table"></div></div>
+</div>
+<footer id="foot"></footer>
+
+<script>
+let OPP=[], AG=[], AGMAP={}, view='opps', sortKey='deadline', sortDir=1;
+
+async function load(){
+  const [o,a] = await Promise.all([
+    fetch('/opportunities?limit=200').then(r=>r.json()),
+    fetch('/agencies?limit=200').then(r=>r.json())
+  ]);
+  OPP=o.items||[]; AG=a.items||[];
+  AG.forEach(x=>AGMAP[x.id]={name:x.name,country:x.country,code:x.agency_code});
+  // country filter options
+  const cf=document.getElementById('countryFilter');
+  [...new Set(AG.map(x=>x.country).filter(Boolean))].sort().forEach(c=>{
+    const op=document.createElement('option');op.value=c;op.textContent=c;cf.appendChild(op);
+  });
+  stats(); render();
+}
+
+function stats(){
+  const open=OPP.filter(o=>o.status==='open').length;
+  const closed=OPP.filter(o=>o.status==='closed').length;
+  const countries=new Set(AG.map(a=>a.country).filter(Boolean)).size;
+  const html=[
+    ['Opportunities',OPP.length],['Open now',open],
+    ['Agencies',AG.length],['Countries / blocs',countries]
+  ].map(([l,n])=>`<div class="stat"><div class="n">${n}</div><div class="l">${l}</div></div>`).join('');
+  document.getElementById('stats').innerHTML=html;
+}
+
+function switchView(v){
+  view=v;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.view===v));
+  document.getElementById('statusFilter').style.display = v==='opps'?'':'none';
+  sortKey = v==='opps'?'deadline':'name'; sortDir=1;
+  render();
+}
+
+function fmtDate(d){
+  if(!d) return '<span class="muted">—</span>';
+  const dt=new Date(d); if(isNaN(dt)) return d;
+  return dt.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+}
+function amount(o){
+  if(o.funding_amount) return o.funding_amount;
+  if(o.amount_value){return (o.currency||'')+' '+Number(o.amount_value).toLocaleString();}
+  return '<span class="muted">—</span>';
+}
+function badge(s){return `<span class="badge b-${s||'unknown'}">${s||'unknown'}</span>`;}
+
+function sortBy(k){ if(sortKey===k){sortDir*=-1;}else{sortKey=k;sortDir=1;} render(); }
+
+function render(){
+  const q=document.getElementById('search').value.toLowerCase();
+  const sf=document.getElementById('statusFilter').value;
+  const cf=document.getElementById('countryFilter').value;
+  const el=document.getElementById('table');
+  if(view==='opps'){
+    let rows=OPP.map(o=>({...o, agency:(AGMAP[o.agency_id]||{}).name||'', country:(AGMAP[o.agency_id]||{}).country||''}));
+    rows=rows.filter(o=>(!sf||o.status===sf)&&(!cf||o.country===cf)&&
+      (!q||[o.program_name,o.agency,o.research_area,o.tags].join(' ').toLowerCase().includes(q)));
+    rows.sort((a,b)=>{let x=a[sortKey]||'',y=b[sortKey]||'';return (x>y?1:x<y?-1:0)*sortDir;});
+    if(!rows.length){el.innerHTML='<div class="empty">No matching opportunities.</div>';foot(0);return;}
+    el.innerHTML=`<table><thead><tr>
+      <th onclick="sortBy('program_name')">Programme</th>
+      <th onclick="sortBy('agency')">Agency</th>
+      <th onclick="sortBy('country')">Country</th>
+      <th onclick="sortBy('amount_value')">Amount</th>
+      <th onclick="sortBy('deadline')">Deadline</th>
+      <th onclick="sortBy('status')">Status</th>
+    </tr></thead><tbody>${rows.map(o=>`<tr>
+      <td class="prog">${o.program_name||''}${o.research_area?`<div class="area">${o.research_area}</div>`:''}
+        ${o.application_link?`<div><a href="${o.application_link}" target="_blank">Apply / details ↗</a></div>`:''}</td>
+      <td>${o.agency||'<span class=muted>—</span>'}</td>
+      <td>${o.country||'<span class=muted>—</span>'}</td>
+      <td class="amt">${amount(o)}</td>
+      <td>${fmtDate(o.deadline)}</td>
+      <td>${badge(o.status)}</td>
+    </tr>`).join('')}</tbody></table>`;
+    foot(rows.length);
+  } else {
+    let rows=AG.filter(a=>(!cf||a.country===cf)&&
+      (!q||[a.name,a.agency_code,a.category,a.country].join(' ').toLowerCase().includes(q)));
+    rows.sort((a,b)=>{let x=a[sortKey]||'',y=b[sortKey]||'';return (x>y?1:x<y?-1:0)*sortDir;});
+    if(!rows.length){el.innerHTML='<div class="empty">No matching agencies.</div>';foot(0);return;}
+    el.innerHTML=`<table><thead><tr>
+      <th onclick="sortBy('agency_code')">Code</th>
+      <th onclick="sortBy('name')">Agency</th>
+      <th onclick="sortBy('country')">Country</th>
+      <th onclick="sortBy('category')">Category</th>
+      <th>Website</th>
+    </tr></thead><tbody>${rows.map(a=>`<tr>
+      <td class="muted">${a.agency_code}</td>
+      <td class="prog">${a.name}</td>
+      <td>${a.country||'—'}</td>
+      <td>${a.category||'<span class=muted>—</span>'}</td>
+      <td>${a.website?`<a href="${a.website}" target="_blank" style="color:var(--brand)">Visit ↗</a>`:'—'}</td>
+    </tr>`).join('')}</tbody></table>`;
+    foot(rows.length);
+  }
+}
+function foot(n){document.getElementById('foot').textContent=`Showing ${n} ${view==='opps'?'opportunities':'agencies'} · data served live from the FundRadar API`;}
+
+
+
+function ask(text){ document.getElementById('chatq').value=text; askBot(); }
+
+async function askBot(){
+  const q=document.getElementById('chatq').value.trim(); if(!q) return;
+  const out=document.getElementById('chatout'); out.textContent='Thinking…';
+  try{
+    const r=await fetch('/chat?q='+encodeURIComponent(q));
+    const d=await r.json(); out.textContent=d.answer||'(no answer)';
+  }catch(e){ out.textContent='Could not reach the chatbot. Is the server running?'; }
+}
+
+load().catch(e=>{document.getElementById('table').innerHTML=
+  '<div class="empty">Could not load data. Make sure the server is running and you ran the two data-loading commands.</div>';});
+</script>
+</body>
+</html>

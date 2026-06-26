@@ -1,0 +1,108 @@
+<svg viewBox="0 0 1300 780" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="FundRadar funding source coverage and expansion diagram">
+<defs><marker id="ar" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,3 L0,6 Z" fill="#475569"/></marker><marker id="arb" markerWidth="11" markerHeight="11" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,3 L0,6 Z" fill="#1D4ED8"/></marker></defs>
+<rect x="0" y="0" width="1300" height="780" rx="0" fill="#FFFFFF" stroke="none" stroke-width="1"/>
+<text x="650.0" y="46" font-family="Segoe UI,Arial,sans-serif" font-size="27" fill="#1E3A8A" text-anchor="middle" font-weight="700">FundRadar — Funding Source Coverage &amp; Expansion</text>
+<text x="650.0" y="70" font-family="Segoe UI,Arial,sans-serif" font-size="13" fill="#64748B" text-anchor="middle" font-weight="400">How many we cover now  ·  how we cover more  ·  how to find &amp; add more</text>
+<rect x="28" y="92" width="372" height="640" rx="14" fill="#F1F5F9" stroke="#E2E8F0" stroke-width="1"/>
+<rect x="424" y="92" width="420" height="640" rx="14" fill="#F1F5F9" stroke="#E2E8F0" stroke-width="1"/>
+<rect x="864" y="92" width="408" height="640" rx="14" fill="#F1F5F9" stroke="#E2E8F0" stroke-width="1"/>
+<text x="214.0" y="126" font-family="Segoe UI,Arial,sans-serif" font-size="15" fill="#1E3A8A" text-anchor="middle" font-weight="700">1 · Where we are today</text>
+<rect x="50" y="150" width="162" height="104" rx="10" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1"/>
+<text x="131" y="202" font-family="Segoe UI,Arial,sans-serif" font-size="34" fill="#1D4ED8" text-anchor="middle" font-weight="700">41</text>
+<text x="131" y="226" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#64748B" text-anchor="middle" font-weight="400">Organisations</text>
+<text x="131" y="240" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#64748B" text-anchor="middle" font-weight="400">in database</text>
+<rect x="224" y="150" width="162" height="104" rx="10" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1"/>
+<text x="305" y="202" font-family="Segoe UI,Arial,sans-serif" font-size="34" fill="#047857" text-anchor="middle" font-weight="700">11</text>
+<text x="305" y="226" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#64748B" text-anchor="middle" font-weight="400">Organisations with</text>
+<text x="305" y="240" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#64748B" text-anchor="middle" font-weight="400">data extracted</text>
+<rect x="50" y="272" width="162" height="104" rx="10" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1"/>
+<text x="131" y="324" font-family="Segoe UI,Arial,sans-serif" font-size="34" fill="#1D4ED8" text-anchor="middle" font-weight="700">25</text>
+<text x="131" y="348" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#64748B" text-anchor="middle" font-weight="400">Live</text>
+<text x="131" y="362" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#64748B" text-anchor="middle" font-weight="400">opportunities collected</text>
+<rect x="224" y="272" width="162" height="104" rx="10" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1"/>
+<text x="305" y="324" font-family="Segoe UI,Arial,sans-serif" font-size="34" fill="#1E3A8A" text-anchor="middle" font-weight="700">18</text>
+<text x="305" y="348" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#64748B" text-anchor="middle" font-weight="400">Countries /</text>
+<text x="305" y="362" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#64748B" text-anchor="middle" font-weight="400">blocs covered</text>
+<text x="214.0" y="408" font-family="Segoe UI,Arial,sans-serif" font-size="12" fill="#1F2937" text-anchor="middle" font-weight="700">Coverage: 11 of 41 sources (27%)</text>
+<rect x="50" y="420" width="336" height="20" rx="10" fill="#E2E8F0" stroke="none" stroke-width="1"/>
+<rect x="50" y="420" width="90" height="20" rx="10" fill="#047857" stroke="none" stroke-width="1"/>
+<text x="214.0" y="470" font-family="Segoe UI,Arial,sans-serif" font-size="12" fill="#B45309" text-anchor="middle" font-weight="700">30 organisations queued for processing</text>
+<rect x="50" y="500" width="336" height="210" rx="10" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1"/>
+<text x="68" y="528" font-family="Segoe UI,Arial,sans-serif" font-size="12" fill="#1E3A8A" text-anchor="start" font-weight="700">Already covered (sample):</text>
+<text x="68" y="552" font-family="Segoe UI,Arial,sans-serif" font-size="11.5" fill="#1F2937" text-anchor="start" font-weight="400">DST · ANRF · DBT · ICMR · BIRAC (India)</text>
+<text x="68" y="574" font-family="Segoe UI,Arial,sans-serif" font-size="11.5" fill="#1F2937" text-anchor="start" font-weight="400">CEFIPRA · USIEF/Fulbright · SNSF · JSPS</text>
+<text x="68" y="596" font-family="Segoe UI,Arial,sans-serif" font-size="11.5" fill="#1F2937" text-anchor="start" font-weight="400">European Commission (Horizon Europe)</text>
+<text x="68" y="618" font-family="Segoe UI,Arial,sans-serif" font-size="11.5" fill="#1F2937" text-anchor="start" font-weight="400">Alexander von Humboldt Foundation</text>
+<text x="68" y="646" font-family="Segoe UI,Arial,sans-serif" font-size="11.5" fill="#64748B" text-anchor="start" font-weight="400">11 sources → 25 live opportunities,</text>
+<text x="68" y="666" font-family="Segoe UI,Arial,sans-serif" font-size="11.5" fill="#64748B" text-anchor="start" font-weight="400">12 open · 11 closed · 2 undated.</text>
+<text x="634.0" y="126" font-family="Segoe UI,Arial,sans-serif" font-size="15" fill="#1E3A8A" text-anchor="middle" font-weight="700">2 · How we cover more</text>
+<rect x="484" y="150" width="300" height="58" rx="10" fill="#FFFFFF" stroke="#1D4ED8" stroke-width="2"/>
+<text x="634.0" y="175" font-family="Segoe UI,Arial,sans-serif" font-size="13.5" fill="#1D4ED8" text-anchor="middle" font-weight="700">1. Source list</text>
+<text x="634.0" y="194" font-family="Segoe UI,Arial,sans-serif" font-size="10.5" fill="#64748B" text-anchor="middle" font-weight="400">41 organisations + websites</text>
+<line x1="634.0" y1="208" x2="634.0" y2="228" stroke="#475569" stroke-width="2" marker-end="url(#ar)"/>
+<rect x="484" y="228" width="300" height="58" rx="10" fill="#FFFFFF" stroke="#1D4ED8" stroke-width="2"/>
+<text x="634.0" y="253" font-family="Segoe UI,Arial,sans-serif" font-size="13.5" fill="#1D4ED8" text-anchor="middle" font-weight="700">2. Scraper</text>
+<text x="634.0" y="272" font-family="Segoe UI,Arial,sans-serif" font-size="10.5" fill="#64748B" text-anchor="middle" font-weight="400">finds the funding pages on each site</text>
+<line x1="634.0" y1="286" x2="634.0" y2="306" stroke="#475569" stroke-width="2" marker-end="url(#ar)"/>
+<rect x="484" y="306" width="300" height="58" rx="10" fill="#FFFFFF" stroke="#1D4ED8" stroke-width="2"/>
+<text x="634.0" y="331" font-family="Segoe UI,Arial,sans-serif" font-size="13.5" fill="#1D4ED8" text-anchor="middle" font-weight="700">3. AI extraction</text>
+<text x="634.0" y="350" font-family="Segoe UI,Arial,sans-serif" font-size="10.5" fill="#64748B" text-anchor="middle" font-weight="400">amount · deadline · eligibility · area</text>
+<line x1="634.0" y1="364" x2="634.0" y2="384" stroke="#475569" stroke-width="2" marker-end="url(#ar)"/>
+<rect x="484" y="384" width="300" height="58" rx="10" fill="#FFFFFF" stroke="#047857" stroke-width="2"/>
+<text x="634.0" y="409" font-family="Segoe UI,Arial,sans-serif" font-size="13.5" fill="#047857" text-anchor="middle" font-weight="700">4. Dashboard + Chatbot</text>
+<text x="634.0" y="428" font-family="Segoe UI,Arial,sans-serif" font-size="10.5" fill="#64748B" text-anchor="middle" font-weight="400">searchable data + Q&amp;A</text>
+<text x="634.0" y="456" font-family="Segoe UI,Arial,sans-serif" font-size="12" fill="#B45309" text-anchor="middle" font-weight="700">Coverage blockers  →  fixes (Phase 2b)</text>
+<rect x="484" y="472" width="300" height="58" rx="10" fill="#FEF3C7" stroke="#B45309" stroke-width="1.5"/>
+<text x="498" y="496" font-family="Segoe UI,Arial,sans-serif" font-size="12" fill="#B45309" text-anchor="start" font-weight="700">JavaScript-heavy sites</text>
+<text x="498" y="516" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#92400E" text-anchor="start" font-weight="400">Fix: add Playwright (headless browser)</text>
+<rect x="484" y="542" width="300" height="58" rx="10" fill="#FEF3C7" stroke="#B45309" stroke-width="1.5"/>
+<text x="498" y="566" font-family="Segoe UI,Arial,sans-serif" font-size="12" fill="#B45309" text-anchor="start" font-weight="700">PDF-only calls</text>
+<text x="498" y="586" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#92400E" text-anchor="start" font-weight="400">Fix: add PDF text extraction</text>
+<path d="M 784 257 H 806 V 501 H 784" fill="none" stroke="#B45309" stroke-width="1.6" stroke-dasharray="4 4" marker-end="url(#ar)"/>
+<text x="1068.0" y="126" font-family="Segoe UI,Arial,sans-serif" font-size="15" fill="#1E3A8A" text-anchor="middle" font-weight="700">3 · How to find &amp; add more</text>
+<text x="1068.0" y="150" font-family="Segoe UI,Arial,sans-serif" font-size="12.5" fill="#1F2937" text-anchor="middle" font-weight="700">(a) Where to find them</text>
+<line x1="1068.0" y1="246" x2="1068.0" y2="186" stroke="#94A3B8" stroke-width="1.5"/>
+<line x1="1068.0" y1="246" x2="940.0" y2="240" stroke="#94A3B8" stroke-width="1.5"/>
+<line x1="1068.0" y1="246" x2="1196.0" y2="240" stroke="#94A3B8" stroke-width="1.5"/>
+<line x1="1068.0" y1="246" x2="950.0" y2="304" stroke="#94A3B8" stroke-width="1.5"/>
+<line x1="1068.0" y1="246" x2="1186.0" y2="304" stroke="#94A3B8" stroke-width="1.5"/>
+<rect x="996.0" y="166" width="144" height="40" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1"/>
+<text x="1068.0" y="183" font-family="Segoe UI,Arial,sans-serif" font-size="10.5" fill="#1F2937" text-anchor="middle" font-weight="400">Government</text>
+<text x="1068.0" y="198" font-family="Segoe UI,Arial,sans-serif" font-size="10.5" fill="#1F2937" text-anchor="middle" font-weight="400">research councils</text>
+<rect x="868.0" y="220" width="144" height="40" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1"/>
+<text x="940.0" y="237" font-family="Segoe UI,Arial,sans-serif" font-size="10.5" fill="#1F2937" text-anchor="middle" font-weight="400">Foundations</text>
+<text x="940.0" y="252" font-family="Segoe UI,Arial,sans-serif" font-size="10.5" fill="#1F2937" text-anchor="middle" font-weight="400">&amp; trusts</text>
+<rect x="1124.0" y="220" width="144" height="40" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1"/>
+<text x="1196.0" y="237" font-family="Segoe UI,Arial,sans-serif" font-size="10.5" fill="#1F2937" text-anchor="middle" font-weight="400">University</text>
+<text x="1196.0" y="252" font-family="Segoe UI,Arial,sans-serif" font-size="10.5" fill="#1F2937" text-anchor="middle" font-weight="400">research offices</text>
+<rect x="878.0" y="284" width="144" height="40" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1"/>
+<text x="950.0" y="301" font-family="Segoe UI,Arial,sans-serif" font-size="10.5" fill="#1F2937" text-anchor="middle" font-weight="400">Industry /</text>
+<text x="950.0" y="316" font-family="Segoe UI,Arial,sans-serif" font-size="10.5" fill="#1F2937" text-anchor="middle" font-weight="400">CSR funds</text>
+<rect x="1114.0" y="284" width="144" height="40" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1"/>
+<text x="1186.0" y="301" font-family="Segoe UI,Arial,sans-serif" font-size="10.5" fill="#1F2937" text-anchor="middle" font-weight="400">International &amp;</text>
+<text x="1186.0" y="316" font-family="Segoe UI,Arial,sans-serif" font-size="10.5" fill="#1F2937" text-anchor="middle" font-weight="400">bilateral bodies</text>
+<circle cx="1068.0" cy="246" r="38" fill="#1E3A8A"/>
+<text x="1068.0" y="251" font-family="Segoe UI,Arial,sans-serif" font-size="12.5" fill="#FFFFFF" text-anchor="middle" font-weight="700">Sources</text>
+<text x="1068.0" y="360" font-family="Segoe UI,Arial,sans-serif" font-size="12.5" fill="#1F2937" text-anchor="middle" font-weight="700">(b) How to add one</text>
+<rect x="894" y="376" width="348" height="48" rx="9" fill="#FFFFFF" stroke="#1D4ED8" stroke-width="1.6"/>
+<circle cx="918" cy="400" r="13" fill="#1D4ED8"/>
+<text x="918" y="404" font-family="Segoe UI,Arial,sans-serif" font-size="12" fill="#FFFFFF" text-anchor="middle" font-weight="700">1</text>
+<text x="940" y="397" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#1F2937" text-anchor="start" font-weight="400">Enter name + website +</text>
+<text x="940" y="413" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#1F2937" text-anchor="start" font-weight="400">category in the source database</text>
+<line x1="918" y1="424" x2="918" y2="442" stroke="#475569" stroke-width="2" marker-end="url(#ar)"/>
+<rect x="894" y="442" width="348" height="48" rx="9" fill="#FFFFFF" stroke="#1D4ED8" stroke-width="1.6"/>
+<circle cx="918" cy="466" r="13" fill="#1D4ED8"/>
+<text x="918" y="470" font-family="Segoe UI,Arial,sans-serif" font-size="12" fill="#FFFFFF" text-anchor="middle" font-weight="700">2</text>
+<text x="940" y="471" font-family="Segoe UI,Arial,sans-serif" font-size="11.5" fill="#1F2937" text-anchor="start" font-weight="400">Run seed + pipeline (one command)</text>
+<line x1="918" y1="490" x2="918" y2="508" stroke="#475569" stroke-width="2" marker-end="url(#ar)"/>
+<rect x="894" y="508" width="348" height="48" rx="9" fill="#FFFFFF" stroke="#047857" stroke-width="1.6"/>
+<circle cx="918" cy="532" r="13" fill="#047857"/>
+<text x="918" y="536" font-family="Segoe UI,Arial,sans-serif" font-size="12" fill="#FFFFFF" text-anchor="middle" font-weight="700">3</text>
+<text x="940" y="529" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#1F2937" text-anchor="start" font-weight="400">New opportunities appear</text>
+<text x="940" y="545" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#1F2937" text-anchor="start" font-weight="400">in dashboard &amp; chatbot</text>
+<text x="1068.0" y="580" font-family="Segoe UI,Arial,sans-serif" font-size="10.8" fill="#64748B" text-anchor="middle" font-weight="400" font-style="italic">No code needed — the same pipeline handles any new source.</text>
+<path d="M 894 406 C 774 724, 524 724, 452 179" fill="none" stroke="#1D4ED8" stroke-width="2.4" stroke-dasharray="2 5"/>
+<line x1="452" y1="179" x2="482" y2="179" stroke="#1D4ED8" stroke-width="2.4" stroke-dasharray="2 5"/>
+<line x1="452" y1="179" x2="482" y2="179" stroke="#1D4ED8" stroke-width="2.4" marker-end="url(#arb)"/>
+<text x="700" y="756" font-family="Segoe UI,Arial,sans-serif" font-size="12" fill="#1D4ED8" text-anchor="middle" font-weight="700">new sources feed the pipeline</text>
+</svg>

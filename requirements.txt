@@ -1,0 +1,24 @@
+# ---------------------------------------------------------------------------
+# CORE — needed to load data and run the API (the demo). Loose versions so pip
+# downloads ready-made wheels for your Python (no compiler required).
+# ---------------------------------------------------------------------------
+fastapi>=0.115
+uvicorn>=0.30
+pydantic>=2.9
+pydantic-settings>=2.5
+SQLAlchemy>=2.0.36          # 2.0.36+ ships wheels for current Python versions
+openpyxl>=3.1
+
+# ---------------------------------------------------------------------------
+# OPTIONAL — only needed for the LIVE scraper (Phase 2). Install later with:
+#   pip install httpx beautifulsoup4 playwright
+# ---------------------------------------------------------------------------
+# httpx>=0.27
+# beautifulsoup4>=4.12
+# playwright>=1.47
+
+# ---------------------------------------------------------------------------
+# OPTIONAL — only needed for REAL AI extraction (Phase 3). Install later with:
+#   pip install google-generativeai
+# ---------------------------------------------------------------------------
+# google-generativeai>=0.8

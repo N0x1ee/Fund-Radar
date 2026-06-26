@@ -1,0 +1,396 @@
+[
+{
+"agency_code": "IND002",
+"program_name": "BRICS STI Framework Programme – 7th Coordinated Call 2026",
+"funding_amount": "Up to Rs 1 crore",
+"eligibility": "Indian researchers in eligible institutions (multilateral BRICS consortia)",
+"research_area": "Multidisciplinary Science & Technology",
+"deadline": "2026-07-03",
+"application_link": "https://dst.gov.in/callforproposals/brics-sti-framework-programme-7th-coordinated-call-brics-multilateral-projects-2026",
+"summary": "DST call for multilateral collaborative research proposals across six priority areas under the BRICS STI Framework Programme.",
+"tags": [
+"BRICS",
+"International",
+"Research Grant"
+],
+"source_url": "https://dst.gov.in/call-for-proposals"
+},
+{
+"agency_code": "IND002",
+"program_name": "DST–JSPS Indo-Japan Cooperative Science Programme (IJCSP) 2026",
+"funding_amount": null,
+"eligibility": "Indian researchers collaborating with Japanese counterparts",
+"research_area": "Science & Technology (bilateral)",
+"deadline": null,
+"application_link": "https://dst.gov.in/callforproposals/dst-jsps-call-proposal-2026-under-indo-japan-cooperative-science-programme-ijcsp",
+"summary": "Bilateral India–Japan cooperative science programme supporting joint projects and researcher mobility.",
+"tags": [
+"India-Japan",
+"Bilateral",
+"Mobility"
+],
+"source_url": "https://dst.gov.in/call-for-proposals"
+},
+{
+"agency_code": "IND002",
+"program_name": "India–Austria S&T Cooperation – Call for Proposals 2026",
+"funding_amount": null,
+"eligibility": "Indian and Austrian joint research teams",
+"research_area": "Science & Technology (bilateral)",
+"deadline": null,
+"application_link": "https://dst.gov.in/callforproposals/india-austria-science-technology-cooperation-call-proposals-2026",
+"summary": "Joint India–Austria research cooperation call for collaborative S&T projects.",
+"tags": [
+"India-Austria",
+"Bilateral"
+],
+"source_url": "https://dst.gov.in/call-for-proposals"
+},
+{
+"agency_code": "IND001",
+"program_name": "ANRF Advanced Research Grant (ARG) 2026",
+"funding_amount": "Up to Rs 5 crore",
+"eligibility": "Faculty/researchers in Indian universities, colleges, labs and recognised R&D institutions",
+"research_area": "Cutting-edge research & innovation (all disciplines)",
+"deadline": "2026-06-10",
+"application_link": "https://anrfonline.in/ANRF/arg_anrf",
+"summary": "Flagship ANRF grant for high-impact research, with funding up to Rs 5 crore per project.",
+"tags": [
+"Flagship",
+"Research Grant",
+"All Disciplines"
+],
+"source_url": "https://anrfonline.in/ANRF/arg_anrf"
+},
+{
+"agency_code": "IND001",
+"program_name": "ANRF National Postdoctoral Fellowship (NPDF) 2026",
+"funding_amount": null,
+"eligibility": "Postdoctoral researchers in Indian institutions",
+"research_area": "All disciplines",
+"deadline": "2026-02-17",
+"application_link": "https://www.psa.gov.in/anrf",
+"summary": "National Postdoctoral Fellowship supporting early-career researchers across disciplines.",
+"tags": [
+"Fellowship",
+"Postdoc"
+],
+"source_url": "https://www.psa.gov.in/anrf"
+},
+{
+"agency_code": "IND003",
+"program_name": "DBT BIO-GRID – Bioinformatics & Computational Biology Centres",
+"funding_amount": "Up to Rs 5 crore per project",
+"eligibility": "Research institutions and universities (India)",
+"research_area": "Bioinformatics & Computational Biology",
+"deadline": "2026-01-31",
+"application_link": "https://dbtindia.gov.in/whats-new/call-for-proposals",
+"summary": "Establishment/upgradation of Bioinformatics & Computational Biology Centres under BIO-GRID, up to Rs 5 crore over 5 years.",
+"tags": [
+"Bioinformatics",
+"Infrastructure"
+],
+"source_url": "https://dbtindia.gov.in/whats-new/call-for-proposals"
+},
+{
+"agency_code": "IND003",
+"program_name": "DBT – AI for Algorithm, Product or Software Development in Biotechnology",
+"funding_amount": null,
+"eligibility": "Eligible Indian research institutions",
+"research_area": "Artificial Intelligence in Biotechnology",
+"deadline": "2026-02-15",
+"application_link": "https://dbtindia.gov.in/whats-new/call-for-proposals",
+"summary": "Call supporting AI-driven algorithm, product, or software development in the biotechnology domain.",
+"tags": [
+"AI",
+"Biotechnology"
+],
+"source_url": "https://dbtindia.gov.in/whats-new/call-for-proposals"
+},
+{
+"agency_code": "IND003",
+"program_name": "DBT – Biotech Hubs in the North Eastern Region (NER)",
+"funding_amount": null,
+"eligibility": "Institutions, universities and government colleges in NER",
+"research_area": "Biotechnology capacity building",
+"deadline": "2026-03-30",
+"application_link": "https://dbtindia.gov.in/whats-new/call-for-proposals",
+"summary": "Proposals to establish Biotech Hubs in India's North Eastern Region.",
+"tags": [
+"Biotechnology",
+"North East",
+"Capacity Building"
+],
+"source_url": "https://dbtindia.gov.in/whats-new/call-for-proposals"
+},
+{
+"agency_code": "IND005",
+"program_name": "ICMR HRD Scheme 2026-27 – Short-Term Studentship (STS)",
+"funding_amount": null,
+"eligibility": "Students from recognised universities/medical colleges",
+"research_area": "Medical & Health Sciences",
+"deadline": "2026-05-30",
+"application_link": "https://www.icmr.gov.in/call-for-proposals",
+"summary": "Short-Term Studentship under the ICMR Human Resource Development scheme for medical research training.",
+"tags": [
+"Studentship",
+"Medical"
+],
+"source_url": "https://www.icmr.gov.in/call-for-proposals"
+},
+{
+"agency_code": "IND005",
+"program_name": "ICMR Long-Term & Short-Term Fellowships Abroad 2026-27",
+"funding_amount": null,
+"eligibility": "Indian biomedical scientists",
+"research_area": "Biomedical Sciences",
+"deadline": "2026-06-30",
+"application_link": "https://www.icmr.gov.in/fellowships",
+"summary": "ICMR HRD fellowships for Indian scientists to train abroad (long- and short-term).",
+"tags": [
+"Fellowship",
+"International",
+"Medical"
+],
+"source_url": "https://www.icmr.gov.in/fellowships"
+},
+{
+"agency_code": "IND005",
+"program_name": "ICMR Anveshan SMALL Extramural Grants 2026",
+"funding_amount": null,
+"eligibility": "Investigators at eligible Indian institutions",
+"research_area": "Medical & Health Sciences",
+"deadline": "2026-03-16",
+"application_link": "https://www.icmr.gov.in/call-for-proposals",
+"summary": "Investigator-initiated small extramural research grants in medical and health sciences.",
+"tags": [
+"Extramural",
+"Medical Research"
+],
+"source_url": "https://www.icmr.gov.in/call-for-proposals"
+},
+{
+"agency_code": "IND005",
+"program_name": "ICMR RFP – Nutrient-Dense Food Products to Prevent Anaemia",
+"funding_amount": null,
+"eligibility": "Research and product-development institutions",
+"research_area": "Nutrition & Public Health",
+"deadline": "2026-07-03",
+"application_link": "https://www.icmr.gov.in/call-for-proposals",
+"summary": "Request for proposals to develop nutrient-dense foods for adolescent girls and women of reproductive age to prevent anaemia.",
+"tags": [
+"Nutrition",
+"Public Health"
+],
+"source_url": "https://www.icmr.gov.in/call-for-proposals"
+},
+{
+"agency_code": "IND007",
+"program_name": "BIRAC Biotechnology Ignition Grant (BIG) – 2026",
+"funding_amount": "Up to Rs 50 lakh",
+"eligibility": "Early-stage startups and innovators (ideation to PoC)",
+"research_area": "Biotechnology / Startups",
+"deadline": "2026-07-01",
+"application_link": "https://birac.nic.in/big.php",
+"summary": "Grant of up to Rs 50 lakh for early-stage biotech startups to reach proof-of-concept, with calls on 1 Jan and 1 Jul.",
+"tags": [
+"Startup",
+"Biotechnology",
+"Ignition Grant"
+],
+"source_url": "https://birac.nic.in/cfp.php"
+},
+{
+"agency_code": "IND007",
+"program_name": "BIRAC Grand Challenges India 2026 – Screening & Diagnosis",
+"funding_amount": null,
+"eligibility": "Innovators working on diagnostics/screening",
+"research_area": "Affordable Diagnostics",
+"deadline": "2026-07-01",
+"application_link": "https://birac.nic.in/cfp.php",
+"summary": "Open call for cost-disruptive innovations in screening and diagnosis for TB, emerging pathogens and enteric diseases.",
+"tags": [
+"Diagnostics",
+"Grand Challenges",
+"Health"
+],
+"source_url": "https://birac.nic.in/cfp.php"
+},
+{
+"agency_code": "IND007",
+"program_name": "BIRAC–RDI Fund (National Call) – Phase 1",
+"funding_amount": null,
+"eligibility": "Startups and research institutions (TRL 4-9)",
+"research_area": "High-impact biotech innovation",
+"deadline": "2026-03-31",
+"application_link": "https://birac.nic.in/cfp.php",
+"summary": "National BIRAC-RDI fund supporting biotech innovations from proof-of-concept to market via equity/debt instruments.",
+"tags": [
+"RDI Fund",
+"Scale-up",
+"Biotechnology"
+],
+"source_url": "https://birac.nic.in/cfp.php"
+},
+{
+"agency_code": "INT002",
+"program_name": "CEFIPRA Collaborative Scientific Research Programme (CSRP) 2026",
+"funding_amount": "Up to EUR 220,000",
+"eligibility": "Joint Indian and French Principal Collaborators",
+"research_area": "Multidisciplinary (maths, physics, chemistry, biotech, environment)",
+"deadline": "2026-07-31",
+"application_link": "https://www.cefipra.org/",
+"summary": "Flagship Indo-French call funding joint projects up to EUR 220,000 for the full duration.",
+"tags": [
+"India-France",
+"Collaborative",
+"Research Grant"
+],
+"source_url": "https://www.cefipra.org/"
+},
+{
+"agency_code": "INT002",
+"program_name": "CEFIPRA Industry-Academia R&D Programme (IARDP) 2026",
+"funding_amount": null,
+"eligibility": "Indo-French industry-academia partnerships",
+"research_area": "Applied / industrial research",
+"deadline": "2026-07-31",
+"application_link": "https://cefipra.org/Docs/IARDP_Guidelines_deadline_31072026.pdf",
+"summary": "Indo-French industry-academia R&D collaborative programme.",
+"tags": [
+"India-France",
+"Industry-Academia"
+],
+"source_url": "https://www.cefipra.org/"
+},
+{
+"agency_code": "INT001",
+"program_name": "Fulbright-Nehru Doctoral Research Fellowships 2027-28",
+"funding_amount": "Funded (J-1 visa, travel, living costs)",
+"eligibility": "Indian scholars registered for a PhD at an Indian institution",
+"research_area": "All disciplines",
+"deadline": "2026-02-18",
+"application_link": "https://www.usief.org.in/fulbright-fellowships/fellowships-for-indian-citizen/fulbright-nehru-doctoral-research-fellowships/",
+"summary": "6-9 month doctoral research fellowship in the US for Indian PhD scholars.",
+"tags": [
+"Fulbright",
+"Fellowship",
+"USA"
+],
+"source_url": "https://www.usief.org.in/"
+},
+{
+"agency_code": "INT001",
+"program_name": "Fulbright-Nehru Student Research Fellowships 2027-28 (US citizens)",
+"funding_amount": "Funded",
+"eligibility": "US citizens (research in India)",
+"research_area": "All disciplines",
+"deadline": "2026-10-06",
+"application_link": "https://www.usief.org.in/fulbright-fellowships/fellowships-for-u-s-citizen/fulbright-nehru-student-research/",
+"summary": "Fulbright-Nehru student research fellowship for US citizens to conduct research in India.",
+"tags": [
+"Fulbright",
+"Fellowship",
+"USA-India"
+],
+"source_url": "https://www.usief.org.in/"
+},
+{
+"agency_code": "INT003",
+"program_name": "SNSF Starting Grants 2026",
+"funding_amount": "Up to CHF 1 million",
+"eligibility": "Early-career researchers (all disciplines)",
+"research_area": "All disciplines",
+"deadline": "2026-05-05",
+"application_link": "https://www.snf.ch/en/w728UqT1Yw256Mz2/funding/careers/snsf-starting-grants",
+"summary": "SNSF Starting Grants of up to CHF 1 million over five years for early-career researchers.",
+"tags": [
+"Career",
+"Starting Grant",
+"Switzerland"
+],
+"source_url": "https://www.snf.ch/en"
+},
+{
+"agency_code": "INT003",
+"program_name": "SNSF Ambizione 2026",
+"funding_amount": null,
+"eligibility": "Postdoctoral researchers seeking to run own projects in Switzerland",
+"research_area": "All disciplines",
+"deadline": "2026-11-03",
+"application_link": "https://www.snf.ch/en/N18L3oGWomTSSGkF/funding/careers/ambizione",
+"summary": "Final Ambizione call enabling postdocs to lead their own research projects at a Swiss institution.",
+"tags": [
+"Career",
+"Postdoc",
+"Switzerland"
+],
+"source_url": "https://www.snf.ch/en"
+},
+{
+"agency_code": "INT005",
+"program_name": "JSPS Postdoctoral Fellowship for Research in Japan (Standard) FY2026",
+"funding_amount": "JPY 362,000 per month + travel & allowances",
+"eligibility": "PhD holders (within 6 years), foreign researchers",
+"research_area": "All fields",
+"deadline": "2026-06-03",
+"application_link": "https://www.jsps.go.jp/english/e-fellow/e-ippan/appliguidelines.html",
+"summary": "JSPS postdoctoral fellowship offering a monthly stipend of JPY 362,000 plus travel, settling-in and research support.",
+"tags": [
+"Fellowship",
+"Japan",
+"Postdoc"
+],
+"source_url": "https://www.jsps.go.jp/english/e-pd/"
+},
+{
+"agency_code": "INT012",
+"program_name": "Horizon Europe – EIC Accelerator Open 2026",
+"funding_amount": "EU grant + equity (blended finance)",
+"eligibility": "Startups and SMEs in the EU/associated countries",
+"research_area": "Deep-tech innovation",
+"deadline": "2026-07-08",
+"application_link": "https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/programmes/horizon",
+"summary": "EIC Accelerator supports high-risk, high-impact deep-tech startups; 2026 windows include 4 Mar, 6 May, 8 Jul, 2 Sep, 4 Nov.",
+"tags": [
+"EIC",
+"Startup",
+"Deep-tech",
+"EU"
+],
+"source_url": "https://research-and-innovation.ec.europa.eu/funding/funding-opportunities/funding-programmes-and-open-calls/horizon-europe_en"
+},
+{
+"agency_code": "INT012",
+"program_name": "Horizon Europe – Cancer Mission Calls 2026",
+"funding_amount": null,
+"eligibility": "Research consortia (EU & associated countries)",
+"research_area": "Cancer / Health",
+"deadline": "2026-09-15",
+"application_link": "https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/opportunities/calls-for-proposals",
+"summary": "Horizon Europe Mission on Cancer topics, part of the EUR 14 billion 2026-27 work programme.",
+"tags": [
+"Health",
+"Cancer",
+"EU",
+"Mission"
+],
+"source_url": "https://research-and-innovation.ec.europa.eu/funding/funding-opportunities/funding-programmes-and-open-calls/horizon-europe_en"
+},
+{
+"agency_code": "INT008",
+"program_name": "Humboldt Research Fellowship 2026 (Postdoctoral & Experienced)",
+"funding_amount": "EUR 3,000-3,600 per month",
+"eligibility": "Postdoctoral and experienced researchers worldwide (all disciplines)",
+"research_area": "All disciplines",
+"deadline": "2026-07-15",
+"application_link": "https://www.humboldt-foundation.de/en/apply/sponsorship-programmes/humboldt-research-fellowship",
+"summary": "Humboldt Research Fellowship for independent research in Germany; next call opens 15 July 2026. Postdocs EUR 3,000/mo, experienced researchers EUR 3,600/mo.",
+"tags": [
+"Fellowship",
+"Germany",
+"Postdoc"
+],
+"source_url": "https://www.humboldt-foundation.de/en/apply/sponsorship-programmes/humboldt-research-fellowship"
+}
+]
