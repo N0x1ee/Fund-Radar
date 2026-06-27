@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en" class="">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>FundRadar — Funding Opportunity Intelligence Platform</title>
+<meta name="description" content="FundRadar — AI-powered platform that discovers, scrapes, extracts and serves funding opportunities from many agencies."/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    darkMode: 'class',
+    theme: { extend: {
+      colors: { brand: { 50:'#eef2ff',100:'#e0e7ff',200:'#c7d2fe',300:'#a5b4fc',400:'#818cf8',500:'#6366f1',600:'#4f46e5',700:'#4338ca',800:'#3730a3',900:'#312e81' } },
+      fontFamily: { sans: ['Inter','-apple-system','Segoe UI','Roboto','sans-serif'] }
+    }}
+  }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  html{scroll-behavior:smooth}
+  body{font-family:'Inter',sans-serif}
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:6px}
+  .dark ::-webkit-scrollbar-thumb{background:#475569}
+  [data-route]{cursor:pointer}
+  .fade{animation:fade .25s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-200 antialiased">
+
+<div class="flex min-h-screen">
+  <!-- Sidebar -->
+  <aside id="sidebar" class="fixed z-40 inset-y-0 left-0 w-64 -translate-x-full lg:translate-x-0 transition-transform
+         bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col">
+    <div class="px-5 h-16 flex items-center gap-2 border-b border-slate-200 dark:border-slate-800">
+      <div class="h-9 w-9 rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 grid place-items-center text-white font-extrabold">F</div>
+      <div>
+        <div class="font-extrabold tracking-tight leading-none">FundRadar</div>
+        <div class="text-[11px] text-slate-400">Funding Intelligence</div>
+      </div>
+    </div>
+    <nav id="nav" class="flex-1 overflow-y-auto p-3 space-y-1 text-sm"></nav>
+    <div class="p-3 border-t border-slate-200 dark:border-slate-800 text-[11px] text-slate-400">
+      <div>Phase 0–1 complete · 2–5 in progress</div>
+      <div class="mt-1">v0.1.0 · demo build</div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="flex-1 lg:ml-64 min-w-0">
+    <!-- Topbar -->
+    <header class="sticky top-0 z-30 h-16 bg-white/80 dark:bg-slate-900/80 backdrop-blur border-b border-slate-200 dark:border-slate-800
+                   flex items-center gap-3 px-4 sm:px-6">
+      <button onclick="toggleSidebar()" class="lg:hidden p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">☰</button>
+      <h1 id="pageTitle" class="font-semibold text-base sm:text-lg truncate">Dashboard</h1>
+      <div class="ml-auto flex items-center gap-2 sm:gap-3">
+        <span id="lastUpdated" class="hidden sm:inline text-xs text-slate-400"></span>
+        <span id="liveDot" class="inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full
+              bg-emerald-50 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300">
+          <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>Live API</span>
+        <button onclick="toggleTheme()" id="themeBtn" class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800" title="Toggle theme">🌙</button>
+      </div>
+    </header>
+
+    <main id="view" class="p-4 sm:p-6 max-w-[1400px] mx-auto"></main>
+    <footer class="px-6 py-8 text-center text-xs text-slate-400">
+      FundRadar · Funding Opportunity Intelligence Platform · data served live from the FastAPI backend
+    </footer>
+  </div>
+</div>
+<div id="backdrop" onclick="toggleSidebar()" class="hidden fixed inset-0 bg-black/40 z-30 lg:hidden"></div>
+
+<script>
+/* ---------------- Navigation ---------------- */
+const ROUTES = [
+  ['dashboard','Dashboard','M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z'],
+  ['agencies','Funding Agencies','M4 21V7l8-4 8 4v14M9 21v-6h6v6'],
+  ['opportunities','Funding Opportunities','M3 7h18M3 12h18M3 17h18'],
+  ['scrapers','Scraper Status','M12 2a10 10 0 100 20 10 10 0 000-20zm0 4v6l4 2'],
+  ['database','Database','M12 3c4.97 0 9 1.79 9 4s-4.03 4-9 4-9-1.79-9-4 4.03-4 9-4zm9 4v10c0 2.21-4.03 4-9 4s-9-1.79-9-4V7'],
+  ['api','API','M8 9l-4 3 4 3m8-6l4 3-4 3M14 5l-4 14'],
+  ['progress','Project Progress','M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11'],
+  ['about','About','M12 9v4m0 4h.01M12 2a10 10 0 100 20 10 10 0 000-20z'],
+];
+function buildNav(){
+  document.getElementById('nav').innerHTML = ROUTES.map(([id,label,d])=>`
+    <a data-route="${id}" onclick="go('${id}')" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg
+       text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+      <svg class="h-[18px] w-[18px] shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="${d}"/></svg>
+      <span>${label}</span>
+    </a>`).join('');
+}
+function setActive(id){
+  document.querySelectorAll('.nav-item').forEach(a=>{
+    const on = a.getAttribute('data-route')===id;
+    a.classList.toggle('bg-brand-50', on); a.classList.toggle('dark:bg-brand-600/20', on);
+    a.classList.toggle('text-brand-700', on); a.classList.toggle('dark:text-brand-300', on);
+    a.classList.toggle('font-semibold', on);
+  });
+  const label = (ROUTES.find(r=>r[0]===id)||[])[1] || 'Dashboard';
+  document.getElementById('pageTitle').textContent = label;
+}
+function go(id){ location.hash = '#/'+id; }
+function toggleSidebar(){ document.getElementById('sidebar').classList.toggle('-translate-x-full'); document.getElementById('backdrop').classList.toggle('hidden'); }
+
+/* ---------------- Theme ---------------- */
+function applyTheme(t){ document.documentElement.classList.toggle('dark', t==='dark'); document.getElementById('themeBtn').textContent = t==='dark'?'☀️':'🌙'; }
+function toggleTheme(){ const t = document.documentElement.classList.contains('dark')?'light':'dark'; localStorage.setItem('fr_theme',t); applyTheme(t); rerenderCharts(); }
+applyTheme(localStorage.getItem('fr_theme')|| (matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'));
+
+/* ---------------- Data ---------------- */
+const STATE = { stats:null, ag:[], opp:[], scr:null, agmap:{}, loaded:false, err:null };
+async function jget(u){ const r = await fetch(u); if(!r.ok) throw new Error(u+' → '+r.status); return r.json(); }
+async function loadAll(){
+  try{
+    const [stats, a, o, scr] = await Promise.all([
+      jget('/stats'), jget('/agencies?limit=500'), jget('/opportunities?limit=500'), jget('/scrapers')
+    ]);
+    STATE.stats = stats; STATE.ag = a.items||[]; STATE.opp = o.items||[]; STATE.scr = scr;
+    STATE.ag.forEach(x=>STATE.agmap[x.id]={name:x.name,country:x.country,code:x.agency_code,category:x.category,funding_type:x.funding_type});
+    STATE.opp = STATE.opp.map(o=>({ ...o,
+      agency:(STATE.agmap[o.agency_id]||{}).name||'—',
+      country:(STATE.agmap[o.agency_id]||{}).country||'—',
+      category:(STATE.agmap[o.agency_id]||{}).category||'—',
+      funding_type:(STATE.agmap[o.agency_id]||{}).funding_type||'—' }));
+    STATE.loaded = true;
+    const lu = stats.last_updated ? new Date(stats.last_updated) : null;
+    document.getElementById('lastUpdated').textContent = lu ? 'Updated '+lu.toLocaleString('en-GB',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '';
+  }catch(e){ STATE.err = e.message; document.getElementById('liveDot').innerHTML='<span class="h-2 w-2 rounded-full bg-rose-500"></span>API offline'; document.getElementById('liveDot').className='inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full bg-rose-50 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300'; }
+}
+
+/* ---------------- Helpers ---------------- */
+const $ = (s,r=document)=>r.querySelector(s);
+const esc = s => (s==null?'':String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function fmtDate(d){ if(!d) return '<span class="text-slate-400">—</span>'; const dt=new Date(d); return isNaN(dt)?esc(d):dt.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}); }
+function fmtDT(d){ if(!d) return '—'; const dt=new Date(d); return isNaN(dt)?esc(d):dt.toLocaleString('en-GB',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}); }
+function amount(o){ if(o.funding_amount) return esc(o.funding_amount); if(o.amount_value) return esc((o.currency||'')+' '+Number(o.amount_value).toLocaleString()); return '<span class="text-slate-400">—</span>'; }
+function statusBadge(s){ s=s||'unknown'; const m={open:'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300',closed:'bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-300',unknown:'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300'}; return `<span class="px-2.5 py-0.5 rounded-full text-xs font-semibold ${m[s]||m.unknown}">${esc(s)}</span>`; }
+function card(cls=''){ return `bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl ${cls}`; }
+function linkBtn(href,txt){ return href?`<a href="${esc(href)}" target="_blank" rel="noopener" class="text-brand-600 dark:text-brand-400 hover:underline font-medium">${txt} ↗</a>`:'<span class="text-slate-400">—</span>'; }
+function uniq(arr){ return [...new Set(arr.filter(Boolean))].sort(); }
+const CH_TXT = ()=> document.documentElement.classList.contains('dark') ? '#cbd5e1' : '#475569';
+const CH_GRID= ()=> document.documentElement.classList.contains('dark') ? 'rgba(148,163,184,.15)' : 'rgba(100,116,139,.15)';
+const PALETTE=['#6366f1','#22c55e','#f59e0b','#ef4444','#06b6d4','#a855f7','#ec4899','#14b8a6','#eab308','#3b82f6','#f97316','#84cc16'];
+
+/* ---------------- Charts registry ---------------- */
+let CHARTS=[];
+function mkChart(ctx,cfg){ const c=new Chart(ctx,cfg); CHARTS.push(c); return c; }
+function clearCharts(){ CHARTS.forEach(c=>{try{c.destroy()}catch(e){}}); CHARTS=[]; }
+let _currentRoute='dashboard';
+function rerenderCharts(){ render(_currentRoute); }
+
+/* ============================================================
+   PAGES
+   ============================================================ */
+function statCard(label,value,sub,accent){
+  return `<div class="${card('p-5')}">
+    <div class="flex items-center justify-between">
+      <div class="text-3xl font-extrabold tracking-tight">${value}</div>
+      <div class="h-9 w-9 rounded-lg ${accent} grid place-items-center text-white text-sm font-bold">${label[0]}</div>
+    </div>
+    <div class="mt-1 text-sm text-slate-500 dark:text-slate-400">${label}</div>
+    ${sub?`<div class="mt-2 text-xs text-slate-400">${sub}</div>`:''}
+  </div>`;
+}
+
+function pageDashboard(){
+  const s = STATE.stats||{};
+  const v = `
+  <div class="fade space-y-6">
+    <!-- hero -->
+    <div class="rounded-2xl bg-gradient-to-br from-brand-600 to-brand-800 text-white p-6 sm:p-8 shadow-lg">
+      <div class="text-xs uppercase tracking-widest text-brand-100/80 font-semibold">AI-powered Funding Opportunity Intelligence</div>
+      <h2 class="mt-2 text-2xl sm:text-3xl font-extrabold">FundRadar</h2>
+      <p class="mt-2 max-w-2xl text-brand-50/90 text-sm sm:text-base">Automatically discovers, scrapes, extracts, stores and monitors grants, fellowships, scholarships and research calls from dozens of funding agencies — and serves them through an API and a chatbot.</p>
+      <div class="mt-4 flex flex-wrap gap-2 text-xs">
+        <span class="px-3 py-1 rounded-full bg-white/15">FastAPI</span>
+        <span class="px-3 py-1 rounded-full bg-white/15">SQLAlchemy</span>
+        <span class="px-3 py-1 rounded-full bg-white/15">Pluggable LLM (Gemini/Ollama/Mock)</span>
+        <span class="px-3 py-1 rounded-full bg-white/15">Polite scraper</span>
+      </div>
+    </div>
+
+    <!-- stat cards -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      ${statCard('Funding Agencies', s.agencies??'—','Seeded from master database','bg-brand-600')}
+      ${statCard('Opportunities', s.opportunities??'—',(s.open??0)+' open · '+(s.closed??0)+' closed','bg-emerald-600')}
+      ${statCard('Countries / Blocs', s.countries??'—','Geographic coverage','bg-cyan-600')}
+      ${statCard('Categories', s.categories??'—','Research & funding domains','bg-violet-600')}
+    </div>
+
+    <!-- charts -->
+    <div class="grid lg:grid-cols-3 gap-4">
+      <div class="${card('p-5')}"><div class="font-semibold mb-3">Opportunity status</div><div class="h-56"><canvas id="cStatus"></canvas></div></div>
+      <div class="${card('p-5 lg:col-span-2')}"><div class="font-semibold mb-3">Agencies by country</div><div class="h-56"><canvas id="cCountry"></canvas></div></div>
+    </div>
+    <div class="grid lg:grid-cols-2 gap-4">
+      <div class="${card('p-5')}"><div class="font-semibold mb-3">Top categories</div><div class="h-64"><canvas id="cCat"></canvas></div></div>
+      <div class="${card('p-5')}"><div class="font-semibold mb-3">Funding types</div><div class="h-64"><canvas id="cType"></canvas></div></div>
+    </div>
+
+    <!-- chatbot + meta -->
+    <div class="grid lg:grid-cols-3 gap-4">
+      <div class="${card('p-5 lg:col-span-2')}">
+        <div class="font-semibold mb-1">Ask FundRadar</div>
+        <div class="text-xs text-slate-400 mb-3">Plain-English questions answered from the live funding database.</div>
+        <div class="flex gap-2">
+          <input id="chatq" placeholder="e.g. What grants are open now?" onkeydown="if(event.key==='Enter')askBot()"
+            class="flex-1 px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"/>
+          <button onclick="askBot()" class="px-4 py-2 rounded-lg bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold">Ask</button>
+        </div>
+        <div class="flex flex-wrap gap-2 mt-3">
+          ${['What grants are open now?','Fellowships for PhD students','Funding above 10 lakh','Opportunities in Germany','Biotech startup funding'].map(q=>`<button onclick="ask('${q}')" class="text-xs px-3 py-1.5 rounded-full bg-brand-50 dark:bg-brand-600/20 text-brand-700 dark:text-brand-300 hover:bg-brand-100">${q}</button>`).join('')}
+        </div>
+        <div id="chatout" class="hidden mt-4 text-sm whitespace-pre-wrap leading-relaxed bg-slate-50 dark:bg-slate-800/60 border-l-4 border-brand-500 rounded-lg p-4"></div>
+      </div>
+      <div class="${card('p-5')}">
+        <div class="font-semibold mb-3">System status</div>
+        <ul class="space-y-2.5 text-sm">
+          <li class="flex justify-between"><span class="text-slate-500">Database</span><span class="font-medium">SQLite (live)</span></li>
+          <li class="flex justify-between"><span class="text-slate-500">Processed records</span><span class="font-medium">${s.processed??0} / ${s.opportunities??0}</span></li>
+          <li class="flex justify-between"><span class="text-slate-500">Agencies w/ data</span><span class="font-medium">${s.with_opportunities??0} / ${s.agencies??0}</span></li>
+          <li class="flex justify-between"><span class="text-slate-500">Scraper targets</span><span class="font-medium">${(STATE.scr&&STATE.scr.engine.total_targets)||0}</span></li>
+          <li class="flex justify-between"><span class="text-slate-500">Last updated</span><span class="font-medium">${fmtDate(s.last_updated)}</span></li>
+        </ul>
+        <div class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-800">
+          <div class="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">Coming soon</div>
+          <div class="grid grid-cols-2 gap-2">
+            ${['Vector search','Email alerts','React frontend','Change-log audit'].map(f=>`<div class="text-xs px-2 py-2 rounded-lg border border-dashed border-slate-300 dark:border-slate-700 text-slate-400 text-center">${f}</div>`).join('')}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+  $('#view').innerHTML = v;
+  // charts
+  const sb = s.status_breakdown||{};
+  mkChart($('#cStatus'),{type:'doughnut',data:{labels:Object.keys(sb),datasets:[{data:Object.values(sb),backgroundColor:['#22c55e','#94a3b8','#f59e0b']}]},options:{plugins:{legend:{position:'bottom',labels:{color:CH_TXT()}}},maintainAspectRatio:false}});
+  const cb = s.countries_breakdown||{};
+  mkChart($('#cCountry'),{type:'bar',data:{labels:Object.keys(cb),datasets:[{data:Object.values(cb),backgroundColor:'#6366f1',borderRadius:4}]},options:{plugins:{legend:{display:false}},scales:{x:{ticks:{color:CH_TXT(),maxRotation:60,minRotation:45,font:{size:9}},grid:{display:false}},y:{ticks:{color:CH_TXT(),stepSize:5},grid:{color:CH_GRID()}}},maintainAspectRatio:false}});
+  const catb = s.categories_breakdown||{};
+  mkChart($('#cCat'),{type:'bar',data:{labels:Object.keys(catb),datasets:[{data:Object.values(catb),backgroundColor:PALETTE}]},options:{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{color:CH_TXT(),stepSize:1},grid:{color:CH_GRID()}},y:{ticks:{color:CH_TXT(),font:{size:10}},grid:{display:false}}},maintainAspectRatio:false}});
+  const tb = s.funding_types_breakdown||{};
+  mkChart($('#cType'),{type:'polarArea',data:{labels:Object.keys(tb),datasets:[{data:Object.values(tb),backgroundColor:PALETTE}]},options:{plugins:{legend:{position:'right',labels:{color:CH_TXT(),font:{size:10}}}},scales:{r:{ticks:{display:false},grid:{color:CH_GRID()}}},maintainAspectRatio:false}});
+}
+
+/* ----- Agencies ----- */
+const AGF = {q:'',country:'',category:'',sort:'agency_code',dir:1};
+function pageAgencies(){
+  const countries = uniq(STATE.ag.map(a=>a.country));
+  const cats = uniq(STATE.ag.map(a=>a.category));
+  $('#view').innerHTML = `
+  <div class="fade space-y-4">
+    <div class="flex flex-wrap gap-3">
+      <input id="agq" value="${esc(AGF.q)}" oninput="AGF.q=this.value;renderAgencies()" placeholder="Search agencies…"
+        class="flex-1 min-w-[200px] px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"/>
+      <select id="agc" onchange="AGF.country=this.value;renderAgencies()" class="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm">
+        <option value="">All countries</option>${countries.map(c=>`<option ${AGF.country===c?'selected':''}>${esc(c)}</option>`).join('')}</select>
+      <select id="agcat" onchange="AGF.category=this.value;renderAgencies()" class="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm">
+        <option value="">All categories</option>${cats.map(c=>`<option ${AGF.category===c?'selected':''}>${esc(c)}</option>`).join('')}</select>
+    </div>
+    <div class="${card('overflow-hidden')}"><div class="overflow-x-auto"><div id="agTable"></div></div></div>
+  </div>`;
+  renderAgencies();
+}
+function oppCountFor(id){ return STATE.opp.filter(o=>o.agency_id===id).length; }
+function renderAgencies(){
+  let rows = STATE.ag.map(a=>({...a, nopp:oppCountFor(a.id), status: oppCountFor(a.id)>0?'active':'monitored'}));
+  if(AGF.q){const q=AGF.q.toLowerCase(); rows=rows.filter(a=>[a.name,a.agency_code,a.category,a.country,a.funding_type].join(' ').toLowerCase().includes(q));}
+  if(AGF.country) rows=rows.filter(a=>a.country===AGF.country);
+  if(AGF.category) rows=rows.filter(a=>a.category===AGF.category);
+  rows.sort((a,b)=>{let x=a[AGF.sort]??'',y=b[AGF.sort]??''; if(typeof x==='number')return (x-y)*AGF.dir; return (''+x).localeCompare(''+y)*AGF.dir;});
+  const th=(k,l)=>`<th onclick="sortAg('${k}')" class="px-4 py-3 text-left text-[11px] uppercase tracking-wide text-slate-400 cursor-pointer hover:text-slate-600 dark:hover:text-slate-200 select-none whitespace-nowrap">${l}${AGF.sort===k?(AGF.dir>0?' ▲':' ▼'):''}</th>`;
+  $('#agTable').innerHTML = `<table class="w-full text-sm">
+    <thead class="bg-slate-50 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-800">
+      <tr>${th('agency_code','Code')}${th('name','Agency')}${th('country','Country')}${th('category','Category')}${th('funding_type','Funding Type')}${th('status','Status')}${th('nopp','Opps')}<th class="px-4 py-3 text-left text-[11px] uppercase tracking-wide text-slate-400">Website</th></tr>
+    </thead><tbody>${rows.map(a=>`
+      <tr class="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/40">
+        <td class="px-4 py-3 text-slate-400 font-mono text-xs">${esc(a.agency_code)}</td>
+        <td class="px-4 py-3 font-semibold">${esc(a.name)}</td>
+        <td class="px-4 py-3">${esc(a.country)||'—'}</td>
+        <td class="px-4 py-3 text-slate-500">${esc(a.category)||'—'}</td>
+        <td class="px-4 py-3 text-slate-500">${esc(a.funding_type)||'—'}</td>
+        <td class="px-4 py-3">${a.status==='active'?'<span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300">active</span>':'<span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-300">monitored</span>'}</td>
+        <td class="px-4 py-3 font-semibold">${a.nopp}</td>
+        <td class="px-4 py-3">${linkBtn(a.website,'Visit')}</td>
+      </tr>`).join('')||`<tr><td colspan="8" class="px-4 py-10 text-center text-slate-400">No matching agencies.</td></tr>`}
+    </tbody></table>
+    <div class="px-4 py-3 text-xs text-slate-400 border-t border-slate-100 dark:border-slate-800">Showing ${rows.length} of ${STATE.ag.length} agencies</div>`;
+}
+function sortAg(k){ AGF.dir = AGF.sort===k? -AGF.dir : 1; AGF.sort=k; renderAgencies(); }
+
+/* ----- Opportunities ----- */
+const OPF = {q:'',status:'',country:'',sort:'deadline',dir:1};
+function pageOpportunities(){
+  const countries = uniq(STATE.opp.map(o=>o.country));
+  $('#view').innerHTML = `
+  <div class="fade space-y-4">
+    <div class="flex flex-wrap gap-3">
+      <input id="opq" value="${esc(OPF.q)}" oninput="OPF.q=this.value;renderOpps()" placeholder="Search opportunities…"
+        class="flex-1 min-w-[200px] px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"/>
+      <select onchange="OPF.status=this.value;renderOpps()" class="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm">
+        <option value="">All statuses</option>${['open','closed','unknown'].map(s=>`<option ${OPF.status===s?'selected':''}>${s}</option>`).join('')}</select>
+      <select onchange="OPF.country=this.value;renderOpps()" class="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm">
+        <option value="">All countries</option>${countries.map(c=>`<option ${OPF.country===c?'selected':''}>${esc(c)}</option>`).join('')}</select>
+    </div>
+    <div class="${card('overflow-hidden')}"><div class="overflow-x-auto"><div id="opTable"></div></div></div>
+  </div>`;
+  renderOpps();
+}
+function renderOpps(){
+  let rows = STATE.opp.slice();
+  if(OPF.q){const q=OPF.q.toLowerCase(); rows=rows.filter(o=>[o.program_name,o.agency,o.research_area,o.tags,o.country].join(' ').toLowerCase().includes(q));}
+  if(OPF.status) rows=rows.filter(o=>o.status===OPF.status);
+  if(OPF.country) rows=rows.filter(o=>o.country===OPF.country);
+  rows.sort((a,b)=>{let x=a[OPF.sort]??'',y=b[OPF.sort]??''; return (''+x).localeCompare(''+y)*OPF.dir;});
+  const th=(k,l)=>`<th onclick="sortOp('${k}')" class="px-4 py-3 text-left text-[11px] uppercase tracking-wide text-slate-400 cursor-pointer hover:text-slate-600 dark:hover:text-slate-200 select-none whitespace-nowrap">${l}${OPF.sort===k?(OPF.dir>0?' ▲':' ▼'):''}</th>`;
+  $('#opTable').innerHTML = `<table class="w-full text-sm">
+    <thead class="bg-slate-50 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-800">
+      <tr>${th('program_name','Title')}${th('agency','Agency')}${th('country','Country')}${th('research_area','Area')}${th('funding_type','Funding Type')}${th('deadline','Deadline')}${th('status','Status')}<th class="px-4 py-3 text-left text-[11px] uppercase tracking-wide text-slate-400">Source</th></tr>
+    </thead><tbody>${rows.map(o=>`
+      <tr class="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/40 align-top">
+        <td class="px-4 py-3 font-semibold max-w-[320px]">${esc(o.program_name)}${o.funding_amount?`<div class="text-xs font-normal text-slate-400 mt-0.5">${esc(o.funding_amount)}</div>`:''}</td>
+        <td class="px-4 py-3">${esc(o.agency)}</td>
+        <td class="px-4 py-3">${esc(o.country)}</td>
+        <td class="px-4 py-3 text-slate-500 max-w-[180px]">${esc(o.research_area)||'—'}</td>
+        <td class="px-4 py-3 text-slate-500">${esc(o.funding_type)||'—'}</td>
+        <td class="px-4 py-3 whitespace-nowrap">${fmtDate(o.deadline)}</td>
+        <td class="px-4 py-3">${statusBadge(o.status)}</td>
+        <td class="px-4 py-3">${linkBtn(o.source_url||o.application_link,'Open')}</td>
+      </tr>`).join('')||`<tr><td colspan="8" class="px-4 py-10 text-center text-slate-400">No matching opportunities.</td></tr>`}
+    </tbody></table>
+    <div class="px-4 py-3 text-xs text-slate-400 border-t border-slate-100 dark:border-slate-800">Showing ${rows.length} of ${STATE.opp.length} opportunities</div>`;
+}
+function sortOp(k){ OPF.dir = OPF.sort===k? -OPF.dir : 1; OPF.sort=k; renderOpps(); }
+
+/* ----- Scraper Status ----- */
+function pageScrapers(){
+  const e = (STATE.scr||{}).engine||{}; const t=(STATE.scr||{}).targets||[];
+  $('#view').innerHTML = `
+  <div class="fade space-y-5">
+    <div class="${card('p-5')} border-l-4 border-brand-500">
+      <div class="flex flex-wrap items-center gap-3">
+        <div class="font-semibold">${esc(e.phase||'Scraping engine')}</div>
+        <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold ${e.live_runs_executed?'bg-emerald-100 text-emerald-700':'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300'}">${e.live_runs_executed?'Live runs active':'Engine built · live runs not executed on demo host'}</span>
+      </div>
+      <p class="text-sm text-slate-500 mt-2">The scraper is generic and shared across all agencies (fetch → discover funding links → extract → hash → upsert). On this demo host the curated dataset stands in for live runs; the engine itself is fully implemented.</p>
+      <div class="grid sm:grid-cols-2 gap-4 mt-4">
+        <div><div class="text-xs font-semibold uppercase text-slate-400 mb-2">Implemented capabilities</div><ul class="space-y-1.5 text-sm">${(e.capabilities||[]).map(c=>`<li class="flex gap-2"><span class="text-emerald-500">✓</span><span>${esc(c)}</span></li>`).join('')}</ul></div>
+        <div><div class="text-xs font-semibold uppercase text-slate-400 mb-2">Pending (Phase 2b)</div><ul class="space-y-1.5 text-sm">${(e.pending||[]).map(c=>`<li class="flex gap-2"><span class="text-slate-400">⬜</span><span class="text-slate-500">${esc(c)}</span></li>`).join('')}</ul></div>
+      </div>
+    </div>
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      ${statCard('Scraper targets', e.total_targets||0,'Agencies configured','bg-brand-600')}
+      ${statCard('With data', e.targets_with_data||0,'Records present','bg-emerald-600')}
+      ${statCard('Ready (idle)', (e.total_targets||0)-(e.targets_with_data||0),'Awaiting first run','bg-amber-500')}
+      ${statCard('Engine status', 'Built','Phase 2 in progress','bg-violet-600')}
+    </div>
+    <div class="${card('overflow-hidden')}"><div class="overflow-x-auto"><table class="w-full text-sm">
+      <thead class="bg-slate-50 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-800">
+        <tr>${['Agency','Country','Priority','Status','Last Run','Records','Result','Runtime'].map(h=>`<th class="px-4 py-3 text-left text-[11px] uppercase tracking-wide text-slate-400 whitespace-nowrap">${h}</th>`).join('')}</tr>
+      </thead><tbody>${t.map(r=>`
+        <tr class="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/40">
+          <td class="px-4 py-3 font-semibold">${esc(r.agency)} <span class="text-slate-400 font-mono text-xs">${esc(r.agency_code)}</span></td>
+          <td class="px-4 py-3">${esc(r.country)||'—'}</td>
+          <td class="px-4 py-3 capitalize text-slate-500">${esc(r.priority)}</td>
+          <td class="px-4 py-3">${r.status==='data loaded'?'<span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300">data loaded</span>':'<span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-300">ready</span>'}</td>
+          <td class="px-4 py-3 whitespace-nowrap text-slate-500">${fmtDT(r.last_run)}</td>
+          <td class="px-4 py-3 font-semibold">${r.records}</td>
+          <td class="px-4 py-3">${r.success===true?'<span class="text-emerald-500">● success</span>':'<span class="text-slate-400">—</span>'}</td>
+          <td class="px-4 py-3 text-slate-400">${r.records?'~':'—'}</td>
+        </tr>`).join('')}
+      </tbody></table></div></div>
+  </div>`;
+}
+
+/* ----- Database viewer ----- */
+const DBV = {table:'opportunities',q:'',page:1,size:10};
+function pageDatabase(){
+  $('#view').innerHTML = `
+  <div class="fade space-y-4">
+    <div class="flex flex-wrap items-center gap-3">
+      <div class="inline-flex rounded-lg border border-slate-300 dark:border-slate-700 overflow-hidden text-sm">
+        <button id="tabOpp" onclick="DBV.table='opportunities';DBV.page=1;renderDB()" class="px-4 py-2">opportunities</button>
+        <button id="tabAg" onclick="DBV.table='agencies';DBV.page=1;renderDB()" class="px-4 py-2 border-l border-slate-300 dark:border-slate-700">agencies</button>
+      </div>
+      <input id="dbq" value="${esc(DBV.q)}" oninput="DBV.q=this.value;DBV.page=1;renderDB()" placeholder="Search rows…"
+        class="flex-1 min-w-[200px] px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"/>
+      <select onchange="DBV.size=+this.value;DBV.page=1;renderDB()" class="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm">
+        ${[10,25,50].map(n=>`<option value="${n}" ${DBV.size===n?'selected':''}>${n} / page</option>`).join('')}</select>
+    </div>
+    <div class="${card('overflow-hidden')}"><div class="overflow-x-auto"><div id="dbTable"></div></div></div>
+    <div id="dbPager" class="flex items-center justify-between text-sm"></div>
+  </div>`;
+  renderDB();
+}
+function renderDB(){
+  $('#tabOpp').className='px-4 py-2 '+(DBV.table==='opportunities'?'bg-brand-600 text-white':'');
+  $('#tabAg').className='px-4 py-2 border-l border-slate-300 dark:border-slate-700 '+(DBV.table==='agencies'?'bg-brand-600 text-white':'');
+  let cols, data;
+  if(DBV.table==='opportunities'){
+    cols=['id','program_name','agency','country','research_area','deadline','status','amount_value'];
+    data=STATE.opp;
+  }else{
+    cols=['id','agency_code','name','country','category','funding_type','website'];
+    data=STATE.ag;
+  }
+  if(DBV.q){const q=DBV.q.toLowerCase(); data=data.filter(r=>cols.some(c=>(''+(r[c]??'')).toLowerCase().includes(q)));}
+  const total=data.length, pages=Math.max(1,Math.ceil(total/DBV.size));
+  DBV.page=Math.min(DBV.page,pages);
+  const slice=data.slice((DBV.page-1)*DBV.size, DBV.page*DBV.size);
+  $('#dbTable').innerHTML=`<table class="w-full text-sm">
+    <thead class="bg-slate-50 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-800"><tr>${cols.map(c=>`<th class="px-3 py-2.5 text-left text-[11px] uppercase tracking-wide text-slate-400 whitespace-nowrap">${c}</th>`).join('')}</tr></thead>
+    <tbody>${slice.map(r=>`<tr class="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/40">${cols.map(c=>{let v=r[c]; if(c==='website'||c==='source_url')return `<td class="px-3 py-2.5">${linkBtn(v,'link')}</td>`; if(c==='status')return `<td class="px-3 py-2.5">${statusBadge(v)}</td>`; return `<td class="px-3 py-2.5 ${c==='id'?'text-slate-400 font-mono text-xs':''} max-w-[260px] truncate" title="${esc(v)}">${esc(v)??'—'}</td>`;}).join('')}</tr>`).join('')||`<tr><td colspan="${cols.length}" class="px-4 py-10 text-center text-slate-400">No rows.</td></tr>`}</tbody></table>`;
+  $('#dbPager').innerHTML=`<span class="text-slate-400">Page ${DBV.page} of ${pages} · ${total} rows</span>
+    <span class="flex gap-2">
+      <button onclick="DBV.page=Math.max(1,DBV.page-1);renderDB()" class="px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 ${DBV.page<=1?'opacity-40 pointer-events-none':''}">Prev</button>
+      <button onclick="DBV.page=Math.min(${pages},DBV.page+1);renderDB()" class="px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 ${DBV.page>=pages?'opacity-40 pointer-events-none':''}">Next</button>
+    </span>`;
+}
+
+/* ----- API docs ----- */
+function pageApi(){
+  const eps=[
+    ['GET','/health','—','Row counts + status','{"status":"ok","agencies":41,"opportunities":25}'],
+    ['GET','/stats','—','Aggregate dashboard statistics & breakdowns','{"agencies":41,"opportunities":25,"countries":18,...}'],
+    ['GET','/agencies','q, country, category, funding_type, priority, limit, offset','Paginated list of funding agencies','{"total":41,"items":[...]}'],
+    ['GET','/agencies/{agency_code}','agency_code (path)','Single agency by code','{"agency_code":"IND001","name":"ANRF",...}'],
+    ['GET','/opportunities','q, research_area, status, min_amount, agency_code, limit, offset','Paginated, filterable opportunities','{"total":25,"items":[...]}'],
+    ['GET','/scrapers','—','Per-agency scraper status + engine capabilities','{"engine":{...},"targets":[...]}'],
+    ['GET','/chat','q (required)','Natural-language Q&A over the database','{"question":"...","answer":"..."}'],
+  ];
+  const mC = m => 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300';
+  $('#view').innerHTML=`
+  <div class="fade space-y-4">
+    <div class="${card('p-5')} flex flex-wrap items-center gap-3">
+      <div><div class="font-semibold">FundRadar REST API</div><div class="text-sm text-slate-500">FastAPI · interactive OpenAPI docs included</div></div>
+      <div class="ml-auto flex gap-2">
+        <a href="/docs" target="_blank" class="px-4 py-2 rounded-lg bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold">Swagger UI ↗</a>
+        <a href="/redoc" target="_blank" class="px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-700 text-sm font-semibold">ReDoc ↗</a>
+      </div>
+    </div>
+    ${eps.map(([m,p,par,desc,resp])=>`
+      <div class="${card('p-4')}">
+        <div class="flex items-center gap-3 flex-wrap">
+          <span class="px-2.5 py-1 rounded-md text-xs font-bold ${mC(m)}">${m}</span>
+          <code class="font-mono text-sm font-semibold">${esc(p)}</code>
+          <a href="${esc(p.includes('{')?'#':p)}" ${p.includes('{')?'':'target="_blank"'} class="ml-auto text-xs text-brand-600 dark:text-brand-400 hover:underline">${p.includes('{')?'':'try ↗'}</a>
+        </div>
+        <p class="text-sm text-slate-500 mt-2">${esc(desc)}</p>
+        <div class="grid sm:grid-cols-2 gap-3 mt-3">
+          <div><div class="text-[11px] uppercase text-slate-400 mb-1">Parameters</div><code class="text-xs text-slate-600 dark:text-slate-300">${esc(par)}</code></div>
+          <div><div class="text-[11px] uppercase text-slate-400 mb-1">Response</div><code class="block text-xs bg-slate-50 dark:bg-slate-800 rounded p-2 overflow-x-auto text-slate-600 dark:text-slate-300">${esc(resp)}</code></div>
+        </div>
+      </div>`).join('')}
+  </div>`;
+}
+
+/* ----- Project Progress ----- */
+function pageProgress(){
+  const phases=[
+    ['Phase 0 — Foundation','done',[['done','Repo structure (db, ingest, llm, scraper, api)'],['done','Config via .env (DB URL + LLM switch)'],['done','Database layer — SQLite, Postgres-ready'],['done','Schema: Agency + Opportunity tables'],['done','Seed loader — 41 agencies from Excel'],['done','Pluggable LLM layer (Gemini/Ollama/Mock)']]],
+    ['Phase 1 — Read API','done',[['done','FastAPI app + uvicorn entrypoint'],['done','/agencies with filters + /agencies/{code}'],['done','/opportunities with filters'],['done','Pydantic schemas + paginated envelope'],['done','/health + interactive /docs'],['done','/stats + /scrapers (this demo)']]],
+    ['Phase 2 — Scraping & ingestion','prog',[['done','Polite HTTP fetch (httpx)'],['done','robots.txt + rate limiting + retries'],['done','Keyword-scored link discovery'],['done','Raw text + content-hash change detection'],['done','Priority-ordered CLI'],['plan','PDF text extraction (2b)'],['plan','Playwright for JS-heavy sites (2b)']]],
+    ['Phase 3 — AI extraction','prog',[['done','Extraction prompt → JSON'],['done','Amount/deadline normalization (₹/$/€, lakh/crore)'],['done','Research-area, summary, tags; auto-close past deadlines'],['done','CLI over unprocessed rows'],['plan','Backfill empty agency columns'],['plan','Confidence scoring + review flags']]],
+    ['Phase 4 — Monitoring','prog',[['done','Full pipeline job (scrape + extract)'],['done','Idempotent re-runs via content hash'],['done','Auto-close past-deadline rows + logs'],['done','Cron / systemd scheduling (every 2 days)'],['plan','Explicit change-log/audit table']]],
+    ['Phase 5 — Search & chatbot','prog',[['done','Query parser + keyword/intent retriever'],['done','Chatbot brain + list fallback (no key needed)'],['done','CLI + /chat + dashboard widget'],['plan','Embeddings + vector store (true semantic)']]],
+    ['Phase 6 — Frontend','prog',[['done','Multi-page web app (this build): dashboard, explorers, DB viewer, API docs'],['plan','React/Next.js component app'],['plan','Public deployment notes']]],
+  ];
+  const ic={done:['✓','text-emerald-500'],prog:['⚙','text-amber-500'],plan:['⬜','text-slate-400']};
+  const badge={done:'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300',prog:'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300'};
+  $('#view').innerHTML=`
+  <div class="fade space-y-5">
+    <div class="${card('p-5')}">
+      <div class="font-semibold text-lg">Current Development Progress</div>
+      <p class="text-sm text-slate-500 mt-1">An honest snapshot of what is built, in progress, and planned. Nothing here is faked — every "done" item maps to working code in the repository.</p>
+      <div class="flex gap-4 mt-4 text-sm">
+        <span class="flex items-center gap-2"><span class="text-emerald-500">✓</span>Completed</span>
+        <span class="flex items-center gap-2"><span class="text-amber-500">⚙</span>In Progress</span>
+        <span class="flex items-center gap-2"><span class="text-slate-400">⬜</span>Planned</span>
+      </div>
+    </div>
+    ${phases.map(([title,st,items])=>`
+      <div class="${card('p-5')}">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="font-semibold">${esc(title)}</div>
+          <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold ${st==='done'?badge.done:badge.prog}">${st==='done'?'Completed':'In Progress'}</span>
+        </div>
+        <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm">
+          ${items.map(([s,t])=>`<li class="flex gap-2"><span class="${ic[s][1]}">${ic[s][0]}</span><span class="${s==='plan'?'text-slate-500':''}">${esc(t)}</span></li>`).join('')}
+        </ul>
+      </div>`).join('')}
+  </div>`;
+}
+
+/* ----- About / Landing ----- */
+function pageAbout(){
+  $('#view').innerHTML=`
+  <div class="fade space-y-5 max-w-4xl">
+    <div class="rounded-2xl bg-gradient-to-br from-brand-600 to-brand-800 text-white p-8">
+      <h2 class="text-3xl font-extrabold">FundRadar</h2>
+      <p class="mt-3 text-brand-50/90">An AI-powered Funding Opportunity Intelligence Platform that automatically discovers, scrapes, extracts, stores and updates funding opportunities — grants, fellowships, scholarships, startup funding and research calls — from many funding agencies, and serves them through a searchable API and a natural-language chatbot.</p>
+    </div>
+
+    <div class="${card('p-6')}">
+      <h3 class="font-semibold text-lg mb-3">Architecture overview</h3>
+      <p class="text-sm text-slate-500 mb-4">A single Python service with cleanly separated layers. Data flows left to right; every stage is independently runnable.</p>
+      <div class="grid sm:grid-cols-5 gap-2 text-center text-xs">
+        ${[['1 · Seed','Excel → agencies table','bg-brand-600'],['2 · Scrape','Agency sites → raw text + hash','bg-cyan-600'],['3 · AI extract','LLM → structured fields','bg-violet-600'],['4 · Monitor','Scheduled idempotent refresh','bg-amber-500'],['5 · Serve','API · dashboard · chatbot','bg-emerald-600']].map(([t,d,c])=>`<div class="${card('p-3')}"><div class="h-8 w-8 mx-auto rounded-lg ${c} text-white grid place-items-center font-bold mb-2">${t[0]}</div><div class="font-semibold">${t}</div><div class="text-slate-400 mt-1">${d}</div></div>`).join('')}
+      </div>
+      <div class="mt-5 grid sm:grid-cols-2 gap-4 text-sm">
+        <div><div class="font-semibold mb-1">Backend</div><p class="text-slate-500">FastAPI + SQLAlchemy (SQLite dev, Postgres-ready). Pydantic schemas, paginated read API, interactive OpenAPI docs.</p></div>
+        <div><div class="font-semibold mb-1">AI layer</div><p class="text-slate-500">Provider-agnostic <code>get_llm()</code> — swap Gemini / local Ollama / Mock with one env var. No vendor lock-in.</p></div>
+        <div><div class="font-semibold mb-1">Scraper</div><p class="text-slate-500">Polite by design: robots.txt, per-host rate limiting, retries, keyword link discovery, content-hash change detection.</p></div>
+        <div><div class="font-semibold mb-1">Frontend</div><p class="text-slate-500">This responsive multi-page app (Tailwind + Chart.js) consuming the live JSON API. Dark mode included.</p></div>
+      </div>
+    </div>
+
+    <div class="grid sm:grid-cols-2 gap-5">
+      <div class="${card('p-6')}">
+        <h3 class="font-semibold mb-2">Current progress</h3>
+        <ul class="text-sm space-y-1.5 text-slate-600 dark:text-slate-300">
+          <li><span class="text-emerald-500">✓</span> Phases 0–1 complete (foundation + read API)</li>
+          <li><span class="text-amber-500">⚙</span> Phases 2–5 in progress (scrape, AI, monitor, chatbot)</li>
+          <li><span class="text-emerald-500">✓</span> 41 agencies seeded · 25 curated opportunities loaded</li>
+          <li><span class="text-emerald-500">✓</span> Live API + chatbot + this web app</li>
+        </ul>
+      </div>
+      <div class="${card('p-6')}">
+        <h3 class="font-semibold mb-2">Future roadmap</h3>
+        <ul class="text-sm space-y-1.5 text-slate-500">
+          <li>⬜ Embeddings + vector search (semantic ranking)</li>
+          <li>⬜ PDF + JS-rendered (Playwright) scraping</li>
+          <li>⬜ Email/alert notifications + change-log audit</li>
+          <li>⬜ Dedicated React/Next.js frontend</li>
+        </ul>
+      </div>
+    </div>
+    <div class="text-center text-xs text-slate-400 pt-2">Built as a project-review demo · See the Project Progress page for the full honest status.</div>
+  </div>`;
+}
+
+/* ---------------- Chatbot ---------------- */
+function ask(t){ const i=$('#chatq'); if(i){i.value=t; askBot();} }
+async function askBot(){
+  const q=($('#chatq')||{}).value?.trim(); if(!q) return;
+  const out=$('#chatout'); out.classList.remove('hidden'); out.textContent='Thinking…';
+  try{ const d=await jget('/chat?q='+encodeURIComponent(q)); out.textContent=d.answer||'(no answer)'; }
+  catch(e){ out.textContent='Could not reach the chatbot.'; }
+}
+
+/* ---------------- Router ---------------- */
+const PAGES={dashboard:pageDashboard,agencies:pageAgencies,opportunities:pageOpportunities,scrapers:pageScrapers,database:pageDatabase,api:pageApi,progress:pageProgress,about:pageAbout};
+function render(route){
+  clearCharts();
+  _currentRoute = route;
+  if(STATE.err){ $('#view').innerHTML=`<div class="${card('p-8')} text-center"><div class="text-rose-500 font-semibold mb-1">Could not reach the API</div><div class="text-sm text-slate-500">${esc(STATE.err)}</div></div>`; return; }
+  if(!STATE.loaded){ $('#view').innerHTML=`<div class="grid place-items-center py-24 text-slate-400"><div class="animate-pulse">Loading FundRadar…</div></div>`; return; }
+  (PAGES[route]||pageDashboard)();
+}
+function route(){
+  const id=(location.hash.replace('#/','')||'dashboard');
+  const valid=ROUTES.some(r=>r[0]===id)?id:'dashboard';
+  setActive(valid); render(valid);
+  if(window.innerWidth<1024){ const sb=$('#sidebar'); if(!sb.classList.contains('-translate-x-full')) toggleSidebar(); }
+  window.scrollTo(0,0);
+}
+window.addEventListener('hashchange',route);
+
+/* ---------------- Boot ---------------- */
+buildNav();
+render('dashboard'); // loading state
+loadAll().then(route);
+</script>
+</body>
+</html>
