@@ -16,9 +16,9 @@
   200: '#bbf7d0',
   300: '#86efac',
   400: '#4ade80',
-  500: '#22c55e',
-  600: '#16a34a',
-  700: '#15803d',
+  500: '#16a34a',
+  600: '#15803d',
+  700: '#166534',
   800: '#166534',
   900: '#14532d'
 },
@@ -63,7 +63,7 @@ fontFamily: {
   <aside id="sidebar" class="fixed z-40 inset-y-0 left-0 w-64 -translate-x-full lg:translate-x-0 transition-transform
          bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col">
     <div class="px-5 h-16 flex items-center gap-2 border-b border-slate-200 dark:border-slate-800">
-      <div class="h-9 w-9 rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 grid place-items-center text-white font-extrabold">F</div>
+      <div class="h-9 w-9 rounded-lg bg-gradient-to-br from-brand-600 to-accent-600 grid place-items-center text-white font-extrabold">F</div>
       <div>
         <div class="font-extrabold tracking-tight leading-none">FundRadar</div>
         <div class="text-[11px] text-slate-400">Funding Intelligence</div>
@@ -199,10 +199,10 @@ function pageDashboard(){
   const v = `
   <div class="fade space-y-6">
     <!-- hero -->
-    <div class="rounded-2xl bg-gradient-to-br from-brand-600 to-brand-800 text-white p-6 sm:p-8 shadow-lg">
+    <div class="rounded-2xl bg-gradient-to-br from-brand-600 via-brand-700 to-accent-600 text-white p-6 sm:p-8 shadow-lg">
       <div class="text-xs uppercase tracking-widest text-brand-100/80 font-semibold">AI-powered Funding Opportunity Intelligence</div>
       <h2 class="mt-2 text-2xl sm:text-3xl font-extrabold">FundRadar</h2>
-      <p class="mt-2 max-w-2xl text-brand-50/90 text-sm sm:text-base">Automatically discovers, scrapes, extracts, stores and monitors grants, fellowships, scholarships and research calls from dozens of funding agencies — and serves them through an API and a chatbot.</p>
+      <p class="mt-2 max-w-2xl text-white/90 text-sm sm:text-base">Automatically discovers, scrapes, extracts, stores and monitors grants, fellowships, scholarships and research calls from dozens of funding agencies — and serves them through an API and a chatbot.</p>
       <div class="mt-4 flex flex-wrap gap-2 text-xs">
         <span class="px-3 py-1 rounded-full bg-white/15">FastAPI</span>
         <span class="px-3 py-1 rounded-full bg-white/15">SQLAlchemy</span>
@@ -237,7 +237,7 @@ function pageDashboard(){
         <div class="flex gap-2">
           <input id="chatq" placeholder="e.g. What grants are open now?" onkeydown="if(event.key==='Enter')askBot()"
             class="flex-1 px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"/>
-          <button onclick="askBot()" class="px-4 py-2 rounded-lg bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold">Ask</button>
+          <button onclick="askBot()" class="px-4 py-2 rounded-lg bg-gradient-to-r from-brand-600 to-accent-600 hover:opacity-90 text-white text-sm font-semibold">Ask</button>
         </div>
         <div class="flex flex-wrap gap-2 mt-3">
           ${['What grants are open now?','Fellowships for PhD students','Funding above 10 lakh','Opportunities in Germany','Biotech startup funding'].map(q=>`<button onclick="ask('${q}')" class="text-xs px-3 py-1.5 rounded-full bg-brand-50 dark:bg-brand-600/20 text-brand-700 dark:text-brand-300 hover:bg-brand-100">${q}</button>`).join('')}
@@ -527,7 +527,7 @@ function pageProgress(){
 function pageAbout(){
   $('#view').innerHTML=`
   <div class="fade space-y-5 max-w-4xl">
-    <div class="rounded-2xl bg-gradient-to-br from-brand-600 to-brand-800 text-white p-8">
+    <div class="rounded-2xl bg-gradient-to-br from-accent-600 to-accent-800 text-white p-8">
       <h2 class="text-3xl font-extrabold">FundRadar</h2>
       <p class="mt-3 text-brand-50/90">An AI-powered Funding Opportunity Intelligence Platform that automatically discovers, scrapes, extracts, stores and updates funding opportunities — grants, fellowships, scholarships, startup funding and research calls — from many funding agencies, and serves them through a searchable API and a natural-language chatbot.</p>
     </div>
