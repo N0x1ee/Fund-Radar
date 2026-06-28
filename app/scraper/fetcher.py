@@ -90,10 +90,53 @@ def fetch(url: str, *, timeout: float = DEFAULT_TIMEOUT) -> FetchResult:
     return FetchResult(url, 0, "", ok=False, error=last_err)
 
 
-def fetch_rendered(url: str) -> FetchResult:
-    """Placeholder for Playwright-rendered fetch (JS-heavy sites).
+def fetch_rendered(url: str, *, timeout: float = 30.0) -> FetchResult:
+    """Fetch a JS-heavy page by rendering it in a headless browser (Playwright).
 
-    Wire this up when a site returns near-empty HTML from fetch(). Kept as a
-    stub so the pipeline can fall back without importing Playwright eagerly.
+    Playwright is an optional dependency. If it is not installed, this returns a
+    clear FetchResult error instead of raising, so the pipeline degrades safely.
+    Install with:  pip install playwright  &&  playwright install chromium
     """
-    raise NotImplementedError("Playwright rendering not yet enabled (Phase 2b).")
+    if not _robots_allows(url):
+        return FetchResult(url, 0, "", ok=False, error="blocked by robots.txt")
+    try:
+        from playwright.sync_api import sync_playwright
+    except Exception:
+        return FetchResult(url, 0, "", ok=False,
+                           error="playwright not installed (pip install playwright)")
+    _throttle(url)
+    try:
+        with sync_playwright() as pw:
+            browser = pw.chromium.launch(headless=True)
+            try:
+                page = browser.new_page(user_agent=USER_AGENT)
+                page.goto(url, wait_until="networkidle", timeout=int(timeout * 1000))
+                html = page.content()
+            finally:
+                browser.close()
+        return FetchResult(url, 200, html, ok=bool(html))
+    except Exception as e:
+        return FetchResult(url, 0, "", ok=False, error=f"render failed: {e}")
+
+
+def _looks_thin(res: "FetchResult") -> bool:
+    """Heuristic: did a static fetch fail to get real content (JS-rendered page)?"""
+    if not res.ok or not res.html:
+        return True
+    low = res.html.lower()
+    if len(res.html) < 1500:
+        return True
+    if "enable javascript" in low or "please enable js" in low:
+        return True
+    return False
+
+
+def smart_fetch(url: str, *, render_fallback: bool = False, timeout: float = DEFAULT_TIMEOUT) -> FetchResult:
+    """Fetch a page statically; if the result looks empty (JS site) and
+    render_fallback is on, retry with the headless browser."""
+    res = fetch(url, timeout=timeout)
+    if render_fallback and _looks_thin(res):
+        rendered = fetch_rendered(url)
+        if rendered.ok and rendered.html:
+            return rendered
+    return res

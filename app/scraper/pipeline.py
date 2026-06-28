@@ -18,6 +18,7 @@ from dataclasses import dataclass
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.config import settings
 from app.db.models import Agency, Opportunity
 from app.scraper import discovery, extractor, fetcher
 
@@ -75,7 +76,7 @@ def scrape_agency(db: Session, agency: Agency, *, max_pages: int = 8) -> AgencyS
         report.note = "no website on record"
         return report
 
-    res = fetcher.fetch(home)
+    res = fetcher.smart_fetch(home, render_fallback=settings.use_playwright)
     if not res.ok or not res.html:
         report.note = res.error or f"homepage status {res.status}"
         return report
@@ -85,7 +86,7 @@ def scrape_agency(db: Session, agency: Agency, *, max_pages: int = 8) -> AgencyS
     report.candidates = len(candidates)
 
     for cand in candidates:
-        page = fetcher.fetch(cand.url)
+        page = fetcher.smart_fetch(cand.url, render_fallback=settings.use_playwright)
         if not page.ok or not page.html:
             report.errors += 1
             continue

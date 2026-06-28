@@ -134,3 +134,23 @@ Dev uses SQLite (`DATABASE_URL=sqlite:///./fundradar.db`). To move to Postgres
 later, install `psycopg2-binary` and set e.g.
 `DATABASE_URL=postgresql+psycopg2://user:pass@localhost:5432/fundradar`.
 The models are written to be Postgres-compatible.
+
+
+## Security & reliability
+
+Security headers, per-IP rate limiting, a no-leak error handler, input limits, and
+safe (parameterised) database access are built in — see `SECURITY.md`. Secrets stay
+in `.env` (git-ignored). Configurable via `.env`: `RATE_LIMIT_PER_MIN`, `ENABLE_DOCS`,
+`CORS_ALLOW_ORIGINS`.
+
+## Scraping JavaScript-heavy sites
+
+Set `USE_PLAYWRIGHT=true` in `.env`, then install the browser engine:
+
+```
+pip install playwright
+playwright install chromium
+```
+
+The scraper then auto-falls back to a headless browser when a site returns empty
+static HTML. (This affects the offline scraper only, not the deployed web app.)

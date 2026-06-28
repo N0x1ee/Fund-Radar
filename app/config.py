@@ -15,5 +15,13 @@ class Settings(BaseSettings):
     ollama_host: str = "http://localhost:11434"
     ollama_model: str = "llama3.1"
 
+    # Scraper
+    use_playwright: bool = False        # render JS-heavy sites via headless browser
+
+    # API security / reliability
+    rate_limit_per_min: int = 120       # max requests per IP per minute (0 = off)
+    enable_docs: bool = True            # expose interactive /docs
+    cors_allow_origins: str = ""        # comma-separated; empty = same-origin only
+
 
 settings = Settings()

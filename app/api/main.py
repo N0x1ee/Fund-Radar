@@ -15,6 +15,8 @@ from sqlalchemy import select, func
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_db
+from app.api.security import install_security
+from app.config import settings
 from app.db.models import Agency, Opportunity
 from app.db.schemas import AgencyOut, OpportunityOut, Page
 from app.chat.bot import answer as chat_answer
@@ -23,7 +25,10 @@ app = FastAPI(
     title="FundRadar API",
     version="0.1.0",
     description="Funding Opportunity Intelligence Platform — read API.",
+    docs_url="/docs" if settings.enable_docs else None,
+    redoc_url="/redoc" if settings.enable_docs else None,
 )
+install_security(app)
 
 
 _DASHBOARD = (Path(__file__).parent / "static" / "dashboard.html").read_text(encoding="utf-8")
@@ -41,7 +46,7 @@ def api_info():
 
 
 @app.get("/chat", tags=["chat"])
-def chat(q: str = Query(..., description="A plain-language question about funding"),
+def chat(q: str = Query(..., min_length=1, max_length=300, description="A plain-language question about funding"),
          db: Session = Depends(get_db)):
     """Ask the chatbot about the funding opportunities in the database."""
     return {"question": q, "answer": chat_answer(q, db)}

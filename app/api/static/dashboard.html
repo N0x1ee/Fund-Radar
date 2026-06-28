@@ -6,22 +6,22 @@
 <title>FundRadar — Funding Opportunity Intelligence</title>
 <style>
   :root{
-    --bg:#f5f7fa; --card:#ffffff; --ink:#1f2937; --muted:#6b7280; --line:#e5e7eb;
-    --brand:#1d4ed8; --brand-d:#1e3a8a; --open:#047857; --open-bg:#d1fae5;
-    --closed:#6b7280; --closed-bg:#f3f4f6; --unk:#b45309; --unk-bg:#fef3c7;
+    --bg:#f6f9fc; --card:#ffffff; --ink:#0f2540; --muted:#5b7088; --line:#e3eaf2;
+    --brand:#2563eb; --brand-d:#1d4ed8; --green:#059669; --green-d:#047857;
+    --open:#059669; --open-bg:#d1fae5;
+    --closed:#64748b; --closed-bg:#f1f5f9; --unk:#b45309; --unk-bg:#fef3c7;
   }
   *{box-sizing:border-box}
   body{margin:0;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
     background:var(--bg);color:var(--ink);font-size:14px;line-height:1.45}
-  header{background:linear-gradient(135deg,var(--brand),var(--brand-d));color:#fff;
-    padding:22px 28px}
+  header{background:var(--brand);color:#fff;padding:22px 28px;border-bottom:4px solid var(--green)}
   header h1{margin:0;font-size:21px;letter-spacing:.2px}
   header p{margin:4px 0 0;opacity:.85;font-size:13px}
   .wrap{max-width:1180px;margin:0 auto;padding:22px 20px 60px}
   .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:-44px 0 22px}
-  .stat{background:var(--card);border:1px solid var(--line);border-radius:12px;
-    padding:16px 18px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
-  .stat .n{font-size:26px;font-weight:700}
+  .stat{background:var(--card);border:1px solid var(--line);border-top:3px solid var(--brand);border-radius:12px;
+    padding:16px 18px;box-shadow:0 1px 2px rgba(15,37,64,.05)}
+  .stat .n{font-size:26px;font-weight:700;color:var(--brand)}
   .stat .l{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
   .tabs{display:flex;gap:8px;margin-bottom:14px}
   .tab{padding:8px 16px;border:1px solid var(--line);background:#fff;border-radius:8px;
@@ -53,7 +53,7 @@
   footer{max-width:1180px;margin:0 auto;padding:0 20px 30px;color:var(--muted);font-size:12px}
   @media(max-width:760px){.stats{grid-template-columns:repeat(2,1fr)}}
 
-  .chatbox{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:18px}
+  .chatbox{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--green);border-radius:12px;padding:16px 18px;margin-bottom:18px}
   .chat-row{display:flex;gap:10px}
   .chat-row input{flex:1;padding:9px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px}
   .chat-row button{padding:9px 18px;border:none;background:var(--brand);color:#fff;border-radius:8px;font-weight:600;cursor:pointer}
@@ -68,7 +68,7 @@
     border-radius:999px;cursor:pointer;user-select:none}
   .chip:hover{background:#e0e8ff}
   .chatout{margin-top:14px;white-space:pre-wrap;font-size:13px;color:var(--ink);line-height:1.6;
-    background:#f8fafc;border:1px solid var(--line);border-left:3px solid var(--brand);
+    background:#f3faf7;border:1px solid #cdeede;border-left:3px solid var(--green);
     border-radius:8px;padding:12px 14px}
   .chatout:empty{display:none}
 </style>
@@ -141,10 +141,9 @@ function stats(){
   const open=OPP.filter(o=>o.status==='open').length;
   const closed=OPP.filter(o=>o.status==='closed').length;
   const countries=new Set(AG.map(a=>a.country).filter(Boolean)).size;
-  const html=[
-    ['Opportunities',OPP.length],['Open now',open],
-    ['Agencies',AG.length],['Countries / blocs',countries]
-  ].map(([l,n])=>`<div class="stat"><div class="n">${n}</div><div class="l">${l}</div></div>`).join('');
+  const items=[['Opportunities',OPP.length,'b'],['Open now',open,'g'],
+    ['Agencies',AG.length,'b'],['Countries / blocs',countries,'b']];
+  const html=items.map(([l,n,c])=>`<div class="stat" style="border-top-color:${c==='g'?'var(--green)':'var(--brand)'}"><div class="n" style="color:${c==='g'?'var(--green)':'var(--brand)'}">${n}</div><div class="l">${l}</div></div>`).join('');
   document.getElementById('stats').innerHTML=html;
 }
 

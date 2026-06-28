@@ -41,8 +41,8 @@ Goal: turn agency websites into raw opportunity records.
 - [x] Raw content store: `Opportunity.raw_text` + `content_hash` change detection (`app/scraper/extractor.py`)
 - [x] Politeness: robots.txt, per-host rate limiting, retries with backoff
 - [x] CLI ordered by `scraping_priority` (`app/scraper/run.py`): `--limit`, `--agency`, `--priority`
+- [x] Playwright rendering for JS-heavy sites (`fetch_rendered` + `smart_fetch` fallback)
 - [ ] PDF text extraction (Phase 2b)
-- [ ] Playwright rendering for JS-heavy sites (Phase 2b)
 
 ## Phase 3 — AI extraction & enrichment  [~]
 Goal: structured, tagged opportunity records from messy content.
@@ -79,7 +79,9 @@ Goal: usable product surface.
 - [ ] Agency directory view
 - [ ] Deploy notes
 
-## Phase 7 — Hardening  [ ]
+## Phase 7 — Hardening  [~]
+- [x] Security layer: headers, rate limiting, error handling, input limits (`app/api/security.py`, SECURITY.md)
+- [x] Deploy config for managed hosting (`render.yaml`); HTTPS via host
 - [ ] Move dev SQLite -> PostgreSQL; Alembic migrations
 - [ ] Auth (saved searches, alerts), tests, Docker, CI
 
