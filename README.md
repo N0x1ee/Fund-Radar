@@ -1,3 +1,14 @@
+---
+title: FundRadarV2
+emoji: 👁
+colorFrom: purple
+colorTo: green
+sdk: docker
+pinned: false
+license: mit
+short_description: AI-powered funding opportunity discovery platform
+---
+
 # FundRadar
 
 AI-powered Funding Opportunity Intelligence Platform — collects, monitors,
