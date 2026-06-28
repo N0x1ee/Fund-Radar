@@ -48,7 +48,7 @@ def main():
             print("No matching agencies. Did you run the seed script?")
             return
         print(f"Scraping {len(agencies)} agenc{'y' if len(agencies)==1 else 'ies'}...\n")
-        totals = {"created": 0, "updated": 0, "unchanged": 0, "errors": 0}
+        totals = {"created": 0, "updated": 0, "unchanged": 0, "errors": 0, "pdfs": 0}
         for agency in agencies:
             rep = scrape_agency(db, agency, max_pages=args.max_pages)
             for k in totals:
@@ -56,9 +56,9 @@ def main():
             flag = "ok" if rep.homepage_ok else f"SKIP ({rep.note})"
             print(f"  {rep.agency_code:<8} {agency.name[:28]:<28} "
                   f"cand={rep.candidates:<2} +{rep.created} ~{rep.updated} ={rep.unchanged} "
-                  f"err={rep.errors}  {flag}")
+                  f"pdf={rep.pdfs} err={rep.errors}  {flag}")
         print(f"\nDone. created={totals['created']} updated={totals['updated']} "
-              f"unchanged={totals['unchanged']} errors={totals['errors']}")
+              f"unchanged={totals['unchanged']} pdfs={totals['pdfs']} errors={totals['errors']}")
     finally:
         db.close()
 

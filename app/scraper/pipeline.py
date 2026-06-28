@@ -20,7 +20,7 @@ from sqlalchemy.orm import Session
 
 from app.config import settings
 from app.db.models import Agency, Opportunity
-from app.scraper import discovery, extractor, fetcher
+from app.scraper import discovery, extractor, fetcher, pdf
 
 
 @dataclass
@@ -32,6 +32,7 @@ class AgencyScrapeReport:
     updated: int = 0
     unchanged: int = 0
     errors: int = 0
+    pdfs: int = 0          # how many candidates were handled as PDFs
     note: str = ""
 
 
@@ -86,9 +87,39 @@ def scrape_agency(db: Session, agency: Agency, *, max_pages: int = 8) -> AgencyS
     report.candidates = len(candidates)
 
     for cand in candidates:
+        # --- PDF branch: scheme details that live inside a PDF document ------
+        if pdf.looks_like_pdf(cand.url):
+            text, err = pdf.fetch_pdf_text(cand.url)
+            if not text:
+                report.errors += 1
+                continue
+            outcome = _upsert_opportunity(
+                db, agency,
+                url=cand.url,
+                title=None,                 # PDFs have no <title>; use link text
+                link_text=cand.text,
+                text=text,
+            )
+            report.pdfs += 1
+            setattr(report, outcome, getattr(report, outcome) + 1)
+            continue
+
+        # --- HTML branch (unchanged) ----------------------------------------
         page = fetcher.smart_fetch(cand.url, render_fallback=settings.use_playwright)
         if not page.ok or not page.html:
             report.errors += 1
+            continue
+        # Safety net: a few servers return a PDF body without a .pdf extension.
+        if page.html[:5] == "%PDF-":
+            text, err = pdf.fetch_pdf_text(cand.url)
+            if not text:
+                report.errors += 1
+                continue
+            outcome = _upsert_opportunity(
+                db, agency, url=cand.url, title=None, link_text=cand.text, text=text,
+            )
+            report.pdfs += 1
+            setattr(report, outcome, getattr(report, outcome) + 1)
             continue
         text = extractor.extract_text(page.html)
         if len(text) < 200:  # too thin to be a real opportunity page
