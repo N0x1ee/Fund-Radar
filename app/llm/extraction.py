@@ -32,11 +32,16 @@ def build_prompt(raw_text: str, *, max_chars: int = 8000) -> str:
     snippet = raw_text[:max_chars]
     return (
         "From the funding opportunity page text below, extract these fields as JSON:\n"
-        '- program_name (string)\n'
-        '- funding_amount (string, exactly as written, or null)\n'
+        '- program_name (the official scheme/fellowship/grant name. Ignore navigation '
+        'or link text like "Read More", "Apply", "Click here", "Funding opportunities", '
+        '"Programmsuche".)\n'
+        '- funding_amount (a SHORT amount only, e.g. "Rs 35,000/month", '
+        '"Up to Rs 50 lakh", "$10,000", or null if no specific figure is stated. '
+        'Never write a sentence; put descriptions in summary/eligibility.)\n'
         '- eligibility (string or null)\n'
         '- research_area (short string, e.g. "Artificial Intelligence", or null)\n'
-        '- deadline (ISO date YYYY-MM-DD if a clear date exists, else null)\n'
+        '- deadline (the LAST DATE to apply as YYYY-MM-DD. Look hard for "last date", '
+        '"deadline", "closing date", "apply by", "submission by", "due". null if truly none.)\n'
         '- application_link (string or null)\n'
         '- contact_info (string or null)\n'
         '- summary (2-3 sentence plain summary)\n'

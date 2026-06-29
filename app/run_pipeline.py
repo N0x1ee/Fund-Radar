@@ -79,6 +79,8 @@ def run(limit: int | None, max_pages: int, do_extract: bool) -> None:
                     extract_opportunity(opp, llm=llm)
                     db.commit()
                     done += 1
+                    log.info("  extracted %d/%d  %s", done, len(todo),
+                             (opp.program_name or "")[:55])
                 except Exception as e:
                     log.error("  extract [%s] failed: %s", opp.id, e)
             log.info("EXTRACT DONE  processed=%d/%d", done, len(todo))
