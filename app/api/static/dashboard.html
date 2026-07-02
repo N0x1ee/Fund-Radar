@@ -116,6 +116,41 @@
   .empty{padding:54px;text-align:center;color:var(--muted)}
   footer{max-width:1180px;margin:0 auto;padding:18px 22px 40px;color:var(--muted);font-size:12px}
   @media(max-width:820px){.hstats{grid-template-columns:repeat(2,1fr)}.brand small{display:none}}
+
+  /* ---- auth modal (login / signup) ---- */
+  .auth-overlay{position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;
+    background:rgba(15,37,64,.45);backdrop-filter:blur(3px);padding:20px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .auth-overlay.show{display:flex}
+  .auth-modal{position:relative;width:100%;max-width:400px;margin:auto;background:var(--card);border:1px solid var(--line);
+    border-radius:16px;box-shadow:var(--shadow);border-top:3px solid var(--brand);padding:26px;
+    max-height:calc(100vh - 40px);max-height:calc(100dvh - 40px);overflow-y:auto}
+  @media(max-width:480px){
+    .auth-overlay{padding:12px}
+    .auth-modal{padding:20px;border-radius:14px;max-height:calc(100vh - 24px);max-height:calc(100dvh - 24px)}
+  }
+  .auth-x{position:absolute;top:11px;right:14px;border:none;background:none;font-size:23px;line-height:1;
+    color:var(--muted);cursor:pointer}
+  .auth-brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:16px;margin-bottom:16px}
+  .auth-tabs{display:flex;background:#f3f7fd;border:1px solid var(--line);border-radius:11px;padding:4px;gap:4px;margin-bottom:18px}
+  .auth-tab{flex:1;text-align:center;padding:8px;border-radius:8px;cursor:pointer;font-weight:700;color:var(--muted);font-size:13.5px;transition:.15s}
+  .auth-tab.active{background:var(--brand);color:#fff;box-shadow:0 4px 10px -4px rgba(37,99,235,.5)}
+  .auth-field{margin-bottom:13px}
+  .auth-field label{display:block;font-size:12.5px;font-weight:600;margin-bottom:5px}
+  .auth-field .opt{color:var(--muted);font-weight:500}
+  .auth-field input{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:10px;font-size:14px;outline:none;transition:.15s}
+  .auth-field input:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+  .auth-field .hint{font-size:11.5px;color:var(--muted);margin-top:5px}
+  .auth-msg{border-radius:10px;padding:9px 12px;font-size:12.5px;margin-bottom:13px}
+  .auth-msg.err{background:#fef2f2;border:1px solid #fecaca;color:#b91c1c}
+  .auth-msg.ok{background:var(--green-soft);border:1px solid #c7eedd;color:var(--green-d)}
+  .auth-submit{width:100%;padding:12px;border:none;border-radius:10px;background:var(--brand);color:#fff;
+    font-weight:700;font-size:14px;cursor:pointer;transition:.15s;display:flex;align-items:center;justify-content:center;gap:8px}
+  .auth-submit:hover{background:var(--brand-d)}
+  .auth-submit:disabled{opacity:.7;cursor:not-allowed}
+  .auth-spin{width:15px;height:15px;border:2px solid rgba(255,255,255,.5);border-top-color:#fff;border-radius:50%;animation:auth-spin .6s linear infinite}
+  @keyframes auth-spin{to{transform:rotate(360deg)}}
+  .auth-switch{text-align:center;font-size:12.5px;color:var(--muted);margin-top:14px}
+  .auth-switch a{color:var(--brand);font-weight:600;cursor:pointer}
 </style>
 </head>
 <body>
@@ -128,10 +163,10 @@
       <span>FundRadar<small>Funding Opportunity Intelligence</small></span>
     </div>
     <div class="nav-spacer"></div>
-    <a class="gbtn" href="/auth/login" onclick="return signIn(event)">
-      <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.9 2.4 30.4 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.2C12.3 13.3 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.1 24.6c0-1.6-.1-3.1-.4-4.6H24v9.1h12.4c-.5 2.9-2.1 5.4-4.6 7.1l7.1 5.5c4.2-3.9 6.6-9.6 6.6-16.1z"/><path fill="#FBBC05" d="M10.5 28.4c-.5-1.4-.8-3-.8-4.4s.3-3 .8-4.4l-7.9-6.2C1 16.6 0 20.2 0 24s1 7.4 2.6 10.6l7.9-6.2z"/><path fill="#34A853" d="M24 48c6.4 0 11.9-2.1 15.8-5.8l-7.1-5.5c-2 1.3-4.5 2.1-8.7 2.1-6.3 0-11.7-3.8-13.5-9.4l-7.9 6.2C6.5 42.6 14.6 48 24 48z"/></svg>
-      Sign in with Google
-    </a>
+    <button class="gbtn" onclick="openAuth('login')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/></svg>
+      Sign in
+    </button>
   </div>
 </nav>
 
@@ -181,13 +216,47 @@
 </div>
 <footer id="foot"></footer>
 
+<!-- ===== Auth modal (login / signup) — reusable component ===== -->
+<div id="authOverlay" class="auth-overlay" onclick="if(event.target===this)closeAuth()">
+  <div class="auth-modal" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+    <button class="auth-x" onclick="closeAuth()" aria-label="Close">&times;</button>
+    <div class="auth-brand" id="authTitle">
+      <span class="logo"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>
+      FundRadar
+    </div>
+    <div class="auth-tabs">
+      <div id="tab-login"  class="auth-tab active" onclick="switchAuthTab('login')">Log in</div>
+      <div id="tab-signup" class="auth-tab"        onclick="switchAuthTab('signup')">Sign up</div>
+    </div>
+    <form id="authForm" onsubmit="return submitAuth(event)" novalidate>
+      <div class="auth-field" id="row-name" style="display:none">
+        <label>Full name <span class="opt">(optional)</span></label>
+        <input id="au-name" type="text" autocomplete="name" placeholder="Ada Lovelace"/>
+      </div>
+      <div class="auth-field">
+        <label>Email</label>
+        <input id="au-email" type="email" autocomplete="email" required placeholder="you@example.com"/>
+      </div>
+      <div class="auth-field">
+        <label>Password</label>
+        <input id="au-pass" type="password" required placeholder="••••••••"/>
+        <div class="hint" id="au-passhint" style="display:none">At least 8 characters.</div>
+      </div>
+      <div id="au-msg" class="auth-msg" style="display:none"></div>
+      <button id="au-submit" class="auth-submit" type="submit">Log in</button>
+    </form>
+    <div class="auth-switch" id="au-switch"></div>
+  </div>
+</div>
+
 <script>
 let OPP=[], AG=[], AGMAP={}, view='opps', sortKey='deadline', sortDir=1;
 const AV_COLORS=['#2563eb','#059669','#7c3aed','#db2777','#ea580c','#0891b2','#4f46e5','#0d9488'];
 function avColor(s){let h=0;for(const ch of (s||'?')) h=(h*31+ch.charCodeAt(0))>>>0; return AV_COLORS[h%AV_COLORS.length];}
 function initials(n){return (n||'?').replace(/[^A-Za-z0-9 ]/g,'').split(/\s+/).filter(Boolean).map(w=>w[0]).slice(0,2).join('').toUpperCase()||'?';}
 
-function signIn(e){ e.preventDefault(); alert('Google sign-in is being wired up next — coming soon!'); return false; }
+/* Authentication logic is isolated in its own module near the end of this file
+   (see "FundRadar — Authentication module"), kept separate from dashboard code. */
 
 async function load(){
   const [o,a] = await Promise.all([
@@ -311,6 +380,84 @@ async function askBot(){
 
 load().catch(e=>{document.getElementById('table').innerHTML=
   '<div class="empty">Could not load data. Make sure the server is running.</div>';});
+</script>
+
+<!-- ==================== FundRadar — Authentication module ====================
+     Self-contained: ALL login/signup logic lives in the IIFE below, isolated
+     from the dashboard script above so the two can be maintained separately.
+     Talks to /auth/login and /auth/signup; exposes only the handlers that the
+     modal markup references (openAuth, closeAuth, switchAuthTab, submitAuth).
+     ========================================================================= -->
+<script>
+(function () {
+  "use strict";
+  let authMode = 'login';
+  const $ = (id) => document.getElementById(id);
+
+  function openAuth(mode){ authMode = mode || 'login'; syncAuth(); clearAuthMsg();
+    $('authOverlay').classList.add('show'); setTimeout(()=>$('au-email').focus(),40); }
+  function closeAuth(){ $('authOverlay').classList.remove('show'); }
+  function switchAuthTab(mode){ authMode = mode; clearAuthMsg(); syncAuth(); }
+
+  function syncAuth(){
+    const login = authMode === 'login';
+    $('tab-login').classList.toggle('active', login);
+    $('tab-signup').classList.toggle('active', !login);
+    $('row-name').style.display = login ? 'none' : '';
+    $('au-passhint').style.display = login ? 'none' : '';
+    $('au-submit').textContent = login ? 'Log in' : 'Create account';
+    $('au-switch').innerHTML = login
+      ? "New here? <a onclick=\"switchAuthTab('signup')\">Create an account</a>"
+      : "Already have an account? <a onclick=\"switchAuthTab('login')\">Log in</a>";
+  }
+
+  function clearAuthMsg(){ const m=$('au-msg'); m.style.display='none'; m.textContent=''; }
+  function showAuthMsg(text, kind){ const m=$('au-msg'); m.className='auth-msg '+kind; m.textContent=text; m.style.display='block'; }
+  function setAuthLoading(on){ const b=$('au-submit'); b.disabled=on;
+    b.innerHTML = on ? '<span class="auth-spin"></span> Please wait…' : (authMode==='login' ? 'Log in' : 'Create account'); }
+
+  async function readDetail(r, fallback){
+    try{ const d = await r.json();
+      if(typeof d.detail === 'string') return d.detail;
+      if(Array.isArray(d.detail) && d.detail[0] && d.detail[0].msg) return d.detail[0].msg;
+    }catch(_){}
+    return fallback;
+  }
+
+  async function submitAuth(e){
+    e.preventDefault(); clearAuthMsg();
+    const email = $('au-email').value.trim();
+    const password = $('au-pass').value;
+    const full_name = $('au-name').value.trim();
+    if(!email || !password){ showAuthMsg('Please enter your email and password.','err'); return false; }
+    if(authMode==='signup' && password.length < 8){ showAuthMsg('Password must be at least 8 characters.','err'); return false; }
+    setAuthLoading(true);
+    try{
+      if(authMode==='signup'){
+        const r = await fetch('/auth/signup', {method:'POST', headers:{'Content-Type':'application/json'},
+          credentials:'include', body:JSON.stringify({email, password, full_name: full_name||null})});
+        if(r.status===201){ authMode='login'; syncAuth(); $('au-pass').value='';
+          showAuthMsg('Account created — please log in.','ok'); }
+        else{ showAuthMsg(await readDetail(r,'Could not create account.'),'err'); }
+      }else{
+        const r = await fetch('/auth/login', {method:'POST', headers:{'Content-Type':'application/json'},
+          credentials:'include', body:JSON.stringify({email, password})});
+        if(r.ok){ const u = await r.json(); showAuthMsg('Signed in as '+u.email+'.','ok'); setTimeout(closeAuth,800); }
+        else{ showAuthMsg(await readDetail(r,'Invalid email or password.'),'err'); }
+      }
+    }catch(_){ showAuthMsg('Network error — please try again.','err'); }
+    finally{ setAuthLoading(false); }
+    return false;
+  }
+
+  document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeAuth(); });
+
+  // Expose ONLY the handlers referenced by the modal markup; everything else stays private.
+  window.openAuth = openAuth;
+  window.closeAuth = closeAuth;
+  window.switchAuthTab = switchAuthTab;
+  window.submitAuth = submitAuth;
+})();
 </script>
 </body>
 </html>
