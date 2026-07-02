@@ -6,85 +6,146 @@
 <title>FundRadar — Funding Opportunity Intelligence</title>
 <style>
   :root{
-    --bg:#f6f9fc; --card:#ffffff; --ink:#0f2540; --muted:#5b7088; --line:#e3eaf2;
-    --brand:#2563eb; --brand-d:#1d4ed8; --green:#059669; --green-d:#047857;
-    --open:#059669; --open-bg:#d1fae5;
-    --closed:#64748b; --closed-bg:#f1f5f9; --unk:#b45309; --unk-bg:#fef3c7;
+    --bg:#eef3f9; --card:#ffffff; --ink:#0f2540; --muted:#64798f; --line:#e6edf5;
+    --brand:#2563eb; --brand-d:#1d4ed8; --brand-soft:#eef4ff;
+    --green:#059669; --green-d:#047857; --green-soft:#e7f7f0;
+    --open:#047857; --open-bg:#d6f5e6;
+    --closed:#64748b; --closed-bg:#eef2f7; --unk:#b45309; --unk-bg:#fef3c7;
+    --shadow:0 1px 2px rgba(15,37,64,.04),0 10px 30px -18px rgba(15,37,64,.22);
   }
   *{box-sizing:border-box}
-  body{margin:0;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-    background:var(--bg);color:var(--ink);font-size:14px;line-height:1.45}
-  header{background:var(--brand);color:#fff;padding:22px 28px;border-bottom:4px solid var(--green)}
-  header h1{margin:0;font-size:21px;letter-spacing:.2px}
-  header p{margin:4px 0 0;opacity:.85;font-size:13px}
-  .wrap{max-width:1180px;margin:0 auto;padding:22px 20px 60px}
-  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:-44px 0 22px}
-  .stat{background:var(--card);border:1px solid var(--line);border-top:3px solid var(--brand);border-radius:12px;
-    padding:16px 18px;box-shadow:0 1px 2px rgba(15,37,64,.05)}
-  .stat .n{font-size:26px;font-weight:700;color:var(--brand)}
-  .stat .l{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
-  .tabs{display:flex;gap:8px;margin-bottom:14px}
-  .tab{padding:8px 16px;border:1px solid var(--line);background:#fff;border-radius:8px;
-    cursor:pointer;font-weight:600;color:var(--muted)}
-  .tab.active{background:var(--brand);color:#fff;border-color:var(--brand)}
-  .controls{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
-  .controls input,.controls select{padding:9px 12px;border:1px solid var(--line);
-    border-radius:8px;font-size:14px;background:#fff}
-  .controls input{flex:1;min-width:220px}
-  .panel{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;
-    box-shadow:0 1px 3px rgba(0,0,0,.05)}
+  html,body{margin:0}
+  body{font-family:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:radial-gradient(1200px 500px at 80% -10%,#dceaff 0,transparent 60%),var(--bg);
+    color:var(--ink);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+
+  /* ---- top nav ---- */
+  .nav{position:sticky;top:0;z-index:30;background:rgba(255,255,255,.9);
+    backdrop-filter:saturate(180%) blur(8px);border-bottom:1px solid var(--line)}
+  .nav-in{max-width:1180px;margin:0 auto;padding:12px 22px;display:flex;align-items:center;gap:14px}
+  .brand{display:flex;align-items:center;gap:11px;font-weight:800;font-size:17px;letter-spacing:-.2px}
+  .logo{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--brand),var(--green));
+    display:grid;place-items:center;color:#fff;box-shadow:0 4px 12px -4px rgba(37,99,235,.5)}
+  .brand small{display:block;font-weight:500;font-size:11px;color:var(--muted);letter-spacing:0}
+  .nav-spacer{flex:1}
+  .gbtn{display:inline-flex;align-items:center;gap:9px;background:#fff;border:1px solid var(--line);
+    padding:8px 14px;border-radius:9px;font-weight:600;font-size:13px;cursor:pointer;color:var(--ink);
+    transition:.15s;text-decoration:none}
+  .gbtn:hover{border-color:#cdd9e8;box-shadow:var(--shadow)}
+
+  .wrap{max-width:1180px;margin:0 auto;padding:24px 22px 70px}
+
+  /* ---- gradient hero ---- */
+  .hero{position:relative;overflow:hidden;border-radius:20px;padding:26px 28px;color:#fff;margin-bottom:22px;
+    background:linear-gradient(115deg,#1e40af 0%,#2563eb 42%,#0e9f6e 115%);
+    box-shadow:0 18px 40px -20px rgba(37,99,235,.65)}
+  .hero::after{content:"";position:absolute;right:-60px;top:-70px;width:240px;height:240px;border-radius:50%;
+    background:radial-gradient(circle,rgba(255,255,255,.18),transparent 70%)}
+  .hero::before{content:"";position:absolute;right:90px;bottom:-90px;width:180px;height:180px;border-radius:50%;
+    background:radial-gradient(circle,rgba(16,185,129,.35),transparent 70%)}
+  .hero h1{margin:0;font-size:26px;letter-spacing:-.5px;position:relative}
+  .hero p{margin:7px 0 0;opacity:.92;max-width:560px;position:relative}
+  .hstats{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:22px}
+  .hstat{background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.22);border-radius:14px;
+    padding:15px 16px;backdrop-filter:blur(3px)}
+  .hstat .ic{opacity:.9;margin-bottom:9px}
+  .hstat .n{font-size:28px;font-weight:800;letter-spacing:-1px;line-height:1}
+  .hstat .l{font-size:12px;color:rgba(255,255,255,.86);font-weight:600;margin-top:4px}
+
+  /* ---- ask card ---- */
+  .ask{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;
+    margin-bottom:22px;box-shadow:var(--shadow);border-top:3px solid var(--green)}
+  .ask-h{font-weight:800;font-size:15px;display:flex;align-items:center;gap:8px}
+  .ask-sub{font-size:12.5px;color:var(--muted);margin:3px 0 13px}
+  .ask-row{display:flex;gap:10px}
+  .ask-row input{flex:1;padding:11px 14px;border:1px solid var(--line);border-radius:10px;font-size:14px;outline:none}
+  .ask-row input:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+  .ask-row button{padding:11px 20px;border:none;background:var(--brand);color:#fff;border-radius:10px;
+    font-weight:700;cursor:pointer;transition:.15s}
+  .ask-row button:hover{background:var(--brand-d)}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+  .chip{font-size:12px;padding:7px 13px;background:var(--brand-soft);color:var(--brand-d);
+    border:1px solid #dbe6ff;border-radius:999px;cursor:pointer;transition:.15s}
+  .chip:hover{background:#e2ebff;transform:translateY(-1px)}
+  .chatout{margin-top:14px;white-space:pre-wrap;font-size:13.5px;line-height:1.6;
+    background:var(--green-soft);border:1px solid #c7eedd;border-left:3px solid var(--green);
+    border-radius:10px;padding:13px 15px}
+  .chatout:empty{display:none}
+
+  /* ---- tabs + controls ---- */
+  .bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+  .tabs{display:inline-flex;background:#fff;border:1px solid var(--line);border-radius:11px;padding:4px;gap:4px}
+  .tab{padding:8px 16px;border-radius:8px;cursor:pointer;font-weight:600;color:var(--muted);transition:.15s}
+  .tab.active{background:var(--brand);color:#fff;box-shadow:0 4px 10px -4px rgba(37,99,235,.5)}
+  .bar-spacer{flex:1}
+  .controls{display:flex;gap:10px;flex-wrap:wrap}
+  .controls input,.controls select{padding:10px 13px;border:1px solid var(--line);border-radius:10px;
+    font-size:14px;background:#fff;outline:none;transition:.15s}
+  .controls input:focus,.controls select:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+  .controls input{min-width:240px}
+
+  /* ---- table ---- */
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:var(--shadow)}
   table{width:100%;border-collapse:collapse}
-  th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
-  th{background:#f9fafb;font-size:11px;text-transform:uppercase;letter-spacing:.5px;
-    color:var(--muted);cursor:pointer;user-select:none;position:sticky;top:0}
-  th:hover{color:var(--ink)}
-  tbody tr:hover{background:#f9fbff}
-  td.prog{font-weight:600;max-width:340px}
-  td.prog a{color:var(--brand);text-decoration:none;font-weight:600;font-size:12px}
-  td.prog a:hover{text-decoration:underline}
-  td .area{color:var(--muted);font-size:12px;margin-top:2px}
-  .badge{display:inline-block;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:700}
+  th,td{text-align:left;padding:13px 16px;vertical-align:middle}
+  thead th{background:#f3f7fd;font-size:11px;text-transform:uppercase;letter-spacing:.6px;font-weight:700;
+    color:var(--muted);cursor:pointer;user-select:none;border-bottom:1px solid var(--line);white-space:nowrap}
+  thead th:hover{color:var(--ink)}
+  tbody td{border-bottom:1px solid var(--line)}
+  tbody tr:nth-child(even){background:#fafcff}
+  tbody tr:last-child td{border-bottom:none}
+  tbody tr{transition:.12s}
+  tbody tr:hover{background:#eef4ff}
+  td.prog{font-weight:700;max-width:380px;color:var(--ink);vertical-align:top}
+  td.prog .area{display:inline-block;margin:6px 8px 0 0;font-size:11px;font-weight:600;color:var(--brand-d);
+    background:var(--brand-soft);padding:2px 9px;border-radius:999px}
+  td.prog .apply{display:block;margin-top:6px}
+  td.prog .apply a{color:var(--brand);text-decoration:none;font-weight:600;font-size:12px}
+  td.prog .apply a:hover{text-decoration:underline}
+  .av{display:inline-flex;align-items:center;gap:9px;font-weight:600}
+  .av .dot{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-size:11px;
+    font-weight:800;color:#fff;flex:none;letter-spacing:.3px}
+  .badge{display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:999px;font-size:11px;font-weight:700;text-transform:capitalize}
+  .badge::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.85}
   .b-open{background:var(--open-bg);color:var(--open)}
   .b-closed{background:var(--closed-bg);color:var(--closed)}
   .b-unknown{background:var(--unk-bg);color:var(--unk)}
   .amt{font-variant-numeric:tabular-nums;white-space:nowrap}
+  .amt.has{color:var(--green-d);font-weight:800}
   .muted{color:var(--muted)}
-  .empty{padding:40px;text-align:center;color:var(--muted)}
-  footer{max-width:1180px;margin:0 auto;padding:0 20px 30px;color:var(--muted);font-size:12px}
-  @media(max-width:760px){.stats{grid-template-columns:repeat(2,1fr)}}
-
-  .chatbox{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--green);border-radius:12px;padding:16px 18px;margin-bottom:18px}
-  .chat-row{display:flex;gap:10px}
-  .chat-row input{flex:1;padding:9px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px}
-  .chat-row button{padding:9px 18px;border:none;background:var(--brand);color:#fff;border-radius:8px;font-weight:600;cursor:pointer}
-  .chat-row button:hover{background:var(--brand-d)}
-  .chat-title{font-weight:700;font-size:13px;color:var(--brand-d);margin-bottom:8px;display:flex;align-items:center;gap:6px}
-  .chatout{margin-top:12px;white-space:pre-wrap;font-size:13px;color:var(--ink);line-height:1.55}
-  .chatout:empty{display:none}
-
-  .chat-sub{font-size:12px;color:var(--muted);margin-bottom:10px}
-  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
-  .chip{font-size:12px;padding:6px 12px;background:#eef2ff;color:var(--brand-d);border:1px solid #dbe3ff;
-    border-radius:999px;cursor:pointer;user-select:none}
-  .chip:hover{background:#e0e8ff}
-  .chatout{margin-top:14px;white-space:pre-wrap;font-size:13px;color:var(--ink);line-height:1.6;
-    background:#f3faf7;border:1px solid #cdeede;border-left:3px solid var(--green);
-    border-radius:8px;padding:12px 14px}
-  .chatout:empty{display:none}
+  .empty{padding:54px;text-align:center;color:var(--muted)}
+  footer{max-width:1180px;margin:0 auto;padding:18px 22px 40px;color:var(--muted);font-size:12px}
+  @media(max-width:820px){.hstats{grid-template-columns:repeat(2,1fr)}.brand small{display:none}}
 </style>
 </head>
 <body>
-<header>
-  <h1>FundRadar</h1>
-  <p>Funding Opportunity Intelligence Platform · live view of the database</p>
-</header>
-<div class="wrap">
-  <div class="stats" id="stats"></div>
+<nav class="nav">
+  <div class="nav-in">
+    <div class="brand">
+      <span class="logo">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      </span>
+      <span>FundRadar<small>Funding Opportunity Intelligence</small></span>
+    </div>
+    <div class="nav-spacer"></div>
+    <a class="gbtn" href="/auth/login" onclick="return signIn(event)">
+      <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.9 2.4 30.4 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.2C12.3 13.3 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.1 24.6c0-1.6-.1-3.1-.4-4.6H24v9.1h12.4c-.5 2.9-2.1 5.4-4.6 7.1l7.1 5.5c4.2-3.9 6.6-9.6 6.6-16.1z"/><path fill="#FBBC05" d="M10.5 28.4c-.5-1.4-.8-3-.8-4.4s.3-3 .8-4.4l-7.9-6.2C1 16.6 0 20.2 0 24s1 7.4 2.6 10.6l7.9-6.2z"/><path fill="#34A853" d="M24 48c6.4 0 11.9-2.1 15.8-5.8l-7.1-5.5c-2 1.3-4.5 2.1-8.7 2.1-6.3 0-11.7-3.8-13.5-9.4l-7.9 6.2C6.5 42.6 14.6 48 24 48z"/></svg>
+      Sign in with Google
+    </a>
+  </div>
+</nav>
 
-  <div class="chatbox">
-    <div class="chat-title">Ask FundRadar</div>
-    <div class="chat-sub">Ask in plain English — answers come straight from the live funding database.</div>
-    <div class="chat-row">
+<div class="wrap">
+  <div class="hero">
+    <h1>Funding Opportunities</h1>
+    <p>AI-extracted grants, fellowships &amp; research calls — pulled automatically from agency websites and PDFs.</p>
+    <div class="hstats" id="stats"></div>
+  </div>
+
+  <div class="ask">
+    <div class="ask-h">💬 Ask FundRadar</div>
+    <div class="ask-sub">Ask in plain English — answers come straight from the live funding database.</div>
+    <div class="ask-row">
       <input id="chatq" placeholder="Type a question, or tap an example below…" onkeydown="if(event.key==='Enter')askBot()"/>
       <button onclick="askBot()">Ask</button>
     </div>
@@ -98,21 +159,22 @@
     <div id="chatout" class="chatout"></div>
   </div>
 
-
-  <div class="tabs">
-    <div class="tab active" data-view="opps" onclick="switchView('opps')">Opportunities</div>
-    <div class="tab" data-view="agencies" onclick="switchView('agencies')">Agencies</div>
-  </div>
-
-  <div class="controls">
-    <input id="search" placeholder="Search…" oninput="render()"/>
-    <select id="statusFilter" onchange="render()">
-      <option value="">All statuses</option>
-      <option value="open">Open</option>
-      <option value="closed">Closed</option>
-      <option value="unknown">Unknown</option>
-    </select>
-    <select id="countryFilter" onchange="render()"><option value="">All countries</option></select>
+  <div class="bar">
+    <div class="tabs">
+      <div class="tab active" data-view="opps" onclick="switchView('opps')">Opportunities</div>
+      <div class="tab" data-view="agencies" onclick="switchView('agencies')">Agencies</div>
+    </div>
+    <div class="bar-spacer"></div>
+    <div class="controls">
+      <input id="search" placeholder="Search schemes, agencies, topics…" oninput="render()"/>
+      <select id="statusFilter" onchange="render()">
+        <option value="">All statuses</option>
+        <option value="open">Open</option>
+        <option value="closed">Closed</option>
+        <option value="unknown">Unknown</option>
+      </select>
+      <select id="countryFilter" onchange="render()"><option value="">All countries</option></select>
+    </div>
   </div>
 
   <div class="panel"><div id="table"></div></div>
@@ -121,15 +183,19 @@
 
 <script>
 let OPP=[], AG=[], AGMAP={}, view='opps', sortKey='deadline', sortDir=1;
+const AV_COLORS=['#2563eb','#059669','#7c3aed','#db2777','#ea580c','#0891b2','#4f46e5','#0d9488'];
+function avColor(s){let h=0;for(const ch of (s||'?')) h=(h*31+ch.charCodeAt(0))>>>0; return AV_COLORS[h%AV_COLORS.length];}
+function initials(n){return (n||'?').replace(/[^A-Za-z0-9 ]/g,'').split(/\s+/).filter(Boolean).map(w=>w[0]).slice(0,2).join('').toUpperCase()||'?';}
+
+function signIn(e){ e.preventDefault(); alert('Google sign-in is being wired up next — coming soon!'); return false; }
 
 async function load(){
   const [o,a] = await Promise.all([
-    fetch('/opportunities?limit=200').then(r=>r.json()),
-    fetch('/agencies?limit=200').then(r=>r.json())
+    fetch('/opportunities?limit=300').then(r=>r.json()),
+    fetch('/agencies?limit=300').then(r=>r.json())
   ]);
   OPP=o.items||[]; AG=a.items||[];
   AG.forEach(x=>AGMAP[x.id]={name:x.name,country:x.country,code:x.agency_code});
-  // country filter options
   const cf=document.getElementById('countryFilter');
   [...new Set(AG.map(x=>x.country).filter(Boolean))].sort().forEach(c=>{
     const op=document.createElement('option');op.value=c;op.textContent=c;cf.appendChild(op);
@@ -137,14 +203,24 @@ async function load(){
   stats(); render();
 }
 
+const ICONS={
+  list:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>',
+  check:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>',
+  bank:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v3M12 14v3M16 14v3"/></svg>',
+  globe:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 010 18M12 3a15 15 0 000 18"/></svg>'
+};
 function stats(){
   const open=OPP.filter(o=>o.status==='open').length;
-  const closed=OPP.filter(o=>o.status==='closed').length;
   const countries=new Set(AG.map(a=>a.country).filter(Boolean)).size;
-  const items=[['Opportunities',OPP.length,'b'],['Open now',open,'g'],
-    ['Agencies',AG.length,'b'],['Countries / blocs',countries,'b']];
-  const html=items.map(([l,n,c])=>`<div class="stat" style="border-top-color:${c==='g'?'var(--green)':'var(--brand)'}"><div class="n" style="color:${c==='g'?'var(--green)':'var(--brand)'}">${n}</div><div class="l">${l}</div></div>`).join('');
-  document.getElementById('stats').innerHTML=html;
+  const cards=[
+    ['list', OPP.length, 'Opportunities tracked'],
+    ['check',open,       'Open right now'],
+    ['bank', AG.length,  'Funding agencies'],
+    ['globe',countries,  'Countries & blocs'],
+  ];
+  document.getElementById('stats').innerHTML=cards.map(([ic,n,l])=>
+    `<div class="hstat"><div class="ic">${ICONS[ic]}</div><div class="n">${n}</div><div class="l">${l}</div></div>`
+  ).join('');
 }
 
 function switchView(v){
@@ -161,12 +237,15 @@ function fmtDate(d){
   return dt.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
 }
 function amount(o){
-  if(o.funding_amount) return o.funding_amount;
   if(o.amount_value){return (o.currency||'')+' '+Number(o.amount_value).toLocaleString();}
+  if(o.funding_amount){var s=String(o.funding_amount);return s.length>46?s.slice(0,44)+'…':s;}
   return '<span class="muted">—</span>';
 }
-function badge(s){return `<span class="badge b-${s||'unknown'}">${s||'unknown'}</span>`;}
-
+function agencyCell(name){
+  if(!name) return '<span class="muted">—</span>';
+  return `<span class="av"><span class="dot" style="background:${avColor(name)}">${initials(name)}</span>${name}</span>`;
+}
+function badge(s){s=s||'unknown';return `<span class="badge b-${s}">${s}</span>`;}
 function sortBy(k){ if(sortKey===k){sortDir*=-1;}else{sortKey=k;sortDir=1;} render(); }
 
 function render(){
@@ -188,11 +267,11 @@ function render(){
       <th onclick="sortBy('deadline')">Deadline</th>
       <th onclick="sortBy('status')">Status</th>
     </tr></thead><tbody>${rows.map(o=>`<tr>
-      <td class="prog">${o.program_name||''}${o.research_area?`<div class="area">${o.research_area}</div>`:''}
-        ${o.application_link?`<div><a href="${o.application_link}" target="_blank">Apply / details ↗</a></div>`:''}</td>
-      <td>${o.agency||'<span class=muted>—</span>'}</td>
+      <td class="prog">${o.program_name||'<span class=muted>Untitled scheme</span>'}${o.research_area?`<div class="area">${o.research_area}</div>`:''}
+        ${o.application_link?`<div class="apply"><a href="${o.application_link}" target="_blank" rel="noopener">Apply / details ↗</a></div>`:''}</td>
+      <td>${agencyCell(o.agency)}</td>
       <td>${o.country||'<span class=muted>—</span>'}</td>
-      <td class="amt">${amount(o)}</td>
+      <td class="amt ${o.amount_value?'has':''}">${amount(o)}</td>
       <td>${fmtDate(o.deadline)}</td>
       <td>${badge(o.status)}</td>
     </tr>`).join('')}</tbody></table>`;
@@ -210,20 +289,17 @@ function render(){
       <th>Website</th>
     </tr></thead><tbody>${rows.map(a=>`<tr>
       <td class="muted">${a.agency_code}</td>
-      <td class="prog">${a.name}</td>
+      <td>${agencyCell(a.name)}</td>
       <td>${a.country||'—'}</td>
       <td>${a.category||'<span class=muted>—</span>'}</td>
-      <td>${a.website?`<a href="${a.website}" target="_blank" style="color:var(--brand)">Visit ↗</a>`:'—'}</td>
+      <td>${a.website?`<a href="${a.website}" target="_blank" rel="noopener" style="color:var(--brand);font-weight:600;text-decoration:none">Visit ↗</a>`:'—'}</td>
     </tr>`).join('')}</tbody></table>`;
     foot(rows.length);
   }
 }
 function foot(n){document.getElementById('foot').textContent=`Showing ${n} ${view==='opps'?'opportunities':'agencies'} · data served live from the FundRadar API`;}
 
-
-
 function ask(text){ document.getElementById('chatq').value=text; askBot(); }
-
 async function askBot(){
   const q=document.getElementById('chatq').value.trim(); if(!q) return;
   const out=document.getElementById('chatout'); out.textContent='Thinking…';
@@ -234,7 +310,7 @@ async function askBot(){
 }
 
 load().catch(e=>{document.getElementById('table').innerHTML=
-  '<div class="empty">Could not load data. Make sure the server is running and you ran the two data-loading commands.</div>';});
+  '<div class="empty">Could not load data. Make sure the server is running.</div>';});
 </script>
 </body>
 </html>

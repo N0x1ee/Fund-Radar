@@ -1,12 +1,15 @@
 """Concrete LLM providers + a factory.
 
-- GeminiProvider : Google Gemini free tier (1500 req/day, no card).
+- GeminiProvider : Google Gemini free tier. Paces requests and retries on the
+                   free-tier rate limit (HTTP 429) so bulk extraction succeeds.
 - OllamaProvider : fully local models, zero cost.
 - MockProvider   : deterministic stub so the pipeline runs with no key.
 """
 from __future__ import annotations
 
 import json
+import re
+import time
 import urllib.request
 
 from app.config import settings
@@ -25,17 +28,57 @@ class MockProvider(LLMProvider):
 
 
 class GeminiProvider(LLMProvider):
+    """Google Gemini with free-tier friendly pacing + retry on 429.
+
+    The free tier allows only a handful of requests per minute, so we (1) keep a
+    minimum gap between calls and (2) if we still hit a 429, wait the delay the
+    API suggests and retry instead of dropping the opportunity.
+    """
+
+    MIN_INTERVAL = 7.0    # seconds between calls (~8/min, under the free limit)
+    MAX_RETRIES = 5
+
     def __init__(self):
         if not settings.gemini_api_key:
             raise RuntimeError("GEMINI_API_KEY is empty. Add it to .env.")
         import google.generativeai as genai  # imported lazily
         genai.configure(api_key=settings.gemini_api_key)
         self._model = genai.GenerativeModel(settings.gemini_model)
+        self._last_call = 0.0
+        self._daily_exhausted = False
+
+    def _throttle(self) -> None:
+        wait = self.MIN_INTERVAL - (time.monotonic() - self._last_call)
+        if wait > 0:
+            time.sleep(wait)
 
     def complete(self, prompt: str, system: str | None = None) -> str:
+        if self._daily_exhausted:
+            raise RuntimeError("Gemini free daily quota exhausted — skipping (resets in ~24h).")
         text = prompt if not system else f"{system}\n\n{prompt}"
-        resp = self._model.generate_content(text)
-        return (resp.text or "").strip()
+        for attempt in range(self.MAX_RETRIES):
+            self._throttle()
+            self._last_call = time.monotonic()
+            try:
+                resp = self._model.generate_content(text)
+                return (resp.text or "").strip()
+            except Exception as e:
+                msg = str(e)
+                low = msg.lower()
+                is_rate = "429" in msg or "quota" in low or "exhausted" in low
+                is_daily = "perday" in low or "requestsperday" in low
+                if is_daily:
+                    # daily cap won't recover for hours: stop retrying everything
+                    self._daily_exhausted = True
+                    raise RuntimeError("Gemini free daily quota exhausted (per-day limit). "
+                                       "Re-run tomorrow, switch model/provider, or enable billing.")
+                if is_rate and attempt < self.MAX_RETRIES - 1:
+                    m = re.search(r"seconds:\s*(\d+)", msg)
+                    back = (int(m.group(1)) + 1) if m else 20
+                    time.sleep(back)
+                    continue
+                raise
+        return ""
 
 
 class OllamaProvider(LLMProvider):
