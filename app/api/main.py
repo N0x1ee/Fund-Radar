@@ -23,6 +23,7 @@ from app.db.database import SessionLocal, init_db
 from app.db.models import Agency, Opportunity
 from app.db.schemas import AgencyOut, OpportunityOut, Page
 from app.chat.bot import answer as chat_answer
+from app.auth.routes import router as auth_router
 
 log = logging.getLogger("fundradar.api")
 
@@ -34,6 +35,7 @@ app = FastAPI(
     redoc_url="/redoc" if settings.enable_docs else None,
 )
 install_security(app)
+app.include_router(auth_router)
 
 
 @app.on_event("startup")

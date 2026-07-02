@@ -23,5 +23,12 @@ class Settings(BaseSettings):
     enable_docs: bool = True            # expose interactive /docs
     cors_allow_origins: str = ""        # comma-separated; empty = same-origin only
 
+    # Authentication (JWT). ALWAYS override JWT_SECRET via env in production.
+    jwt_secret: str = "dev-insecure-change-me"   # override via JWT_SECRET env var
+    jwt_algorithm: str = "HS256"
+    access_token_minutes: int = 60               # access-token lifetime (minutes)
+    remember_me_days: int = 30                   # "Remember me" cookie lifetime (days)
+    cookie_secure: bool = False                  # True in production (HTTPS-only auth cookie)
+
 
 settings = Settings()

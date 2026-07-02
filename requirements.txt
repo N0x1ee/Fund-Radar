@@ -10,6 +10,13 @@ SQLAlchemy>=2.0.36          # 2.0.36+ ships wheels for current Python versions
 openpyxl>=3.1
 
 # ---------------------------------------------------------------------------
+# AUTH — user accounts (feature/authentication). Required once auth is enabled.
+# ---------------------------------------------------------------------------
+bcrypt>=4.0
+PyJWT>=2.8
+email-validator>=2.0
+
+# ---------------------------------------------------------------------------
 # OPTIONAL — only needed for the LIVE scraper (Phase 2). Install later with:
 #   pip install httpx beautifulsoup4 pypdf playwright
 # ---------------------------------------------------------------------------

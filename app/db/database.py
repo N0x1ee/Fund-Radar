@@ -24,4 +24,5 @@ def get_session():
 def init_db():
     """Create all tables. Import models first so they register on Base."""
     from app.db import models  # noqa: F401
+    from app.auth import models as _auth_models  # noqa: F401  (registers users table)
     Base.metadata.create_all(bind=engine)
