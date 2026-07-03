@@ -2,8 +2,9 @@
 
 Signup (M2), Login (M3), and the authenticated /me endpoint (M4). Signup creates
 an account; login verifies credentials and issues a JWT in an httpOnly cookie;
-/me returns the current user via the get_current_user dependency. Logout / refresh
-/ role-based authorization are not implemented yet. Mounted in app/api/main.py.
+/me returns the current user via the get_current_user dependency; logout clears the
+cookie. Refresh tokens / role-based authorization are not implemented yet. Mounted
+in app/api/main.py.
 """
 from __future__ import annotations
 
@@ -99,3 +100,16 @@ def login(payload: LoginIn, response: Response, db: Session = Depends(get_db)) -
 def me(current_user: User = Depends(get_current_user)) -> User:
     """Return the currently authenticated user (requires a valid access cookie)."""
     return current_user
+
+
+@router.post("/logout")
+def logout(response: Response):
+    """Clear the access cookie. Safe to call whether or not a session exists."""
+    response.delete_cookie(
+        key=ACCESS_COOKIE,
+        path="/",
+        httponly=True,
+        samesite="lax",
+        secure=settings.cookie_secure,
+    )
+    return {"detail": "Logged out."}

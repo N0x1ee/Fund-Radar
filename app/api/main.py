@@ -63,20 +63,28 @@ def _bootstrap_db() -> None:
 
 
 _STATIC = Path(__file__).parent / "static"
-_APP_HTML = (_STATIC / "index.html").read_text(encoding="utf-8")
-_DASHBOARD = (_STATIC / "dashboard.html").read_text(encoding="utf-8")
+
+
+def _page(name: str) -> str:
+    """Read a static HTML page at request time.
+
+    Read per request (not cached at import) so edits to the HTML are served
+    immediately without restarting the process. The files are small, so the
+    read cost is negligible.
+    """
+    return (_STATIC / name).read_text(encoding="utf-8")
 
 
 @app.get("/", response_class=HTMLResponse, tags=["meta"])
 def home():
     """Default dashboard — project's white/blue/green theme."""
-    return _DASHBOARD
+    return _page("dashboard.html")
 
 
 @app.get("/app", response_class=HTMLResponse, tags=["meta"])
 def new_app():
     """Friend's alternate multi-page web app — preview here (indigo/dark theme)."""
-    return _APP_HTML
+    return _page("index.html")
 
 
 @app.get("/api", tags=["meta"])

@@ -151,6 +151,20 @@
   @keyframes auth-spin{to{transform:rotate(360deg)}}
   .auth-switch{text-align:center;font-size:12.5px;color:var(--muted);margin-top:14px}
   .auth-switch a{color:var(--brand);font-weight:600;cursor:pointer}
+
+  /* ---- logged-in user menu (navbar) ---- */
+  .usermenu{position:relative}
+  .uavatar{width:24px;height:24px;border-radius:7px;background:linear-gradient(135deg,var(--brand),var(--green));
+    color:#fff;font-size:10.5px;font-weight:800;display:grid;place-items:center;letter-spacing:.3px}
+  .uname{max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .udrop{display:none;position:absolute;right:0;top:calc(100% + 8px);min-width:190px;background:var(--card);
+    border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:6px;z-index:40}
+  .udrop-email{font-size:12px;color:var(--muted);padding:8px 10px 6px;border-bottom:1px solid var(--line);
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:4px}
+  .udrop-item{width:100%;text-align:left;background:none;border:none;padding:9px 10px;border-radius:8px;
+    font-size:13px;font-weight:600;color:var(--ink);cursor:pointer}
+  .udrop-item:hover{background:#f3f7fd;color:var(--brand-d)}
+  @media(max-width:480px){ .uname{display:none} }
 </style>
 </head>
 <body>
@@ -163,10 +177,7 @@
       <span>FundRadar<small>Funding Opportunity Intelligence</small></span>
     </div>
     <div class="nav-spacer"></div>
-    <button class="gbtn" onclick="openAuth('login')">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/></svg>
-      Sign in
-    </button>
+    <div id="authNav"></div>
   </div>
 </nav>
 
@@ -442,7 +453,7 @@ load().catch(e=>{document.getElementById('table').innerHTML=
       }else{
         const r = await fetch('/auth/login', {method:'POST', headers:{'Content-Type':'application/json'},
           credentials:'include', body:JSON.stringify({email, password})});
-        if(r.ok){ const u = await r.json(); showAuthMsg('Signed in as '+u.email+'.','ok'); setTimeout(closeAuth,800); }
+        if(r.ok){ const u = await r.json(); showAuthMsg('Signed in as '+u.email+'.','ok'); refreshSession(); setTimeout(closeAuth,800); }
         else{ showAuthMsg(await readDetail(r,'Invalid email or password.'),'err'); }
       }
     }catch(_){ showAuthMsg('Network error — please try again.','err'); }
@@ -452,11 +463,56 @@ load().catch(e=>{document.getElementById('table').innerHTML=
 
   document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeAuth(); });
 
-  // Expose ONLY the handlers referenced by the modal markup; everything else stays private.
+  /* ---- session / navbar reflection (via /auth/me and /auth/logout) ---- */
+  function esc(s){ return (s==null?'':String(s)).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  function initialsOf(s){ return (s||'?').replace(/[^A-Za-z0-9 ]/g,'').split(/\s+/).filter(Boolean).map(w=>w[0]).slice(0,2).join('').toUpperCase() || '?'; }
+  let menuOpen = false;
+
+  function renderLoggedOut(){
+    $('authNav').innerHTML =
+      "<button class=\"gbtn\" onclick=\"openAuth('login')\">"
+      + '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/></svg>'
+      + ' Sign in</button>';
+  }
+  function renderLoggedIn(u){
+    const name = u.full_name || u.email;
+    $('authNav').innerHTML =
+      '<div class="usermenu">'
+      + '<button class="gbtn" onclick="toggleUserMenu()">'
+      +   '<span class="uavatar">' + esc(initialsOf(name)) + '</span>'
+      +   '<span class="uname">' + esc(name) + '</span>'
+      +   '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>'
+      + '</button>'
+      + '<div class="udrop" id="udrop">'
+      +   '<div class="udrop-email">' + esc(u.email) + '</div>'
+      +   '<button class="udrop-item" onclick="logout()">Log out</button>'
+      + '</div></div>';
+    menuOpen = false;
+  }
+  async function refreshSession(){
+    try{
+      const r = await fetch('/auth/me', {credentials:'include'});
+      if(r.ok){ renderLoggedIn(await r.json()); return; }
+    }catch(_){}
+    renderLoggedOut();
+  }
+  function toggleUserMenu(){ const d=$('udrop'); if(!d) return; menuOpen = !menuOpen; d.style.display = menuOpen ? 'block' : 'none'; }
+  async function logout(){
+    try{ await fetch('/auth/logout', {method:'POST', credentials:'include'}); }catch(_){}
+    await refreshSession();   // renders logged-out
+  }
+  document.addEventListener('click', (e)=>{ if(menuOpen && !e.target.closest('.usermenu')){ menuOpen=false; const d=$('udrop'); if(d) d.style.display='none'; } });
+
+  // Expose ONLY the handlers referenced by the modal / navbar markup; everything else stays private.
   window.openAuth = openAuth;
   window.closeAuth = closeAuth;
   window.switchAuthTab = switchAuthTab;
   window.submitAuth = submitAuth;
+  window.toggleUserMenu = toggleUserMenu;
+  window.logout = logout;
+
+  renderLoggedOut();   // show Sign in immediately, then reflect real session
+  refreshSession();
 })();
 </script>
 </body>
