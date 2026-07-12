@@ -32,6 +32,10 @@ def build_prompt(raw_text: str, *, max_chars: int = 8000) -> str:
     snippet = raw_text[:max_chars]
     return (
         "From the funding opportunity page text below, extract these fields as JSON:\n"
+        '- is_funding_opportunity (true ONLY if the page describes ONE specific grant, '
+        'fellowship, scholarship or call for proposals that someone can apply to. '
+        'false for navigation/index pages, lists of links, news articles, '
+        'acknowledgement pages, programme catalogues, or general information pages.)\n'
         '- program_name (the official scheme/fellowship/grant name. Ignore navigation '
         'or link text like "Read More", "Apply", "Click here", "Funding opportunities", '
         '"Programmsuche".)\n'
@@ -131,5 +135,9 @@ def extract_opportunity(opp, llm=None) -> dict:
         return {}
     response = llm.complete(build_prompt(opp.raw_text), system=SYSTEM_PROMPT)
     data = parse_llm_json(response)
+    if data.get("is_funding_opportunity") is False:
+        # Not a real opportunity (nav/index/news page): mark done, let caller drop it.
+        opp.processed = True
+        return data
     apply_extraction(opp, data)
     return data

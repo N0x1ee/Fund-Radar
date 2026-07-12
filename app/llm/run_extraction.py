@@ -52,9 +52,13 @@ def main():
             try:
                 data = extract_opportunity(opp, llm=llm)
                 ok += 1
-                name = (opp.program_name or "")[:40]
-                print(f"  [{opp.id}] {name:<40} amount={opp.amount_value} "
-                      f"deadline={opp.deadline} status={opp.status}")
+                if data.get("is_funding_opportunity") is False:
+                    print(f"  [{opp.id}] skipped (not an opportunity)")
+                    db.delete(opp)
+                else:
+                    name = (opp.program_name or "")[:40]
+                    print(f"  [{opp.id}] {name:<40} amount={opp.amount_value} "
+                          f"deadline={opp.deadline} status={opp.status}")
             except Exception as e:
                 print(f"  [{opp.id}] ERROR: {e}")
             db.commit()

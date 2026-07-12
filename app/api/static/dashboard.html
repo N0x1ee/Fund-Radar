@@ -380,12 +380,21 @@ function render(){
 function foot(n){document.getElementById('foot').textContent=`Showing ${n} ${view==='opps'?'opportunities':'agencies'} · data served live from the FundRadar API`;}
 
 function ask(text){ document.getElementById('chatq').value=text; askBot(); }
+function renderAnswer(text){
+  // Escape HTML first (safety), then apply light markdown: **bold**, links, bullets.
+  const esc=s=>s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  let h=esc(text);
+  h=h.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
+  h=h.replace(/(https?:\/\/[^\s<)]+)/g,'<a href="$1" target="_blank" rel="noopener">$1</a>');
+  h=h.replace(/^\s*[*•-]\s+/gm,'&bull; ');
+  return h.replace(/\n/g,'<br>');
+}
 async function askBot(){
   const q=document.getElementById('chatq').value.trim(); if(!q) return;
   const out=document.getElementById('chatout'); out.textContent='Thinking…';
   try{
     const r=await fetch('/chat?q='+encodeURIComponent(q));
-    const d=await r.json(); out.textContent=d.answer||'(no answer)';
+    const d=await r.json(); out.innerHTML=renderAnswer(d.answer||'(no answer)');
   }catch(e){ out.textContent='Could not reach the chatbot. Is the server running?'; }
 }
 

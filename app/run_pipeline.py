@@ -76,11 +76,16 @@ def run(limit: int | None, max_pages: int, do_extract: bool) -> None:
             done = 0
             for opp in todo:
                 try:
-                    extract_opportunity(opp, llm=llm)
-                    db.commit()
+                    data = extract_opportunity(opp, llm=llm)
                     done += 1
-                    log.info("  extracted %d/%d  %s", done, len(todo),
-                             (opp.program_name or "")[:55])
+                    if data.get("is_funding_opportunity") is False:
+                        log.info("  skipped %d/%d (not an opportunity)  %s", done, len(todo),
+                                 (opp.program_name or opp.source_url or "")[:55])
+                        db.delete(opp)
+                    else:
+                        log.info("  extracted %d/%d  %s", done, len(todo),
+                                 (opp.program_name or "")[:55])
+                    db.commit()
                 except Exception as e:
                     log.error("  extract [%s] failed: %s", opp.id, e)
             log.info("EXTRACT DONE  processed=%d/%d", done, len(todo))

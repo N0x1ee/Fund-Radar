@@ -67,7 +67,12 @@ def parse_deadline(text: str | None) -> date | None:
     """Parse common deadline formats. Returns None if nothing parseable."""
     if not text:
         return None
-    s = text.strip()
+    # LLMs occasionally return a list of dates — take the first one.
+    if isinstance(text, (list, tuple)):
+        text = text[0] if text else None
+        if not text:
+            return None
+    s = str(text).strip()
     # ISO first (handles values the LLM is told to return)
     try:
         return date.fromisoformat(s[:10])

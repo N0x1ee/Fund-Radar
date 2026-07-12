@@ -77,7 +77,13 @@ def _page(name: str) -> str:
 
 @app.get("/", response_class=HTMLResponse, tags=["meta"])
 def home():
-    """Default dashboard — project's white/blue/green theme."""
+    """Public landing page — white/blue/green theme."""
+    return _page("landing.html")
+
+
+@app.get("/dashboard", response_class=HTMLResponse, tags=["meta"])
+def dashboard():
+    """Main dashboard — project's white/blue/green theme."""
     return _page("dashboard.html")
 
 
