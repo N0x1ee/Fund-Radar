@@ -165,6 +165,10 @@
     font-size:13px;font-weight:600;color:var(--ink);cursor:pointer}
   .udrop-item:hover{background:#f3f7fd;color:var(--brand-d)}
   @media(max-width:480px){ .uname{display:none} }
+
+  /* ---- auth gate: dashboard is blurred until the user signs in ---- */
+  body.auth-locked .wrap, body.auth-locked footer{filter:blur(7px);pointer-events:none;user-select:none}
+  body.auth-locked .auth-x{display:none}
 </style>
 </head>
 <body>
@@ -398,8 +402,13 @@ async function askBot(){
   }catch(e){ out.textContent='Could not reach the chatbot. Is the server running?'; }
 }
 
-load().catch(e=>{document.getElementById('table').innerHTML=
-  '<div class="empty">Could not load data. Make sure the server is running.</div>';});
+/* Data loads only after the auth module confirms a signed-in session. */
+let dashStarted=false;
+window.startDashboard=function(){
+  if(dashStarted) return; dashStarted=true;
+  load().catch(e=>{document.getElementById('table').innerHTML=
+    '<div class="empty">Could not load data. Make sure the server is running.</div>';});
+};
 </script>
 
 <!-- ==================== FundRadar — Authentication module ====================
@@ -416,7 +425,13 @@ load().catch(e=>{document.getElementById('table').innerHTML=
 
   function openAuth(mode){ authMode = mode || 'login'; syncAuth(); clearAuthMsg();
     $('authOverlay').classList.add('show'); setTimeout(()=>$('au-email').focus(),40); }
-  function closeAuth(){ $('authOverlay').classList.remove('show'); }
+  function closeAuth(){
+    // While the dashboard is locked (not signed in), the modal cannot be dismissed.
+    if(document.body.classList.contains('auth-locked')) return;
+    $('authOverlay').classList.remove('show'); }
+  function lockDashboard(){ document.body.classList.add('auth-locked'); openAuth('login'); }
+  function unlockDashboard(){ document.body.classList.remove('auth-locked');
+    if(window.startDashboard) window.startDashboard(); }
   function switchAuthTab(mode){ authMode = mode; clearAuthMsg(); syncAuth(); }
 
   function syncAuth(){
@@ -494,6 +509,7 @@ load().catch(e=>{document.getElementById('table').innerHTML=
       + '</button>'
       + '<div class="udrop" id="udrop">'
       +   '<div class="udrop-email">' + esc(u.email) + '</div>'
+      +   '<button class="udrop-item" onclick="location.href=\'/profile\'">My profile</button>'
       +   '<button class="udrop-item" onclick="logout()">Log out</button>'
       + '</div></div>';
     menuOpen = false;
@@ -501,9 +517,10 @@ load().catch(e=>{document.getElementById('table').innerHTML=
   async function refreshSession(){
     try{
       const r = await fetch('/auth/me', {credentials:'include'});
-      if(r.ok){ renderLoggedIn(await r.json()); return; }
+      if(r.ok){ renderLoggedIn(await r.json()); unlockDashboard(); return; }
     }catch(_){}
     renderLoggedOut();
+    lockDashboard();
   }
   function toggleUserMenu(){ const d=$('udrop'); if(!d) return; menuOpen = !menuOpen; d.style.display = menuOpen ? 'block' : 'none'; }
   async function logout(){

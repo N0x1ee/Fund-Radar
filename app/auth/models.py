@@ -27,6 +27,14 @@ class User(Base):
     password_hash: Mapped[str] = mapped_column(String(255))
     full_name: Mapped[str | None] = mapped_column(String(255))
 
+    # Profile fields (editable on /profile). All optional.
+    phone: Mapped[str | None] = mapped_column(String(20))
+    institution: Mapped[str | None] = mapped_column(String(255))
+    linkedin: Mapped[str | None] = mapped_column(String(500))
+    orcid: Mapped[str | None] = mapped_column(String(100))
+    website: Mapped[str | None] = mapped_column(String(500))
+    research_interests: Mapped[str | None] = mapped_column(String(1000))
+
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
 

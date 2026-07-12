@@ -87,6 +87,12 @@ def dashboard():
     return _page("dashboard.html")
 
 
+@app.get("/profile", response_class=HTMLResponse, tags=["meta"])
+def profile():
+    """User profile page (redirects to the dashboard login gate if signed out)."""
+    return _page("profile.html")
+
+
 @app.get("/app", response_class=HTMLResponse, tags=["meta"])
 def new_app():
     """Friend's alternate multi-page web app — preview here (indigo/dark theme)."""

@@ -42,9 +42,32 @@ class UserOut(BaseModel):
     id: int
     email: EmailStr
     full_name: str | None = None
+    phone: str | None = None
+    institution: str | None = None
+    linkedin: str | None = None
+    orcid: str | None = None
+    website: str | None = None
+    research_interests: str | None = None
     is_active: bool
     is_admin: bool
     created_at: datetime | None = None
+
+
+class ProfileUpdateIn(BaseModel):
+    """Editable profile fields (PATCH /auth/me). Only sent fields are changed."""
+    full_name: str | None = Field(default=None, max_length=255)
+    phone: str | None = Field(default=None, max_length=20)
+    institution: str | None = Field(default=None, max_length=255)
+    linkedin: str | None = Field(default=None, max_length=500)
+    orcid: str | None = Field(default=None, max_length=100)
+    website: str | None = Field(default=None, max_length=500)
+    research_interests: str | None = Field(default=None, max_length=1000)
+
+
+class PasswordChangeIn(BaseModel):
+    """Payload for changing the account password."""
+    current_password: str = Field(min_length=1, max_length=128)
+    new_password: str = Field(min_length=8, max_length=128)
 
 
 class TokenOut(BaseModel):

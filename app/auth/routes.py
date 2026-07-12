@@ -18,7 +18,8 @@ from sqlalchemy.orm import Session
 from app.api.deps import get_db
 from app.config import settings
 from app.auth.models import User
-from app.auth.schemas import LoginIn, SignupIn, UserOut
+from app.auth.schemas import (LoginIn, PasswordChangeIn, ProfileUpdateIn,
+                              SignupIn, UserOut)
 from app.auth.deps import ACCESS_COOKIE, get_current_user
 from app.auth.security import create_access_token, hash_password, verify_password
 
@@ -100,6 +101,33 @@ def login(payload: LoginIn, response: Response, db: Session = Depends(get_db)) -
 def me(current_user: User = Depends(get_current_user)) -> User:
     """Return the currently authenticated user (requires a valid access cookie)."""
     return current_user
+
+
+@router.patch("/me", response_model=UserOut)
+def update_me(payload: ProfileUpdateIn,
+              db: Session = Depends(get_db),
+              current_user: User = Depends(get_current_user)) -> User:
+    """Update the current user's profile. Only fields present in the request change."""
+    for field, value in payload.model_dump(exclude_unset=True).items():
+        setattr(current_user, field, value)
+    db.commit()
+    db.refresh(current_user)
+    return current_user
+
+
+@router.post("/change-password")
+def change_password(payload: PasswordChangeIn,
+                    db: Session = Depends(get_db),
+                    current_user: User = Depends(get_current_user)):
+    """Change the account password (requires the current password)."""
+    if not verify_password(payload.current_password, current_user.password_hash):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Current password is incorrect.",
+        )
+    current_user.password_hash = hash_password(payload.new_password)
+    db.commit()
+    return {"detail": "Password changed."}
 
 
 @router.post("/logout")
