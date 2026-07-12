@@ -19,7 +19,7 @@ from urllib.parse import urlparse
 import httpx
 
 USER_AGENT = "FundRadarBot/0.1 (+https://github.com/your-org/fundradar; research aggregator)"
-DEFAULT_TIMEOUT = 20.0
+DEFAULT_TIMEOUT = 35.0   # some government sites are slow (DBT timed out at 20s)
 MIN_INTERVAL_PER_HOST = 2.0   # seconds between requests to the same host
 MAX_RETRIES = 3
 
@@ -74,18 +74,28 @@ def fetch(url: str, *, timeout: float = DEFAULT_TIMEOUT) -> FetchResult:
 
     headers = {"User-Agent": USER_AGENT}
     last_err: str | None = None
+    verify = True  # downgraded once (with a warning in the result) on broken certs
     for attempt in range(1, MAX_RETRIES + 1):
         _throttle(url)
         try:
-            with httpx.Client(follow_redirects=True, timeout=timeout, headers=headers) as client:
+            with httpx.Client(follow_redirects=True, timeout=timeout, headers=headers,
+                              verify=verify) as client:
                 resp = client.get(url)
             if resp.status_code >= 500:
                 last_err = f"server error {resp.status_code}"
                 time.sleep(2 ** attempt)
                 continue
-            return FetchResult(url, resp.status_code, resp.text, ok=resp.status_code < 400)
+            err = None if verify else "insecure: served with invalid TLS certificate"
+            return FetchResult(url, resp.status_code, resp.text,
+                               ok=resp.status_code < 400, error=err)
         except httpx.HTTPError as e:
             last_err = str(e)
+            # Many (esp. government) sites have misconfigured certificate chains.
+            # The page content is public, so retry once without verification
+            # rather than dropping the agency entirely.
+            if verify and "CERTIFICATE_VERIFY_FAILED" in last_err.upper().replace(" ", "_"):
+                verify = False
+                continue
             time.sleep(2 ** attempt)
     return FetchResult(url, 0, "", ok=False, error=last_err)
 

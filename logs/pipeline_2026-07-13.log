@@ -1,0 +1,531 @@
+2026-07-13 01:41:42,445  ============================================================
+2026-07-13 01:41:42,445  PIPELINE START  provider=gemini  limit=all
+2026-07-13 01:41:42,989  HTTP Request: GET https://anrfonline.in "HTTP/1.1 302 Found"
+2026-07-13 01:41:42,999  HTTP Request: GET https://anrfonline.in/ANRF/HomePage "HTTP/1.1 200 "
+2026-07-13 01:41:44,930  HTTP Request: GET https://anrfonline.in/ANRF/Ramanujan_fellowship?HomePage=New "HTTP/1.1 200 "
+2026-07-13 01:41:46,936  HTTP Request: GET https://anrfonline.in/ANRF/jcbose_fellowship?HomePage=New "HTTP/1.1 200 "
+2026-07-13 01:41:48,903  HTTP Request: GET https://anrfonline.in/ANRF/arg_anrf?HomePage=New "HTTP/1.1 200 "
+2026-07-13 01:41:50,911  HTTP Request: GET https://anrfonline.in/ANRF/inrg_anrf?HomePage=New "HTTP/1.1 200 "
+2026-07-13 01:41:52,911  HTTP Request: GET https://anrfonline.in/ANRF/jcbose_anrf "HTTP/1.1 200 "
+2026-07-13 01:41:54,953  HTTP Request: GET https://anrfonline.in/ANRF/npdf?HomePage=New "HTTP/1.1 200 "
+2026-07-13 01:41:56,930  HTTP Request: GET https://anrfonline.in/ANRF/ecrg_anrf?HomePage=New "HTTP/1.1 200 "
+2026-07-13 01:41:58,919  HTTP Request: GET https://anrfonline.in/ANRF/emr?HomePage=New "HTTP/1.1 200 "
+2026-07-13 01:41:59,000    IND001   ANRF                         +0 ~0 =8 err0  ok
+2026-07-13 01:41:59,747  HTTP Request: GET https://dst.gov.in "HTTP/1.1 200 OK"
+2026-07-13 01:42:01,668  HTTP Request: GET https://dst.gov.in/call-for-proposals "HTTP/1.1 200 OK"
+2026-07-13 01:42:03,618  HTTP Request: GET https://dst.gov.in/callforproposals-1 "HTTP/1.1 200 OK"
+2026-07-13 01:42:05,886  HTTP Request: GET https://dst.gov.in/callforproposals/india-austria-science-technology-cooperation-call-proposals-2026 "HTTP/1.1 200 OK"
+2026-07-13 01:42:07,821  HTTP Request: GET https://dst.gov.in/callforproposals/dst-jsps-call-proposal-2026-under-indo-japan-cooperative-science-programme-ijcsp "HTTP/1.1 200 OK"
+2026-07-13 01:42:09,403  HTTP Request: GET http://dst.gov.in/fellowship-opportunities-researchers "HTTP/1.1 301 Moved Permanently"
+2026-07-13 01:42:09,660  HTTP Request: GET https://dst.gov.in/fellowship-opportunities-researchers "HTTP/1.1 200 OK"
+2026-07-13 01:42:11,784  HTTP Request: GET https://dst.gov.in/callforproposals/brics-sti-framework-programme-7th-coordinated-call-brics-multilateral-projects-2026 "HTTP/1.1 200 OK"
+2026-07-13 01:42:13,648  HTTP Request: GET https://dst.gov.in/document/budget/detailed-demands-grants-2024-2025 "HTTP/1.1 200 OK"
+2026-07-13 01:42:15,649  HTTP Request: GET https://dst.gov.in/schemes-programmes "HTTP/1.1 200 OK"
+2026-07-13 01:42:15,692    IND002   DST                          +2 ~1 =5 err0  ok
+2026-07-13 01:42:51,330    IND003   DBT                          +0 ~0 =0 err0  skip ([WinError 10060] A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond)
+2026-07-13 01:42:51,768  HTTP Request: GET https://www.csir.res.in "HTTP/1.1 301 Moved Permanently"
+2026-07-13 01:42:51,820  HTTP Request: GET https://www.csir.res.in/hi "HTTP/1.1 200 OK"
+2026-07-13 01:42:53,789  HTTP Request: GET https://www.csir.res.in/hi/csir-annual-grantsbudget "HTTP/1.1 200 OK"
+2026-07-13 01:42:55,812  HTTP Request: GET https://www.csir.res.in/hi/news-call-for-proposals-announcements "HTTP/1.1 200 OK"
+2026-07-13 01:42:58,830  HTTP Request: GET https://www.csir.res.in/hi/News/Call-for-proposals/Announcements/raasaayanaika-hathaiyaaraon-kae-naisaedha-kae-laie-sangathana "HTTP/1.1 200 OK"
+2026-07-13 01:43:00,707  HTTP Request: GET https://www.csir.res.in/hi/News/Call-for-proposals/Announcements/paradhaanamantarai-anausandhaana-adhayakasa-paiemaarasai "HTTP/1.1 200 OK"
+2026-07-13 01:43:02,792  HTTP Request: GET https://www.csir.res.in/hi/News/Call-for-proposals/Announcements/sahayaogaatamaka-vaaijanaanaika-anausandhaana-kaarayakarama-2 "HTTP/1.1 200 OK"
+2026-07-13 01:43:03,786  HTTP Request: GET https://www.csir.res.in/hi/News/Call-for-proposals/Announcements/raolaainda-phaailaosaipa-antaima-taithai-01082026 "HTTP/1.1 200 OK"
+2026-07-13 01:43:06,654  HTTP Request: GET https://www.csir.res.in/hi/News/Call-for-proposals/Announcements/bhaarata-eu-ttc-kai-ev-baaitaraiyaon-kai-raisaaikalainga-kai "HTTP/1.1 200 OK"
+2026-07-13 01:43:07,764  HTTP Request: GET https://www.csir.res.in/hi/News/Call-for-proposals/Announcements/sakarainainga-aura-naidaana-kae-laie-abhauutapauurava "HTTP/1.1 200 OK"
+2026-07-13 01:43:07,879    IND004   CSIR                         +1 ~7 =0 err0  ok
+2026-07-13 01:44:08,237    IND005   ICMR                         +0 ~0 =0 err0  skip (blocked by robots.txt)
+2026-07-13 01:44:15,073  HTTP Request: GET https://dhr.gov.in "HTTP/1.1 302 Found"
+2026-07-13 01:44:15,149  HTTP Request: GET https://www.dhr.gov.in/ "HTTP/1.1 403 Forbidden"
+2026-07-13 01:44:15,150    IND006   DHR                          +0 ~0 =0 err0  skip (homepage status 403)
+2026-07-13 01:44:15,939  HTTP Request: GET https://www.birac.nic.in "HTTP/1.1 200 OK"
+2026-07-13 01:44:17,725  HTTP Request: GET https://www.birac.nic.in/desc_new.php?id=1347 "HTTP/1.1 200 OK"
+2026-07-13 01:44:19,622  HTTP Request: GET https://www.birac.nic.in/desc_new.php?id=1327 "HTTP/1.1 200 OK"
+2026-07-13 01:44:21,659  HTTP Request: GET https://www.birac.nic.in/desc_new.php?id=1319 "HTTP/1.1 200 OK"
+2026-07-13 01:44:23,683  HTTP Request: GET https://www.birac.nic.in/desc_new.php?id=1334 "HTTP/1.1 200 OK"
+2026-07-13 01:44:25,670  HTTP Request: GET https://www.birac.nic.in/cfp.php "HTTP/1.1 200 OK"
+2026-07-13 01:44:27,648  HTTP Request: GET https://www.birac.nic.in/desc_new.php?id=277 "HTTP/1.1 200 OK"
+2026-07-13 01:44:29,713  HTTP Request: GET https://www.birac.nic.in/desc_new.php?id=279 "HTTP/1.1 200 OK"
+2026-07-13 01:44:29,751    IND007   BIRAC                        +1 ~6 =0 err0  ok
+2026-07-13 01:44:31,901  HTTP Request: GET https://icssr.org "HTTP/1.1 200 OK"
+2026-07-13 01:44:35,899  HTTP Request: GET https://icssr.org/indo-german-funding-opportunity-joint-research-projects "HTTP/1.1 200 OK"
+2026-07-13 01:44:39,901  HTTP Request: GET https://icssr.org/announcements/call-applications-icssrs-postdoctoral-fellowship-2026 "HTTP/1.1 200 OK"
+2026-07-13 01:44:43,903  HTTP Request: GET https://icssr.org/announcements/call-applications-icssrs-senior-fellowship-2026 "HTTP/1.1 200 OK"
+2026-07-13 01:44:47,900  HTTP Request: GET https://icssr.org/announcements/call-applications-icssrs-doctoral-fellowships-financial-year-2026-27 "HTTP/1.1 200 OK"
+2026-07-13 01:44:51,895  HTTP Request: GET https://icssr.org/fellowships "HTTP/1.1 200 OK"
+2026-07-13 01:44:55,904  HTTP Request: GET https://icssr.org/research-projects "HTTP/1.1 200 OK"
+2026-07-13 01:44:59,903  HTTP Request: GET https://icssr.org/organization-international-and-national-seminars-conferences-india "HTTP/1.1 200 OK"
+2026-07-13 01:45:03,906  HTTP Request: GET https://icssr.org/research-survey-publication "HTTP/1.1 200 OK"
+2026-07-13 01:45:03,924    IND008   ICSSR                        +8 ~0 =0 err0  ok
+2026-07-13 01:45:04,059    IND009   ISRO                         +0 ~0 =0 err0  skip (blocked by robots.txt)
+2026-07-13 01:45:08,294  HTTP Request: GET https://insaindia.res.in "HTTP/1.1 200 OK"
+2026-07-13 01:45:09,375  HTTP Request: GET https://insaindia.res.in/scroll_news_pdf/SRFP-2026-Announcement.pdf "HTTP/1.1 200 OK"
+2026-07-13 01:45:11,975  HTTP Request: GET https://insaindia.res.in/isrf-call-2024-25/ "HTTP/1.1 404 Not Found"
+2026-07-13 01:45:13,678  HTTP Request: GET https://insaindia.res.in/scroll_news_pdf/FAST-SF-2026-Announcement.pdf "HTTP/1.1 200 OK"
+2026-07-13 01:45:15,533  HTTP Request: GET https://insaindia.res.in/scroll_news_pdf/INSPIRE-RESULT-2024.pdf "HTTP/1.1 200 OK"
+2026-07-13 01:45:17,718  HTTP Request: GET https://insaindia.res.in/scroll_news_pdf/INSPIRE-Faculty-Fellowship2025.pdf "HTTP/1.1 200 OK"
+2026-07-13 01:45:20,148  HTTP Request: GET https://insaindia.res.in/?page_id=963 "HTTP/1.1 404 Not Found"
+2026-07-13 01:45:22,270  HTTP Request: GET https://insaindia.res.in/isrf-call-2025-26/ "HTTP/1.1 200 OK"
+2026-07-13 01:45:25,311  HTTP Request: GET https://insaindia.res.in/insa-leads-programme/ "HTTP/1.1 200 OK"
+2026-07-13 01:45:25,520    IND010   INSA                         +2 ~0 =4 err2  ok
+2026-07-13 01:45:26,224  HTTP Request: GET https://sparc.iitkgp.ac.in "HTTP/1.1 200 OK"
+2026-07-13 01:45:26,230    IND011   SPARC                        +0 ~0 =0 err0  ok
+2026-07-13 01:45:28,531  HTTP Request: GET https://www.igstc.org "HTTP/1.1 200 OK"
+2026-07-13 01:45:32,526  HTTP Request: GET https://www.igstc.org/home/extension_grant "HTTP/1.1 200 OK"
+2026-07-13 01:45:36,518  HTTP Request: GET https://www.igstc.org/home/industrial_current_fellowships "HTTP/1.1 200 OK"
+2026-07-13 01:45:40,527  HTTP Request: GET https://www.igstc.org/home/industrial_fellowships_guidelines_2026 "HTTP/1.1 200 OK"
+2026-07-13 01:45:44,541  HTTP Request: GET https://www.igstc.org/home/industrial_fellowships_guidelines_faq_2026 "HTTP/1.1 200 OK"
+2026-07-13 01:45:48,522  HTTP Request: GET https://www.igstc.org/home/industrial_fellowship_forms "HTTP/1.1 200 OK"
+2026-07-13 01:45:52,538  HTTP Request: GET https://www.igstc.org/home/industrial_fellowships "HTTP/1.1 200 OK"
+2026-07-13 01:45:56,541  HTTP Request: GET https://www.igstc.org//home/industrial_fellowships_2025 "HTTP/1.1 200 OK"
+2026-07-13 01:46:00,538  HTTP Request: GET https://www.igstc.org/home/open_call "HTTP/1.1 200 OK"
+2026-07-13 01:46:00,564    IND012   IGSTC                        +8 ~0 =0 err0  ok
+2026-07-13 01:46:15,369    IND013   JCSTI                        +0 ~0 =0 err0  skip ([Errno 11001] getaddrinfo failed)
+2026-07-13 01:46:16,008  HTTP Request: GET https://iksindia.org "HTTP/1.1 200 OK"
+2026-07-13 01:46:16,027    IND014   IKS Division                 +0 ~0 =0 err0  ok
+2026-07-13 01:46:16,048    IND015   Ministry of Heavy Industries +0 ~0 =0 err0  skip (blocked by robots.txt)
+2026-07-13 01:46:18,199  HTTP Request: GET https://steel.gov.in "HTTP/1.1 200 OK"
+2026-07-13 01:46:22,165  HTTP Request: GET https://steel.gov.in/detailed-demands-for-grants "HTTP/1.1 200 OK"
+2026-07-13 01:46:22,217    IND016   Ministry of Steel            +1 ~0 =0 err0  ok
+2026-07-13 01:46:22,913  HTTP Request: GET https://www.usief.org.in "HTTP/1.1 200 OK"
+2026-07-13 01:46:24,871  HTTP Request: GET https://www.usief.org.in/fulbright-fellowships/fellowships-for-indian-citizen/ "HTTP/1.1 200 OK"
+2026-07-13 01:46:26,897  HTTP Request: GET https://www.usief.org.in/fulbright-fellowships/fellowships-for-u-s-citizen/ "HTTP/1.1 200 OK"
+2026-07-13 01:46:28,863  HTTP Request: GET https://www.usief.org.in/news/2027-28-hubert-h-humphrey-fellowship-program-announced-apply-now/ "HTTP/1.1 200 OK"
+2026-07-13 01:46:30,879  HTTP Request: GET https://www.usief.org.in/fulbright-fellowships/fellowships-for-indian-citizen/hubert-h-humphrey-fellowship-program/ "HTTP/1.1 200 OK"
+2026-07-13 01:46:32,870  HTTP Request: GET https://www.usief.org.in/news/https-www-usief-org-in-fulbright-fellowships-fellowships-for-indian-citizen-fulbright-foreign-language-teaching-assistant-flta-program/ "HTTP/1.1 200 OK"
+2026-07-13 01:46:34,871  HTTP Request: GET https://www.usief.org.in/fulbright-fellowships/fellowships-for-indian-citizen/fulbright-foreign-language-teaching-assistant-flta-program/ "HTTP/1.1 200 OK"
+2026-07-13 01:46:36,868  HTTP Request: GET https://www.usief.org.in/fulbright-fellowships/ "HTTP/1.1 200 OK"
+2026-07-13 01:46:36,932    INT001   USIEF                        +2 ~0 =5 err0  ok
+2026-07-13 01:46:37,423  HTTP Request: GET https://www.cefipra.org "HTTP/1.1 200 OK"
+2026-07-13 01:46:39,457  HTTP Request: GET https://www.cefipra.org/PgmMF.aspx?p=RC "HTTP/1.1 200 OK"
+2026-07-13 01:46:41,377  HTTP Request: GET https://www.cefipra.org/PgmAA.aspx?p=CS "HTTP/1.1 200 OK"
+2026-07-13 01:46:43,388  HTTP Request: GET https://www.cefipra.org/PgmIA.aspx?p=IR "HTTP/1.1 200 OK"
+2026-07-13 01:46:45,414  HTTP Request: GET https://www.cefipra.org/Docs/MarqueeDocs/Notice_for_All_programmes.pdf "HTTP/1.1 200 OK"
+2026-07-13 01:46:47,758  HTTP Request: GET https://www.cefipra.org/Prgms.aspx "HTTP/1.1 200 OK"
+2026-07-13 01:46:47,821    INT002   IFCPAR/CEFIPRA               +1 ~0 =4 err0  ok
+2026-07-13 01:46:49,740  HTTP Request: GET https://www.snf.ch "HTTP/1.1 307 Temporary Redirect"
+2026-07-13 01:46:50,818  HTTP Request: GET https://www.snf.ch/de "HTTP/1.1 200 OK"
+2026-07-13 01:46:51,686  HTTP Request: GET https://www.snf.ch/de/ORgUpoSFePiH6QCp/seite/foerderung-erhalten "HTTP/1.1 200 OK"
+2026-07-13 01:46:54,048  HTTP Request: GET https://www.snf.ch/de/LlLsqrrZVo4EqWui/seite/laufende-ausschreibungen "HTTP/1.1 200 OK"
+2026-07-13 01:46:55,664  HTTP Request: GET https://www.snf.ch/de/8Hai6BhjDyc3OPDH/seite/foerderung/neuigkeiten "HTTP/1.1 200 OK"
+2026-07-13 01:46:58,343  HTTP Request: GET https://www.snf.ch/de/eixmIzwCnCiezKQn/seite/foerderung/informationen-fuer-forschende "HTTP/1.1 200 OK"
+2026-07-13 01:46:59,695  HTTP Request: GET https://www.snf.ch/de/bdZnPuKZmtIoMs84/seite/foerderung/international "HTTP/1.1 200 OK"
+2026-07-13 01:47:02,037  HTTP Request: GET https://www.snf.ch/de/2QbX0vSpcmmylCya/seite/foerderung/projektmitarbeitende "HTTP/1.1 200 OK"
+2026-07-13 01:47:04,332  HTTP Request: GET https://www.snf.ch/de/IqmbmJEUNlpydenH/seite/foerderung/beitrags-und-ausfuehrungsreglement "HTTP/1.1 200 OK"
+2026-07-13 01:47:06,240  HTTP Request: GET https://www.snf.ch/de/Z2GsZbMCeccg4x9U/seite/foerderung/dokumente-formulare "HTTP/1.1 200 OK"
+2026-07-13 01:47:06,479    INT003   SNSF                         +5 ~0 =0 err0  ok
+2026-07-13 01:47:06,745    INT004   Business Finland             +0 ~0 =0 err0  skip (blocked by robots.txt)
+2026-07-13 01:47:07,690  HTTP Request: GET https://www.jsps.go.jp "HTTP/1.1 200 OK"
+2026-07-13 01:47:10,367  HTTP Request: GET https://www.jsps.go.jp/j-grantsinaid/ "HTTP/1.1 200 OK"
+2026-07-13 01:47:10,407    INT005   JSPS                         +0 ~0 =1 err0  ok
+2026-07-13 01:47:14,833  HTTP Request: GET https://www.nstc.gov.tw "HTTP/1.1 200 200"
+2026-07-13 01:47:18,515  HTTP Request: GET https://www.nstc.gov.tw/folksonomy/rfpList "HTTP/1.1 200 200"
+2026-07-13 01:47:22,173  HTTP Request: GET https://www.nstc.gov.tw/folksonomy/rfpList?l=ch "HTTP/1.1 200 200"
+2026-07-13 01:47:22,560    INT006   NSTC Taiwan                  +2 ~0 =0 err0  ok
+2026-07-13 01:47:24,088  HTTP Request: GET https://www.dfg.de "HTTP/1.1 200 OK"
+2026-07-13 01:47:26,098  HTTP Request: GET https://www.dfg.de/de/foerderung/foerdermoeglichkeiten/programme "HTTP/1.1 200 OK"
+2026-07-13 01:47:28,296  HTTP Request: GET https://www.dfg.de/de/foerderung/antrag-foerderprozess/einzelfoerderung "HTTP/1.1 200 OK"
+2026-07-13 01:47:30,305  HTTP Request: GET https://www.dfg.de/de/foerderung/antrag-foerderprozess/acknowledgements "HTTP/1.1 200 OK"
+2026-07-13 01:47:32,068  HTTP Request: GET https://www.dfg.de/de/foerderung "HTTP/1.1 200 OK"
+2026-07-13 01:47:34,181  HTTP Request: GET https://www.dfg.de/de/foerderung/foerdermoeglichkeiten/ausschreibungen "HTTP/1.1 200 OK"
+2026-07-13 01:47:36,316  HTTP Request: GET https://www.dfg.de/de/foerderung/foerdermoeglichkeiten/infoveranstaltungen-foerderung "HTTP/1.1 200 OK"
+2026-07-13 01:47:38,289  HTTP Request: GET https://www.dfg.de/de/foerderung/foerdermoeglichkeiten/foerderung "HTTP/1.1 200 OK"
+2026-07-13 01:47:40,441  HTTP Request: GET https://www.dfg.de/de/foerderung/foerdermoeglichkeiten/laender-regionen "HTTP/1.1 200 OK"
+2026-07-13 01:47:41,204    INT007   DFG                          +6 ~0 =2 err0  ok
+2026-07-13 01:47:43,034  HTTP Request: GET https://www.humboldt-foundation.de "HTTP/1.1 200 OK"
+2026-07-13 01:47:44,900  HTTP Request: GET https://www.humboldt-foundation.de/bewerben/foerderung-waehrend-des-aufenthalts "HTTP/1.1 200 OK"
+2026-07-13 01:47:46,963  HTTP Request: GET https://www.humboldt-foundation.de/bewerben/alumnifoerderung "HTTP/1.1 200 OK"
+2026-07-13 01:47:49,119  HTTP Request: GET https://www.humboldt-foundation.de/entdecken/newsroom/pressemitteilungen/attraktivere-foerderung-fuer-spitzenforschung "HTTP/1.1 200 OK"
+2026-07-13 01:47:51,054  HTTP Request: GET https://www.humboldt-foundation.de/bewerben/foerderprogramme/humboldt-forschungsstipendium "HTTP/1.1 200 OK"
+2026-07-13 01:47:52,921  HTTP Request: GET https://www.humboldt-foundation.de/bewerben/foerderprogramme "HTTP/1.1 200 OK"
+2026-07-13 01:47:54,977  HTTP Request: GET https://www.humboldt-foundation.de/entdecken/newsroom/aktuelles/von-argentinien-nach-deutschland-paula-tribellis-humboldt-forschungsstipendium-mit-kind "HTTP/1.1 200 OK"
+2026-07-13 01:47:56,926  HTTP Request: GET https://www.humboldt-foundation.de/bewerben/foerderprogramme/henriette-herz-scouting-programm "HTTP/1.1 200 OK"
+2026-07-13 01:47:59,108  HTTP Request: GET https://www.humboldt-foundation.de/bewerben/foerderprogramme/programme-a-bis-z "HTTP/1.1 200 OK"
+2026-07-13 01:47:59,151    INT008   Alexander von Humboldt Found +4 ~2 =2 err0  ok
+2026-07-13 01:48:00,678  HTTP Request: GET https://anr.fr "HTTP/1.1 200 OK"
+2026-07-13 01:48:00,681    INT009   ANR France                   +0 ~0 =0 err0  ok
+2026-07-13 01:48:02,207  HTTP Request: GET https://www.inria.fr "HTTP/1.1 301 Moved Permanently"
+2026-07-13 01:48:02,411  HTTP Request: GET https://www.inria.fr/fr "HTTP/1.1 200 OK"
+2026-07-13 01:48:02,626    INT010   Inria                        +0 ~0 =0 err0  ok
+2026-07-13 01:48:05,176  HTTP Request: GET https://www.bmftr.bund.de "HTTP/1.1 302 Found"
+2026-07-13 01:48:05,341  HTTP Request: GET https://www.bmftr.bund.de/DE/Home/home_node.html "HTTP/1.1 200 OK"
+2026-07-13 01:48:08,942  HTTP Request: GET https://www.bmftr.bund.de/DE/Forschung/AkademischeLaufbahn/Studium/StudentischeVerbaendefoerderung/studentischeverbaendefoerderung_node.html "HTTP/1.1 200 OK"
+2026-07-13 01:48:11,665  HTTP Request: GET https://www.bmftr.bund.de/DE/Forschung/AkademischeLaufbahn/Studium/Finanzierung/Stipendien/begabtenfoerderungswerke/begabtenfoerderungswerke_node.html "HTTP/1.1 200 OK"
+2026-07-13 01:48:13,808  HTTP Request: GET https://www.bmftr.bund.de/DE/Forschung/Wissenschaftssystem/WissenschaftlicheKarriere/Promotionsstipendium/promotionsstipendium_node.html "HTTP/1.1 200 OK"
+2026-07-13 01:48:16,587  HTTP Request: GET https://www.bmftr.bund.de/DE/Forschung/AkademischeLaufbahn/Finanzierung/Aufstiegsstipendium/aufstiegsstipendium_node.html "HTTP/1.1 200 OK"
+2026-07-13 01:48:18,745  HTTP Request: GET https://www.bmftr.bund.de/DE/Forschung/AkademischeLaufbahn/Finanzierung/Weiterbildungsstipendium/weiterbildungsstipendium_node.html "HTTP/1.1 200 OK"
+2026-07-13 01:48:21,286  HTTP Request: GET https://www.bmftr.bund.de/DE/Ministerium/Ausschreibungen/ausschreibungen_node.html "HTTP/1.1 200 OK"
+2026-07-13 01:48:22,056    INT011   BMFTR Germany                +6 ~0 =0 err0  ok
+2026-07-13 01:48:23,685  HTTP Request: GET https://research-and-innovation.ec.europa.eu/funding/funding-opportunities/funding-programmes-and-open-calls/horizon-europe_en "HTTP/1.1 200 OK"
+2026-07-13 01:48:25,792  HTTP Request: GET https://research-and-innovation.ec.europa.eu/funding/funding-opportunities/funding-programmes-and-open-calls_en "HTTP/1.1 200 OK"
+2026-07-13 01:48:27,580  HTTP Request: GET https://research-and-innovation.ec.europa.eu/funding/funding-opportunities_en "HTTP/1.1 200 OK"
+2026-07-13 01:48:29,526  HTTP Request: GET https://research-and-innovation.ec.europa.eu/funding/funding-opportunities/funding-programmes-and-open-calls/horizon-europe_en "HTTP/1.1 200 OK"
+2026-07-13 01:48:31,633  HTTP Request: GET https://research-and-innovation.ec.europa.eu/funding/funding-opportunities/funding-programmes-and-open-calls/horizon-europe_bg "HTTP/1.1 301 Moved Permanently"
+2026-07-13 01:48:31,831  HTTP Request: GET https://research-and-innovation.ec.europa.eu/funding/funding-opportunities/funding-programmes-and-open-calls/horizon-europe_en?prefLang=bg "HTTP/1.1 200 OK"
+2026-07-13 01:48:33,608  HTTP Request: GET https://research-and-innovation.ec.europa.eu/funding/funding-opportunities/funding-programmes-and-open-calls/horizon-europe_es "HTTP/1.1 301 Moved Permanently"
+2026-07-13 01:48:33,772  HTTP Request: GET https://research-and-innovation.ec.europa.eu/funding/funding-opportunities/funding-programmes-and-open-calls/horizon-europe_en?prefLang=es "HTTP/1.1 200 OK"
+2026-07-13 01:48:35,583  HTTP Request: GET https://research-and-innovation.ec.europa.eu/funding/funding-opportunities/funding-programmes-and-open-calls/horizon-europe_cs "HTTP/1.1 429 Too Many Requests"
+2026-07-13 01:48:37,764  HTTP Request: GET https://research-and-innovation.ec.europa.eu/funding/funding-opportunities/funding-programmes-and-open-calls/horizon-europe_da "HTTP/1.1 301 Moved Permanently"
+2026-07-13 01:48:37,998  HTTP Request: GET https://research-and-innovation.ec.europa.eu/funding/funding-opportunities/funding-programmes-and-open-calls/horizon-europe_en?prefLang=da "HTTP/1.1 200 OK"
+2026-07-13 01:48:39,563  HTTP Request: GET https://research-and-innovation.ec.europa.eu/funding/funding-opportunities/funding-programmes-and-open-calls/horizon-europe_de "HTTP/1.1 301 Moved Permanently"
+2026-07-13 01:48:39,735  HTTP Request: GET https://research-and-innovation.ec.europa.eu/funding/funding-opportunities/funding-programmes-and-open-calls/horizon-europe_en?prefLang=de "HTTP/1.1 200 OK"
+2026-07-13 01:48:39,780    INT012   European Commission (Horizon +5 ~1 =1 err1  ok
+2026-07-13 01:48:42,289  HTTP Request: GET https://www.clean-hydrogen.europa.eu "HTTP/1.1 302 Moved Temporarily"
+2026-07-13 01:48:42,693  HTTP Request: GET https://www.clean-hydrogen.europa.eu/select-language?destination=/node/1 "HTTP/1.1 200 OK"
+2026-07-13 01:48:42,695    INT013   Clean Hydrogen Partnership   +0 ~0 =0 err0  ok
+2026-07-13 01:48:44,358  HTTP Request: GET http://brics-sti.org "HTTP/1.1 200 OK"
+2026-07-13 01:48:46,340  HTTP Request: GET http://brics-sti.org/index.php?p=opportunities "HTTP/1.1 200 OK"
+2026-07-13 01:48:48,332  HTTP Request: GET http://brics-sti.org?p=new/42 "HTTP/1.1 200 OK"
+2026-07-13 01:48:50,349  HTTP Request: GET http://brics-sti.org/index.php?p=new/42/ "HTTP/1.1 200 OK"
+2026-07-13 01:48:52,356  HTTP Request: GET http://brics-sti.org/index.php?p=new/38/ "HTTP/1.1 200 OK"
+2026-07-13 01:48:52,386    INT014   BRICS STI Framework Programm +4 ~0 =0 err0  ok
+2026-07-13 01:48:52,797  HTTP Request: GET https://www.aistic.gov.in "HTTP/1.1 302 Found"
+2026-07-13 01:48:52,816  HTTP Request: GET https://www.aistic.gov.in/ASEAN/HomePage "HTTP/1.1 200 "
+2026-07-13 01:48:54,785  HTTP Request: GET https://www.aistic.gov.in/ASEAN/aistdfFellowship "HTTP/1.1 200 "
+2026-07-13 01:48:56,782  HTTP Request: GET https://www.aistic.gov.in/ASEAN/aistdfFUNDING "HTTP/1.1 200 "
+2026-07-13 01:48:56,832    INT015   ASEAN-India S&T Cooperation  +2 ~0 =0 err0  ok
+2026-07-13 01:48:58,454  HTTP Request: GET https://www.snf.ch/en/UKQxILyeulyH9qfi/funding/programmes/bilateral-programmes-indo "HTTP/1.1 200 OK"
+2026-07-13 01:49:00,045  HTTP Request: GET https://www.snf.ch/en/A7fep1IPxz1XezVS/page/find-funding-scheme "HTTP/1.1 200 OK"
+2026-07-13 01:49:02,070  HTTP Request: GET https://www.snf.ch/de/UKQxILyeulyH9qfi/foerderung/programme/bilaterale-programme-indo "HTTP/1.1 200 OK"
+2026-07-13 01:49:03,816  HTTP Request: GET https://www.snf.ch/en/ORgUpoSFePiH6QCp/page/get-a-grant "HTTP/1.1 200 OK"
+2026-07-13 01:49:08,834  HTTP Request: GET https://www.snf.ch/en/mKVdFSoD7dwtinOR/funding/supplementary-measures/mobility-grants-in-projects "HTTP/1.1 200 OK"
+2026-07-13 01:49:10,788  HTTP Request: GET https://www.snf.ch/en/ovil4ntsX4h2jEiU/funding/supplementary-measures/flexibility-grant "HTTP/1.1 200 OK"
+2026-07-13 01:49:12,210  HTTP Request: GET https://www.snf.ch/en/gCCYPmblxBCAFNZg/funding/supplementary-measures/gender-equality-grant "HTTP/1.1 200 OK"
+2026-07-13 01:49:14,818  HTTP Request: GET https://www.snf.ch/en/BMM7TPWBJpsuIIXp/page/snsf-and-innosuisse-funding-scheme-events "HTTP/1.1 200 OK"
+2026-07-13 01:49:15,297  HTTP Request: GET https://www.snf.ch/en/UKQxILyeulyH9qfi/funding/programmes/bilateral-programmes-indo "HTTP/1.1 200 OK"
+2026-07-13 01:49:15,337    INT016   Indo-Swiss Joint Research Pr +8 ~0 =0 err0  ok
+2026-07-13 01:49:15,499    FND001   Wadhwani Foundation          +0 ~0 =0 err0  skip (blocked by robots.txt)
+2026-07-13 01:49:15,962    FND002   Lung Cancer Research Foundat +0 ~0 =0 err0  skip (blocked by robots.txt)
+2026-07-13 01:49:30,783    FND003   OUCH-I                       +0 ~0 =0 err0  skip ([Errno 11001] getaddrinfo failed)
+2026-07-13 01:49:31,258  HTTP Request: GET https://www.stanford.edu "HTTP/1.1 200 OK"
+2026-07-13 01:49:31,405    UNI001   Stanford University Programs +0 ~0 =0 err0  ok
+2026-07-13 01:49:33,226  HTTP Request: GET https://www.biu.ac.il "HTTP/1.1 200 OK"
+2026-07-13 01:49:35,009  HTTP Request: GET https://www.biu.ac.il/scholarships "HTTP/1.1 302 Moved Temporarily"
+2026-07-13 01:49:35,968  HTTP Request: GET https://validate.perfdrive.com/?ssa=5e08f6f3-0ec9-48ca-a070-8ffc779a9823&ssb=26371214864&ssc=https%3A%2F%2Fwww.biu.ac.il%2Fscholarships&ssi=f0909298-d06e-4172-a647-5a5f8b77b132&ssk=botmanager_support@radware.com&ssm=95119944462974231101638154104314&ssn=b207b2b944a6706771bafbbd931758d38aae669cc0f2-eaa9-4d83-9e913f&sso=95cad807-096b0db1018d86e9d5ed972909262b0b236505026c10eba1&ssp=08044854341783868780178382595054219&ssq=45428608757671121594387576502930002061176&ssr=MTAzLjQzLjM1LjMx&sst=FundRadarBot/0.1%20(+https://github.com/your-org/fundradar;%20research%20aggregator)&ssu=&ssv=&ssw=&ssx=eyJ1em14IjoiN2Y5MDAwODc5OTM4YmUtMDU1NS00MmUxLWJhMmEtMTk4ZTdmOTZhNTdkMS0xNzgzODg3NTc2MDMxMC04YjQyYTk3YTczMGEzM2U4MTAiLCJfX3V6bWYiOiI3ZjkwMDA2NjljYzBmMi1lYWE5LTRkODMtOTgwNy0wOTZiMGRiMTAxOGQxLTE3ODM4ODc1NzYwMzEwLTAwNGEyMDhjOWEzMzZhZWZhNmUxMCIsInJkIjoiYml1LmFjLmlsIn0= "HTTP/1.1 200 OK"
+2026-07-13 01:49:35,992    UNI002   Bar-Ilan University Grants   +0 ~1 =0 err0  ok
+2026-07-13 01:49:36,710  HTTP Request: GET https://www.iith.ac.in "HTTP/1.1 200 OK"
+2026-07-13 01:49:38,616  HTTP Request: GET https://www.iith.ac.in/academics/programmes-offered/ "HTTP/1.1 200 OK"
+2026-07-13 01:49:38,636    UNI003   IIT Hyderabad WIN CoE        +0 ~0 =1 err0  ok
+2026-07-13 01:49:42,136  HTTP Request: GET https://sreepvf.org "HTTP/1.1 200 OK"
+2026-07-13 01:49:42,980  HTTP Request: GET https://sreepvf.org/research-grants/ "HTTP/1.1 200 OK"
+2026-07-13 01:49:44,802  HTTP Request: GET https://sreepvf.org/the-results-of-the-preliminary-round-of-the-2026-sree-ramakrishna-paramahamsa-agriculture-grant-have-been-communicated-to-all-applicants/ "HTTP/1.1 200 OK"
+2026-07-13 01:49:46,655  HTTP Request: GET https://sreepvf.org/research-grants "HTTP/1.1 301 Moved Permanently"
+2026-07-13 01:49:47,008  HTTP Request: GET https://sreepvf.org/research-grants/ "HTTP/1.1 200 OK"
+2026-07-13 01:49:47,095    FND004   Sree Padmavathi Venkateswara +3 ~0 =0 err0  ok
+2026-07-13 01:50:01,947    INS001   BIRCs                        +0 ~0 =0 err0  skip ([Errno 11001] getaddrinfo failed)
+2026-07-13 01:50:02,539  HTTP Request: GET https://bilink.org "HTTP/1.1 200 OK"
+2026-07-13 01:50:02,541    INS002   BILINK                       +0 ~0 =0 err0  ok
+2026-07-13 01:50:02,541  SCRAPE DONE  new=71 changed=18 unchanged=33 errors=3
+2026-07-13 01:50:02,541  EXTRACT SKIPPED (--no-extract)
+2026-07-13 01:50:02,541  PIPELINE END
+2026-07-13 02:19:21,406  ============================================================
+2026-07-13 02:19:21,407  PIPELINE START  provider=gemini  limit=all
+2026-07-13 02:19:21,811  HTTP Request: GET https://anrfonline.in "HTTP/1.1 302 Found"
+2026-07-13 02:19:21,820  HTTP Request: GET https://anrfonline.in/ANRF/HomePage "HTTP/1.1 200 "
+2026-07-13 02:19:23,737  HTTP Request: GET https://anrfonline.in/ANRF/Ramanujan_fellowship?HomePage=New "HTTP/1.1 200 "
+2026-07-13 02:19:25,800  HTTP Request: GET https://anrfonline.in/ANRF/jcbose_fellowship?HomePage=New "HTTP/1.1 200 "
+2026-07-13 02:19:27,789  HTTP Request: GET https://anrfonline.in/ANRF/arg_anrf?HomePage=New "HTTP/1.1 200 "
+2026-07-13 02:19:29,797  HTTP Request: GET https://anrfonline.in/ANRF/inrg_anrf?HomePage=New "HTTP/1.1 200 "
+2026-07-13 02:19:31,769  HTTP Request: GET https://anrfonline.in/ANRF/jcbose_anrf "HTTP/1.1 200 "
+2026-07-13 02:19:33,780  HTTP Request: GET https://anrfonline.in/ANRF/npdf?HomePage=New "HTTP/1.1 200 "
+2026-07-13 02:19:35,814  HTTP Request: GET https://anrfonline.in/ANRF/ecrg_anrf?HomePage=New "HTTP/1.1 200 "
+2026-07-13 02:19:37,824  HTTP Request: GET https://anrfonline.in/ANRF/emr?HomePage=New "HTTP/1.1 200 "
+2026-07-13 02:19:37,904    IND001   ANRF                         +0 ~0 =8 err0  ok
+2026-07-13 02:19:38,736  HTTP Request: GET https://dst.gov.in "HTTP/1.1 200 OK"
+2026-07-13 02:19:40,630  HTTP Request: GET https://dst.gov.in/call-for-proposals "HTTP/1.1 200 OK"
+2026-07-13 02:19:42,574  HTTP Request: GET https://dst.gov.in/callforproposals-1 "HTTP/1.1 200 OK"
+2026-07-13 02:19:49,037  HTTP Request: GET https://dst.gov.in/callforproposals/india-austria-science-technology-cooperation-call-proposals-2026 "HTTP/1.1 200 OK"
+2026-07-13 02:19:49,785  HTTP Request: GET https://dst.gov.in/callforproposals/dst-jsps-call-proposal-2026-under-indo-japan-cooperative-science-programme-ijcsp "HTTP/1.1 200 OK"
+2026-07-13 02:19:51,333  HTTP Request: GET http://dst.gov.in/fellowship-opportunities-researchers "HTTP/1.1 301 Moved Permanently"
+2026-07-13 02:19:51,619  HTTP Request: GET https://dst.gov.in/fellowship-opportunities-researchers "HTTP/1.1 200 OK"
+2026-07-13 02:19:53,795  HTTP Request: GET https://dst.gov.in/callforproposals/brics-sti-framework-programme-7th-coordinated-call-brics-multilateral-projects-2026 "HTTP/1.1 200 OK"
+2026-07-13 02:19:55,575  HTTP Request: GET https://dst.gov.in/document/budget/detailed-demands-grants-2024-2025 "HTTP/1.1 200 OK"
+2026-07-13 02:19:57,559  HTTP Request: GET https://dst.gov.in/schemes-programmes "HTTP/1.1 200 OK"
+2026-07-13 02:19:57,590    IND002   DST                          +0 ~0 =8 err0  ok
+2026-07-13 02:21:36,647    IND003   DBT                          +0 ~0 =0 err0  skip ([WinError 10060] A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond)
+2026-07-13 02:21:37,244  HTTP Request: GET https://www.csir.res.in "HTTP/1.1 301 Moved Permanently"
+2026-07-13 02:21:37,292  HTTP Request: GET https://www.csir.res.in/hi "HTTP/1.1 200 OK"
+2026-07-13 02:21:39,300  HTTP Request: GET https://www.csir.res.in/hi/csir-annual-grantsbudget "HTTP/1.1 200 OK"
+2026-07-13 02:21:41,317  HTTP Request: GET https://www.csir.res.in/hi/news-call-for-proposals-announcements "HTTP/1.1 200 OK"
+2026-07-13 02:21:43,307  HTTP Request: GET https://www.csir.res.in/hi/News/Call-for-proposals/Announcements/raasaayanaika-hathaiyaaraon-kae-naisaedha-kae-laie-sangathana "HTTP/1.1 200 OK"
+2026-07-13 02:21:45,235  HTTP Request: GET https://www.csir.res.in/hi/News/Call-for-proposals/Announcements/paradhaanamantarai-anausandhaana-adhayakasa-paiemaarasai "HTTP/1.1 200 OK"
+2026-07-13 02:21:47,327  HTTP Request: GET https://www.csir.res.in/hi/News/Call-for-proposals/Announcements/sahayaogaatamaka-vaaijanaanaika-anausandhaana-kaarayakarama-2 "HTTP/1.1 200 OK"
+2026-07-13 02:21:49,314  HTTP Request: GET https://www.csir.res.in/hi/News/Call-for-proposals/Announcements/raolaainda-phaailaosaipa-antaima-taithai-01082026 "HTTP/1.1 200 OK"
+2026-07-13 02:21:51,316  HTTP Request: GET https://www.csir.res.in/hi/News/Call-for-proposals/Announcements/bhaarata-eu-ttc-kai-ev-baaitaraiyaon-kai-raisaaikalainga-kai "HTTP/1.1 200 OK"
+2026-07-13 02:21:53,330  HTTP Request: GET https://www.csir.res.in/hi/News/Call-for-proposals/Announcements/sakarainainga-aura-naidaana-kae-laie-abhauutapauurava "HTTP/1.1 200 OK"
+2026-07-13 02:21:53,519    IND004   CSIR                         +0 ~0 =8 err0  ok
+2026-07-13 02:22:53,880    IND005   ICMR                         +0 ~0 =0 err0  skip (blocked by robots.txt)
+2026-07-13 02:22:54,356  HTTP Request: GET https://dhr.gov.in "HTTP/1.1 302 Found"
+2026-07-13 02:22:54,562  HTTP Request: GET https://www.dhr.gov.in/ "HTTP/1.1 403 Forbidden"
+2026-07-13 02:22:54,563    IND006   DHR                          +0 ~0 =0 err0  skip (homepage status 403)
+2026-07-13 02:22:55,266  HTTP Request: GET https://www.birac.nic.in "HTTP/1.1 200 OK"
+2026-07-13 02:22:57,173  HTTP Request: GET https://www.birac.nic.in/desc_new.php?id=1347 "HTTP/1.1 200 OK"
+2026-07-13 02:22:59,142  HTTP Request: GET https://www.birac.nic.in/desc_new.php?id=1327 "HTTP/1.1 200 OK"
+2026-07-13 02:23:01,115  HTTP Request: GET https://www.birac.nic.in/desc_new.php?id=1319 "HTTP/1.1 200 OK"
+2026-07-13 02:23:03,183  HTTP Request: GET https://www.birac.nic.in/desc_new.php?id=1334 "HTTP/1.1 200 OK"
+2026-07-13 02:23:05,102  HTTP Request: GET https://www.birac.nic.in/cfp.php "HTTP/1.1 200 OK"
+2026-07-13 02:23:07,267  HTTP Request: GET https://www.birac.nic.in/desc_new.php?id=277 "HTTP/1.1 200 OK"
+2026-07-13 02:23:09,136  HTTP Request: GET https://www.birac.nic.in/desc_new.php?id=279 "HTTP/1.1 200 OK"
+2026-07-13 02:23:09,158    IND007   BIRAC                        +0 ~0 =7 err0  ok
+2026-07-13 02:23:11,231  HTTP Request: GET https://icssr.org "HTTP/1.1 200 OK"
+2026-07-13 02:23:15,232  HTTP Request: GET https://icssr.org/indo-german-funding-opportunity-joint-research-projects "HTTP/1.1 200 OK"
+2026-07-13 02:23:19,212  HTTP Request: GET https://icssr.org/announcements/call-applications-icssrs-postdoctoral-fellowship-2026 "HTTP/1.1 200 OK"
+2026-07-13 02:23:23,226  HTTP Request: GET https://icssr.org/announcements/call-applications-icssrs-senior-fellowship-2026 "HTTP/1.1 200 OK"
+2026-07-13 02:23:27,233  HTTP Request: GET https://icssr.org/announcements/call-applications-icssrs-doctoral-fellowships-financial-year-2026-27 "HTTP/1.1 200 OK"
+2026-07-13 02:23:31,225  HTTP Request: GET https://icssr.org/fellowships "HTTP/1.1 200 OK"
+2026-07-13 02:23:35,234  HTTP Request: GET https://icssr.org/research-projects "HTTP/1.1 200 OK"
+2026-07-13 02:23:39,232  HTTP Request: GET https://icssr.org/organization-international-and-national-seminars-conferences-india "HTTP/1.1 200 OK"
+2026-07-13 02:23:43,215  HTTP Request: GET https://icssr.org/research-survey-publication "HTTP/1.1 200 OK"
+2026-07-13 02:23:43,227    IND008   ICSSR                        +0 ~0 =8 err0  ok
+2026-07-13 02:23:43,356    IND009   ISRO                         +0 ~0 =0 err0  skip (blocked by robots.txt)
+2026-07-13 02:23:46,597  HTTP Request: GET https://insaindia.res.in "HTTP/1.1 200 OK"
+2026-07-13 02:23:48,470  HTTP Request: GET https://insaindia.res.in/scroll_news_pdf/SRFP-2026-Announcement.pdf "HTTP/1.1 200 OK"
+2026-07-13 02:23:51,284  HTTP Request: GET https://insaindia.res.in/isrf-call-2024-25/ "HTTP/1.1 404 Not Found"
+2026-07-13 02:23:52,611  HTTP Request: GET https://insaindia.res.in/scroll_news_pdf/FAST-SF-2026-Announcement.pdf "HTTP/1.1 200 OK"
+2026-07-13 02:23:54,448  HTTP Request: GET https://insaindia.res.in/scroll_news_pdf/INSPIRE-RESULT-2024.pdf "HTTP/1.1 200 OK"
+2026-07-13 02:23:56,565  HTTP Request: GET https://insaindia.res.in/scroll_news_pdf/INSPIRE-Faculty-Fellowship2025.pdf "HTTP/1.1 200 OK"
+2026-07-13 02:23:59,331  HTTP Request: GET https://insaindia.res.in/?page_id=963 "HTTP/1.1 404 Not Found"
+2026-07-13 02:24:01,614  HTTP Request: GET https://insaindia.res.in/isrf-call-2025-26/ "HTTP/1.1 200 OK"
+2026-07-13 02:24:03,249  HTTP Request: GET https://insaindia.res.in/insa-leads-programme/ "HTTP/1.1 200 OK"
+2026-07-13 02:24:03,455    IND010   INSA                         +0 ~0 =6 err2  ok
+2026-07-13 02:24:04,059  HTTP Request: GET https://sparc.iitkgp.ac.in "HTTP/1.1 200 OK"
+2026-07-13 02:24:04,066    IND011   SPARC                        +0 ~0 =0 err0  ok
+2026-07-13 02:24:06,402  HTTP Request: GET https://www.igstc.org "HTTP/1.1 200 OK"
+2026-07-13 02:24:10,412  HTTP Request: GET https://www.igstc.org/home/extension_grant "HTTP/1.1 200 OK"
+2026-07-13 02:24:14,389  HTTP Request: GET https://www.igstc.org/home/industrial_current_fellowships "HTTP/1.1 200 OK"
+2026-07-13 02:24:18,408  HTTP Request: GET https://www.igstc.org/home/industrial_fellowships_guidelines_2026 "HTTP/1.1 200 OK"
+2026-07-13 02:24:22,408  HTTP Request: GET https://www.igstc.org/home/industrial_fellowships_guidelines_faq_2026 "HTTP/1.1 200 OK"
+2026-07-13 02:24:26,408  HTTP Request: GET https://www.igstc.org/home/industrial_fellowship_forms "HTTP/1.1 200 OK"
+2026-07-13 02:24:30,414  HTTP Request: GET https://www.igstc.org/home/industrial_fellowships "HTTP/1.1 200 OK"
+2026-07-13 02:24:34,407  HTTP Request: GET https://www.igstc.org//home/industrial_fellowships_2025 "HTTP/1.1 200 OK"
+2026-07-13 02:24:38,416  HTTP Request: GET https://www.igstc.org/home/open_call "HTTP/1.1 200 OK"
+2026-07-13 02:24:38,441    IND012   IGSTC                        +0 ~0 =8 err0  ok
+2026-07-13 02:24:53,386    IND013   JCSTI                        +0 ~0 =0 err0  skip ([Errno 11001] getaddrinfo failed)
+2026-07-13 02:24:54,047  HTTP Request: GET https://iksindia.org "HTTP/1.1 200 OK"
+2026-07-13 02:24:54,068    IND014   IKS Division                 +0 ~0 =0 err0  ok
+2026-07-13 02:24:54,191    IND015   Ministry of Heavy Industries +0 ~0 =0 err0  skip (blocked by robots.txt)
+2026-07-13 02:24:56,420  HTTP Request: GET https://steel.gov.in "HTTP/1.1 200 OK"
+2026-07-13 02:25:00,396  HTTP Request: GET https://steel.gov.in/detailed-demands-for-grants "HTTP/1.1 200 OK"
+2026-07-13 02:25:00,461    IND016   Ministry of Steel            +0 ~0 =1 err0  ok
+2026-07-13 02:25:01,071  HTTP Request: GET https://www.usief.org.in "HTTP/1.1 200 OK"
+2026-07-13 02:25:03,016  HTTP Request: GET https://www.usief.org.in/fulbright-fellowships/fellowships-for-indian-citizen/ "HTTP/1.1 200 OK"
+2026-07-13 02:25:05,000  HTTP Request: GET https://www.usief.org.in/fulbright-fellowships/fellowships-for-u-s-citizen/ "HTTP/1.1 200 OK"
+2026-07-13 02:25:06,995  HTTP Request: GET https://www.usief.org.in/news/2027-28-hubert-h-humphrey-fellowship-program-announced-apply-now/ "HTTP/1.1 200 OK"
+2026-07-13 02:25:09,001  HTTP Request: GET https://www.usief.org.in/fulbright-fellowships/fellowships-for-indian-citizen/hubert-h-humphrey-fellowship-program/ "HTTP/1.1 200 OK"
+2026-07-13 02:25:10,989  HTTP Request: GET https://www.usief.org.in/news/https-www-usief-org-in-fulbright-fellowships-fellowships-for-indian-citizen-fulbright-foreign-language-teaching-assistant-flta-program/ "HTTP/1.1 200 OK"
+2026-07-13 02:25:12,997  HTTP Request: GET https://www.usief.org.in/fulbright-fellowships/fellowships-for-indian-citizen/fulbright-foreign-language-teaching-assistant-flta-program/ "HTTP/1.1 200 OK"
+2026-07-13 02:25:15,013  HTTP Request: GET https://www.usief.org.in/fulbright-fellowships/ "HTTP/1.1 200 OK"
+2026-07-13 02:25:15,088    INT001   USIEF                        +0 ~0 =7 err0  ok
+2026-07-13 02:25:15,529  HTTP Request: GET https://www.cefipra.org "HTTP/1.1 200 OK"
+2026-07-13 02:25:17,577  HTTP Request: GET https://www.cefipra.org/PgmMF.aspx?p=RC "HTTP/1.1 200 OK"
+2026-07-13 02:25:19,506  HTTP Request: GET https://www.cefipra.org/PgmAA.aspx?p=CS "HTTP/1.1 200 OK"
+2026-07-13 02:25:21,648  HTTP Request: GET https://www.cefipra.org/PgmIA.aspx?p=IR "HTTP/1.1 200 OK"
+2026-07-13 02:25:23,508  HTTP Request: GET https://www.cefipra.org/Docs/MarqueeDocs/Notice_for_All_programmes.pdf "HTTP/1.1 200 OK"
+2026-07-13 02:25:25,525  HTTP Request: GET https://www.cefipra.org/Prgms.aspx "HTTP/1.1 200 OK"
+2026-07-13 02:25:25,593    INT002   IFCPAR/CEFIPRA               +0 ~0 =5 err0  ok
+2026-07-13 02:25:27,313  HTTP Request: GET https://www.snf.ch "HTTP/1.1 307 Temporary Redirect"
+2026-07-13 02:25:27,319  HTTP Request: GET https://www.snf.ch/de "HTTP/1.1 200 OK"
+2026-07-13 02:25:28,675  HTTP Request: GET https://www.snf.ch/de/ORgUpoSFePiH6QCp/seite/foerderung-erhalten "HTTP/1.1 200 OK"
+2026-07-13 02:25:30,665  HTTP Request: GET https://www.snf.ch/de/LlLsqrrZVo4EqWui/seite/laufende-ausschreibungen "HTTP/1.1 200 OK"
+2026-07-13 02:25:32,628  HTTP Request: GET https://www.snf.ch/de/8Hai6BhjDyc3OPDH/seite/foerderung/neuigkeiten "HTTP/1.1 200 OK"
+2026-07-13 02:25:34,661  HTTP Request: GET https://www.snf.ch/de/eixmIzwCnCiezKQn/seite/foerderung/informationen-fuer-forschende "HTTP/1.1 200 OK"
+2026-07-13 02:25:36,689  HTTP Request: GET https://www.snf.ch/de/bdZnPuKZmtIoMs84/seite/foerderung/international "HTTP/1.1 200 OK"
+2026-07-13 02:25:38,681  HTTP Request: GET https://www.snf.ch/de/2QbX0vSpcmmylCya/seite/foerderung/projektmitarbeitende "HTTP/1.1 200 OK"
+2026-07-13 02:25:40,676  HTTP Request: GET https://www.snf.ch/de/IqmbmJEUNlpydenH/seite/foerderung/beitrags-und-ausfuehrungsreglement "HTTP/1.1 200 OK"
+2026-07-13 02:25:42,637  HTTP Request: GET https://www.snf.ch/de/Z2GsZbMCeccg4x9U/seite/foerderung/dokumente-formulare "HTTP/1.1 200 OK"
+2026-07-13 02:25:42,678    INT003   SNSF                         +0 ~0 =5 err0  ok
+2026-07-13 02:25:42,846    INT004   Business Finland             +0 ~0 =0 err0  skip (blocked by robots.txt)
+2026-07-13 02:25:43,570  HTTP Request: GET https://www.jsps.go.jp "HTTP/1.1 200 OK"
+2026-07-13 02:25:45,680  HTTP Request: GET https://www.jsps.go.jp/j-grantsinaid/ "HTTP/1.1 200 OK"
+2026-07-13 02:25:45,780    INT005   JSPS                         +0 ~0 =1 err0  ok
+2026-07-13 02:25:50,830  HTTP Request: GET https://www.nstc.gov.tw "HTTP/1.1 200 200"
+2026-07-13 02:25:55,491  HTTP Request: GET https://www.nstc.gov.tw/folksonomy/rfpList "HTTP/1.1 200 200"
+2026-07-13 02:25:59,045  HTTP Request: GET https://www.nstc.gov.tw/folksonomy/rfpList?l=ch "HTTP/1.1 200 200"
+2026-07-13 02:25:59,307    INT006   NSTC Taiwan                  +0 ~0 =2 err0  ok
+2026-07-13 02:26:00,783  HTTP Request: GET https://www.dfg.de "HTTP/1.1 200 OK"
+2026-07-13 02:26:02,789  HTTP Request: GET https://www.dfg.de/de/foerderung/foerdermoeglichkeiten/programme "HTTP/1.1 200 OK"
+2026-07-13 02:26:06,117  HTTP Request: GET https://www.dfg.de/de/foerderung/antrag-foerderprozess/einzelfoerderung "HTTP/1.1 200 OK"
+2026-07-13 02:26:08,877  HTTP Request: GET https://www.dfg.de/de/foerderung/antrag-foerderprozess/acknowledgements "HTTP/1.1 200 OK"
+2026-07-13 02:26:10,891  HTTP Request: GET https://www.dfg.de/de/foerderung "HTTP/1.1 200 OK"
+2026-07-13 02:26:12,746  HTTP Request: GET https://www.dfg.de/de/foerderung/foerdermoeglichkeiten/ausschreibungen "HTTP/1.1 200 OK"
+2026-07-13 02:26:14,976  HTTP Request: GET https://www.dfg.de/de/foerderung/foerdermoeglichkeiten/infoveranstaltungen-foerderung "HTTP/1.1 200 OK"
+2026-07-13 02:26:17,037  HTTP Request: GET https://www.dfg.de/de/foerderung/foerdermoeglichkeiten/foerderung "HTTP/1.1 200 OK"
+2026-07-13 02:26:19,422  HTTP Request: GET https://www.dfg.de/de/foerderung/foerdermoeglichkeiten/laender-regionen "HTTP/1.1 200 OK"
+2026-07-13 02:26:20,279    INT007   DFG                          +0 ~0 =8 err0  ok
+2026-07-13 02:26:22,214  HTTP Request: GET https://www.humboldt-foundation.de "HTTP/1.1 200 OK"
+2026-07-13 02:26:24,041  HTTP Request: GET https://www.humboldt-foundation.de/bewerben/foerderung-waehrend-des-aufenthalts "HTTP/1.1 200 OK"
+2026-07-13 02:26:26,050  HTTP Request: GET https://www.humboldt-foundation.de/bewerben/alumnifoerderung "HTTP/1.1 200 OK"
+2026-07-13 02:26:28,110  HTTP Request: GET https://www.humboldt-foundation.de/entdecken/newsroom/pressemitteilungen/attraktivere-foerderung-fuer-spitzenforschung "HTTP/1.1 200 OK"
+2026-07-13 02:26:30,204  HTTP Request: GET https://www.humboldt-foundation.de/bewerben/foerderprogramme/humboldt-forschungsstipendium "HTTP/1.1 200 OK"
+2026-07-13 02:26:32,108  HTTP Request: GET https://www.humboldt-foundation.de/bewerben/foerderprogramme "HTTP/1.1 200 OK"
+2026-07-13 02:26:34,179  HTTP Request: GET https://www.humboldt-foundation.de/entdecken/newsroom/aktuelles/von-argentinien-nach-deutschland-paula-tribellis-humboldt-forschungsstipendium-mit-kind "HTTP/1.1 200 OK"
+2026-07-13 02:26:36,213  HTTP Request: GET https://www.humboldt-foundation.de/bewerben/foerderprogramme/henriette-herz-scouting-programm "HTTP/1.1 200 OK"
+2026-07-13 02:26:38,216  HTTP Request: GET https://www.humboldt-foundation.de/bewerben/foerderprogramme/programme-a-bis-z "HTTP/1.1 200 OK"
+2026-07-13 02:26:38,262    INT008   Alexander von Humboldt Found +0 ~0 =8 err0  ok
+2026-07-13 02:26:39,870  HTTP Request: GET https://anr.fr "HTTP/1.1 200 OK"
+2026-07-13 02:26:39,871    INT009   ANR France                   +0 ~0 =0 err0  ok
+2026-07-13 02:26:41,375  HTTP Request: GET https://www.inria.fr "HTTP/1.1 301 Moved Permanently"
+2026-07-13 02:26:41,580  HTTP Request: GET https://www.inria.fr/fr "HTTP/1.1 200 OK"
+2026-07-13 02:26:41,807    INT010   Inria                        +0 ~0 =0 err0  ok
+2026-07-13 02:26:43,846  HTTP Request: GET https://www.bmftr.bund.de "HTTP/1.1 302 Found"
+2026-07-13 02:26:44,469  HTTP Request: GET https://www.bmftr.bund.de/DE/Home/home_node.html "HTTP/1.1 200 OK"
+2026-07-13 02:26:47,419  HTTP Request: GET https://www.bmftr.bund.de/DE/Forschung/AkademischeLaufbahn/Studium/StudentischeVerbaendefoerderung/studentischeverbaendefoerderung_node.html "HTTP/1.1 200 OK"
+2026-07-13 02:26:49,364  HTTP Request: GET https://www.bmftr.bund.de/DE/Forschung/AkademischeLaufbahn/Studium/Finanzierung/Stipendien/begabtenfoerderungswerke/begabtenfoerderungswerke_node.html "HTTP/1.1 200 OK"
+2026-07-13 02:26:52,191  HTTP Request: GET https://www.bmftr.bund.de/DE/Forschung/Wissenschaftssystem/WissenschaftlicheKarriere/Promotionsstipendium/promotionsstipendium_node.html "HTTP/1.1 200 OK"
+2026-07-13 02:26:54,132  HTTP Request: GET https://www.bmftr.bund.de/DE/Forschung/AkademischeLaufbahn/Finanzierung/Aufstiegsstipendium/aufstiegsstipendium_node.html "HTTP/1.1 200 OK"
+2026-07-13 02:26:56,582  HTTP Request: GET https://www.bmftr.bund.de/DE/Forschung/AkademischeLaufbahn/Finanzierung/Weiterbildungsstipendium/weiterbildungsstipendium_node.html "HTTP/1.1 200 OK"
+2026-07-13 02:26:59,624  HTTP Request: GET https://www.bmftr.bund.de/DE/Ministerium/Ausschreibungen/ausschreibungen_node.html "HTTP/1.1 200 OK"
+2026-07-13 02:27:00,467    INT011   BMFTR Germany                +0 ~0 =6 err0  ok
+2026-07-13 02:27:01,673  HTTP Request: GET https://research-and-innovation.ec.europa.eu/funding/funding-opportunities/funding-programmes-and-open-calls/horizon-europe_en "HTTP/1.1 200 OK"
+2026-07-13 02:27:03,783  HTTP Request: GET https://research-and-innovation.ec.europa.eu/funding/funding-opportunities/funding-programmes-and-open-calls_en "HTTP/1.1 200 OK"
+2026-07-13 02:27:05,730  HTTP Request: GET https://research-and-innovation.ec.europa.eu/funding/funding-opportunities_en "HTTP/1.1 200 OK"
+2026-07-13 02:27:07,755  HTTP Request: GET https://research-and-innovation.ec.europa.eu/funding/funding-opportunities/funding-programmes-and-open-calls/horizon-europe_en "HTTP/1.1 200 OK"
+2026-07-13 02:27:09,831  HTTP Request: GET https://research-and-innovation.ec.europa.eu/funding/funding-opportunities/funding-programmes-and-open-calls/horizon-europe_bg "HTTP/1.1 301 Moved Permanently"
+2026-07-13 02:27:10,048  HTTP Request: GET https://research-and-innovation.ec.europa.eu/funding/funding-opportunities/funding-programmes-and-open-calls/horizon-europe_en?prefLang=bg "HTTP/1.1 200 OK"
+2026-07-13 02:27:11,837  HTTP Request: GET https://research-and-innovation.ec.europa.eu/funding/funding-opportunities/funding-programmes-and-open-calls/horizon-europe_es "HTTP/1.1 301 Moved Permanently"
+2026-07-13 02:27:12,068  HTTP Request: GET https://research-and-innovation.ec.europa.eu/funding/funding-opportunities/funding-programmes-and-open-calls/horizon-europe_en?prefLang=es "HTTP/1.1 200 OK"
+2026-07-13 02:27:13,773  HTTP Request: GET https://research-and-innovation.ec.europa.eu/funding/funding-opportunities/funding-programmes-and-open-calls/horizon-europe_cs "HTTP/1.1 301 Moved Permanently"
+2026-07-13 02:27:13,970  HTTP Request: GET https://research-and-innovation.ec.europa.eu/funding/funding-opportunities/funding-programmes-and-open-calls/horizon-europe_en?prefLang=cs "HTTP/1.1 429 Too Many Requests"
+2026-07-13 02:27:15,934  HTTP Request: GET https://research-and-innovation.ec.europa.eu/funding/funding-opportunities/funding-programmes-and-open-calls/horizon-europe_da "HTTP/1.1 301 Moved Permanently"
+2026-07-13 02:27:16,411  HTTP Request: GET https://research-and-innovation.ec.europa.eu/funding/funding-opportunities/funding-programmes-and-open-calls/horizon-europe_en?prefLang=da "HTTP/1.1 200 OK"
+2026-07-13 02:27:17,734  HTTP Request: GET https://research-and-innovation.ec.europa.eu/funding/funding-opportunities/funding-programmes-and-open-calls/horizon-europe_de "HTTP/1.1 301 Moved Permanently"
+2026-07-13 02:27:17,907  HTTP Request: GET https://research-and-innovation.ec.europa.eu/funding/funding-opportunities/funding-programmes-and-open-calls/horizon-europe_en?prefLang=de "HTTP/1.1 429 Too Many Requests"
+2026-07-13 02:27:17,940    INT012   European Commission (Horizon +0 ~0 =6 err2  ok
+2026-07-13 02:27:20,276  HTTP Request: GET https://www.clean-hydrogen.europa.eu "HTTP/1.1 302 Moved Temporarily"
+2026-07-13 02:27:20,669  HTTP Request: GET https://www.clean-hydrogen.europa.eu/select-language?destination=/node/1 "HTTP/1.1 200 OK"
+2026-07-13 02:27:20,673    INT013   Clean Hydrogen Partnership   +0 ~0 =0 err0  ok
+2026-07-13 02:27:21,695  HTTP Request: GET http://brics-sti.org "HTTP/1.1 200 OK"
+2026-07-13 02:27:23,696  HTTP Request: GET http://brics-sti.org/index.php?p=opportunities "HTTP/1.1 200 OK"
+2026-07-13 02:27:25,754  HTTP Request: GET http://brics-sti.org?p=new/42 "HTTP/1.1 200 OK"
+2026-07-13 02:27:27,705  HTTP Request: GET http://brics-sti.org/index.php?p=new/42/ "HTTP/1.1 200 OK"
+2026-07-13 02:27:29,693  HTTP Request: GET http://brics-sti.org/index.php?p=new/38/ "HTTP/1.1 200 OK"
+2026-07-13 02:27:29,706    INT014   BRICS STI Framework Programm +0 ~0 =4 err0  ok
+2026-07-13 02:27:29,995  HTTP Request: GET https://www.aistic.gov.in "HTTP/1.1 302 Found"
+2026-07-13 02:27:30,009  HTTP Request: GET https://www.aistic.gov.in/ASEAN/HomePage "HTTP/1.1 200 "
+2026-07-13 02:27:32,035  HTTP Request: GET https://www.aistic.gov.in/ASEAN/aistdfFellowship "HTTP/1.1 200 "
+2026-07-13 02:27:34,055  HTTP Request: GET https://www.aistic.gov.in/ASEAN/aistdfFUNDING "HTTP/1.1 200 "
+2026-07-13 02:27:34,113    INT015   ASEAN-India S&T Cooperation  +0 ~0 =2 err0  ok
+2026-07-13 02:27:34,389  HTTP Request: GET https://www.snf.ch/en/UKQxILyeulyH9qfi/funding/programmes/bilateral-programmes-indo "HTTP/1.1 200 OK"
+2026-07-13 02:27:36,373  HTTP Request: GET https://www.snf.ch/en/A7fep1IPxz1XezVS/page/find-funding-scheme "HTTP/1.1 200 OK"
+2026-07-13 02:27:38,388  HTTP Request: GET https://www.snf.ch/de/UKQxILyeulyH9qfi/foerderung/programme/bilaterale-programme-indo "HTTP/1.1 200 OK"
+2026-07-13 02:27:40,391  HTTP Request: GET https://www.snf.ch/en/ORgUpoSFePiH6QCp/page/get-a-grant "HTTP/1.1 200 OK"
+2026-07-13 02:27:42,406  HTTP Request: GET https://www.snf.ch/en/mKVdFSoD7dwtinOR/funding/supplementary-measures/mobility-grants-in-projects "HTTP/1.1 200 OK"
+2026-07-13 02:27:44,402  HTTP Request: GET https://www.snf.ch/en/ovil4ntsX4h2jEiU/funding/supplementary-measures/flexibility-grant "HTTP/1.1 200 OK"
+2026-07-13 02:27:46,391  HTTP Request: GET https://www.snf.ch/en/gCCYPmblxBCAFNZg/funding/supplementary-measures/gender-equality-grant "HTTP/1.1 200 OK"
+2026-07-13 02:27:48,377  HTTP Request: GET https://www.snf.ch/en/BMM7TPWBJpsuIIXp/page/snsf-and-innosuisse-funding-scheme-events "HTTP/1.1 200 OK"
+2026-07-13 02:27:50,406  HTTP Request: GET https://www.snf.ch/en/UKQxILyeulyH9qfi/funding/programmes/bilateral-programmes-indo "HTTP/1.1 200 OK"
+2026-07-13 02:27:50,478    INT016   Indo-Swiss Joint Research Pr +0 ~0 =8 err0  ok
+2026-07-13 02:27:50,579    FND001   Wadhwani Foundation          +0 ~0 =0 err0  skip (blocked by robots.txt)
+2026-07-13 02:27:50,950    FND002   Lung Cancer Research Foundat +0 ~0 =0 err0  skip (blocked by robots.txt)
+2026-07-13 02:28:05,986    FND003   OUCH-I                       +0 ~0 =0 err0  skip ([Errno 11001] getaddrinfo failed)
+2026-07-13 02:28:06,531  HTTP Request: GET https://www.stanford.edu "HTTP/1.1 200 OK"
+2026-07-13 02:28:06,687    UNI001   Stanford University Programs +0 ~0 =0 err0  ok
+2026-07-13 02:28:07,920  HTTP Request: GET https://www.biu.ac.il "HTTP/1.1 302 Moved Temporarily"
+2026-07-13 02:28:08,896  HTTP Request: GET https://validate.perfdrive.com/?ssa=c197771b-7cca-4dcc-b247-c4ba1f8b739a&ssb=32023244058&ssc=https%3A%2F%2Fwww.biu.ac.il%2F&ssi=406b7abc-d06e-4694-bb92-e34e29cf5348&ssk=botmanager_support@radware.com&ssm=93762259037740423101259235219372&ssn=b7867de6a6beeaf774d31a920e3461cd9372ccaae59b-46d6-4672-ad2fef&sso=6d07ac95-99b54eff4564e6e86489d218c86d9d7545ca3c39854c7bbf&ssp=67488692841783806654178385909216455&ssq=93687718988849992494489888831780532486432&ssr=MTAzLjQzLjM1LjMx&sst=FundRadarBot/0.1%20(+https://github.com/your-org/fundradar;%20research%20aggregator)&ssu=&ssv=&ssw=&ssx=eyJfX3V6bWYiOiI3ZjkwMDBjY2FhZTU5Yi00NmQ2LTQ2NzItYWM5NS05OWI1NGVmZjQ1NjQxLTE3ODM4ODk4ODkwMDAwLTAwNDYwNGU4ZWE1Mjk5OTVkMmMxMCIsInJkIjoiYml1LmFjLmlsIiwidXpteCI6IjdmOTAwMGFhMTM2ZWNkLWU4YTQtNDBiOS04OTE2LWRjODM5NTY0Y2Y2NDEtMTc4Mzg4OTg4OTAwMDAtMTJiZGFiYjhlOWY2NDYwNDEwIn0= "HTTP/1.1 200 OK"
+2026-07-13 02:28:08,899    UNI002   Bar-Ilan University Grants   +0 ~0 =0 err0  ok
+2026-07-13 02:28:09,503  HTTP Request: GET https://www.iith.ac.in "HTTP/1.1 200 OK"
+2026-07-13 02:28:11,527  HTTP Request: GET https://www.iith.ac.in/academics/programmes-offered/ "HTTP/1.1 200 OK"
+2026-07-13 02:28:11,549    UNI003   IIT Hyderabad WIN CoE        +0 ~0 =1 err0  ok
+2026-07-13 02:28:12,775  HTTP Request: GET https://sreepvf.org "HTTP/1.1 200 OK"
+2026-07-13 02:28:14,509  HTTP Request: GET https://sreepvf.org/research-grants/ "HTTP/1.1 200 OK"
+2026-07-13 02:28:16,581  HTTP Request: GET https://sreepvf.org/the-results-of-the-preliminary-round-of-the-2026-sree-ramakrishna-paramahamsa-agriculture-grant-have-been-communicated-to-all-applicants/ "HTTP/1.1 200 OK"
+2026-07-13 02:28:18,360  HTTP Request: GET https://sreepvf.org/research-grants "HTTP/1.1 301 Moved Permanently"
+2026-07-13 02:28:18,697  HTTP Request: GET https://sreepvf.org/research-grants/ "HTTP/1.1 200 OK"
+2026-07-13 02:28:18,764    FND004   Sree Padmavathi Venkateswara +0 ~0 =3 err0  ok
+2026-07-13 02:28:33,876    INS001   BIRCs                        +0 ~0 =0 err0  skip ([Errno 11001] getaddrinfo failed)
+2026-07-13 02:28:34,253  HTTP Request: GET https://bilink.org "HTTP/1.1 200 OK"
+2026-07-13 02:28:34,257    INS002   BILINK                       +0 ~0 =0 err0  ok
+2026-07-13 02:28:34,258  SCRAPE DONE  new=0 changed=0 unchanged=120 errors=4
+2026-07-13 02:28:34,979  EXTRACT START  90 new/changed opportunities  provider=gemini
+2026-07-13 02:28:35,655    extract [2] failed: Gemini free daily quota exhausted (per-day limit). Re-run tomorrow, switch model/provider, or enable billing.
+2026-07-13 02:28:35,656    extract [24] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,656    extract [47] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,656    extract [48] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,656    extract [49] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,657    extract [50] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,657    extract [52] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,657    extract [53] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,657    extract [54] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,657    extract [62] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,657    extract [63] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,658    extract [65] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,658    extract [66] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,658    extract [67] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,658    extract [68] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,658    extract [79] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,658    extract [88] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,658    extract [92] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,659    extract [96] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,659    extract [102] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,659    extract [103] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,659    extract [104] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,659    extract [105] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,659    extract [106] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,660    extract [107] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,660    extract [108] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,660    extract [109] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,660    extract [110] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,660    extract [111] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,660    extract [112] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,660    extract [113] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,661    extract [114] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,661    extract [115] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,661    extract [116] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,661    extract [117] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,661    extract [118] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,661    extract [119] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,661    extract [120] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,661    extract [121] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,662    extract [122] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,662    extract [123] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,662    extract [124] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,662    extract [125] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,662    extract [126] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,662    extract [127] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,662    extract [128] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,662    extract [129] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,662    extract [130] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,663    extract [131] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,663    extract [132] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,663    extract [133] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,663    extract [134] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,663    extract [135] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,663    extract [136] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,663    extract [137] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,663    extract [138] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,663    extract [139] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,664    extract [140] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,664    extract [141] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,664    extract [142] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,664    extract [143] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,664    extract [144] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,664    extract [145] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,664    extract [146] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,664    extract [147] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,664    extract [148] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,664    extract [149] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,665    extract [150] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,665    extract [151] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,665    extract [152] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,665    extract [153] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,665    extract [154] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,665    extract [155] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,665    extract [156] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,665    extract [157] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,665    extract [158] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,666    extract [159] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,666    extract [160] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,666    extract [161] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,666    extract [162] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,666    extract [163] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,666    extract [164] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,666    extract [165] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,666    extract [166] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,666    extract [167] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,667    extract [168] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,667    extract [169] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,667    extract [170] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,667    extract [171] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,667    extract [172] failed: Gemini free daily quota exhausted — skipping (resets in ~24h).
+2026-07-13 02:28:35,667  EXTRACT DONE  processed=0/90
+2026-07-13 02:28:35,667  PIPELINE END

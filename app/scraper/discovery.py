@@ -12,13 +12,27 @@ from dataclasses import dataclass
 from urllib.parse import urljoin, urlparse
 
 # Words that signal a funding opportunity page. Weighted: strong vs supporting.
+# Includes French / German / Finnish terms so non-English agency sites
+# (ANR, Inria, DFG, BMFTR, Business Finland...) are discoverable too.
 STRONG_KEYWORDS = [
     "grant", "fellowship", "scholarship", "call for proposal", "call for proposals",
     "funding opportunit", "request for proposal", "rfp", "funding scheme",
+    "open call", "funding call",
+    # French
+    "appel à projets", "appels à projets", "appel a projets", "financement",
+    "bourse", "subvention",
+    # German
+    "förderung", "foerderung", "förderprogramm", "ausschreibung", "stipendium",
+    # Finnish
+    "rahoitus",
 ]
 SUPPORTING_KEYWORDS = [
     "funding", "fund", "award", "scheme", "programme", "program", "proposal",
     "apply", "application", "opportunit", "research support", "deadline",
+    # French
+    "candidature", "postuler", "aide",
+    # German
+    "antrag", "bewerbung",
 ]
 # Pages we never want to treat as opportunities.
 NEGATIVE_KEYWORDS = ["login", "privacy", "sitemap", "contact us", "careers", "tender"]
