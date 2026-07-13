@@ -11,7 +11,8 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from sqlalchemy import String, Boolean, DateTime, func
+from sqlalchemy import (Boolean, DateTime, ForeignKey, String,
+                        UniqueConstraint, func)
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.database import Base
@@ -40,3 +41,16 @@ class User(Base):
 
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
     last_login_at: Mapped[datetime | None] = mapped_column(DateTime)
+
+
+class SavedOpportunity(Base):
+    """A user's bookmark on a funding opportunity (unique per user+opportunity)."""
+    __tablename__ = "saved_opportunities"
+    __table_args__ = (UniqueConstraint("user_id", "opportunity_id"),)
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    opportunity_id: Mapped[int] = mapped_column(
+        ForeignKey("opportunities.id", ondelete="CASCADE"), index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())

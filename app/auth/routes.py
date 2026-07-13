@@ -17,7 +17,9 @@ from sqlalchemy.orm import Session
 
 from app.api.deps import get_db
 from app.config import settings
-from app.auth.models import User
+from app.auth.models import SavedOpportunity, User
+from app.db.models import Opportunity
+from app.db.schemas import OpportunityOut
 from app.auth.schemas import (LoginIn, PasswordChangeIn, ProfileUpdateIn,
                               SignupIn, UserOut)
 from app.auth.deps import ACCESS_COOKIE, get_current_user
@@ -66,8 +68,8 @@ def login(payload: LoginIn, response: Response, db: Session = Depends(get_db)) -
 
     Returns the user (never the token). Invalid credentials → 401 with a generic
     message, so login can't be used to discover which emails are registered.
-    Email is already normalized by LoginIn. `remember_me` is accepted but not yet
-    acted upon (deferred to a later milestone).
+    Email is already normalized by LoginIn. With `remember_me` the session lasts
+    REMEMBER_ME_DAYS instead of ACCESS_TOKEN_MINUTES.
     """
     user = db.scalar(select(User).where(User.email == payload.email))
     if user is None or not verify_password(payload.password, user.password_hash):
@@ -81,11 +83,13 @@ def login(payload: LoginIn, response: Response, db: Session = Depends(get_db)) -
             detail="This account is disabled.",
         )
 
-    token = create_access_token(user.id)
+    minutes = (settings.remember_me_days * 24 * 60
+               if payload.remember_me else settings.access_token_minutes)
+    token = create_access_token(user.id, expires_minutes=minutes)
     response.set_cookie(
         key=ACCESS_COOKIE,
         value=token,
-        max_age=settings.access_token_minutes * 60,  # cookie expires with the token
+        max_age=minutes * 60,          # cookie expires with the token
         httponly=True,                 # not readable by JavaScript (XSS-safe)
         secure=settings.cookie_secure, # True in production (HTTPS only)
         samesite="lax",                # CSRF mitigation
@@ -128,6 +132,67 @@ def change_password(payload: PasswordChangeIn,
     current_user.password_hash = hash_password(payload.new_password)
     db.commit()
     return {"detail": "Password changed."}
+
+
+# --- Saved opportunities (bookmarks) ----------------------------------------
+
+@router.get("/saved", response_model=list[OpportunityOut])
+def list_saved(db: Session = Depends(get_db),
+               current_user: User = Depends(get_current_user)):
+    """Full details of the current user's saved opportunities (newest first)."""
+    rows = db.execute(
+        select(Opportunity)
+        .join(SavedOpportunity, SavedOpportunity.opportunity_id == Opportunity.id)
+        .where(SavedOpportunity.user_id == current_user.id)
+        .order_by(SavedOpportunity.created_at.desc())
+    ).scalars().all()
+    return rows
+
+
+@router.get("/saved/ids")
+def list_saved_ids(db: Session = Depends(get_db),
+                   current_user: User = Depends(get_current_user)):
+    """Just the opportunity IDs — used by the dashboard to draw bookmark stars."""
+    ids = db.scalars(
+        select(SavedOpportunity.opportunity_id)
+        .where(SavedOpportunity.user_id == current_user.id)
+    ).all()
+    return {"ids": list(ids)}
+
+
+@router.post("/saved/{opportunity_id}", status_code=status.HTTP_201_CREATED)
+def save_opportunity(opportunity_id: int,
+                     db: Session = Depends(get_db),
+                     current_user: User = Depends(get_current_user)):
+    """Bookmark an opportunity. Saving one that's already saved is a no-op."""
+    if db.get(Opportunity, opportunity_id) is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail="Opportunity not found.")
+    exists = db.scalar(select(SavedOpportunity).where(
+        SavedOpportunity.user_id == current_user.id,
+        SavedOpportunity.opportunity_id == opportunity_id))
+    if not exists:
+        db.add(SavedOpportunity(user_id=current_user.id,
+                                opportunity_id=opportunity_id))
+        try:
+            db.commit()
+        except IntegrityError:      # race with a double-click
+            db.rollback()
+    return {"detail": "Saved."}
+
+
+@router.delete("/saved/{opportunity_id}")
+def unsave_opportunity(opportunity_id: int,
+                       db: Session = Depends(get_db),
+                       current_user: User = Depends(get_current_user)):
+    """Remove a bookmark. Safe to call even if it wasn't saved."""
+    row = db.scalar(select(SavedOpportunity).where(
+        SavedOpportunity.user_id == current_user.id,
+        SavedOpportunity.opportunity_id == opportunity_id))
+    if row:
+        db.delete(row)
+        db.commit()
+    return {"detail": "Removed."}
 
 
 @router.post("/logout")

@@ -94,6 +94,18 @@
   .empty{padding:44px;text-align:center;color:var(--muted)}
   .empty b{display:block;color:var(--ink);margin-bottom:6px;font-size:15px}
 
+  /* saved opportunities list */
+  .saveditem{display:flex;align-items:center;gap:14px;padding:14px 4px;border-bottom:1px solid var(--line)}
+  .saveditem:last-child{border-bottom:none}
+  .saveditem .flex1{flex:1;min-width:0}
+  .saveditem .nm{font-weight:700;font-size:14px}
+  .saveditem .meta{font-size:12.5px;color:var(--muted);margin-top:2px}
+  .saveditem .meta b{color:var(--green-d)}
+  .saveditem a.apply{font-size:12.5px;font-weight:600;white-space:nowrap}
+  .unsave{border:none;background:none;color:#f59e0b;font-size:18px;cursor:pointer;
+    padding:4px;line-height:1;transition:.15s}
+  .unsave:hover{transform:scale(1.2)}
+
   .tabpane{display:none} .tabpane.active{display:block}
   footer{max-width:1080px;margin:0 auto;padding:12px 22px 34px;color:var(--muted);font-size:12px}
   @media(max-width:760px){.grid2{grid-template-columns:1fr}.tiles{grid-template-columns:repeat(2,1fr)}}
@@ -203,12 +215,8 @@
 
   <!-- ================= SAVED ================= -->
   <div class="tabpane" id="pane-saved">
-    <div class="card">
-      <div class="empty">
-        <b>No saved opportunities yet</b>
-        Bookmarking from the dashboard is coming soon — for now, explore
-        <a href="/dashboard">the live opportunities</a>.
-      </div>
+    <div class="card" id="savedCard">
+      <div class="empty">Loading…</div>
     </div>
   </div>
 
@@ -319,6 +327,46 @@ async function logout(){
   location.href='/';
 }
 
+function esc(s){return (s==null?'':String(s)).replace(/[&<>"']/g,
+  c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+async function loadSaved(){
+  const card=$('savedCard');
+  try{
+    const r=await fetch('/auth/saved',{credentials:'include'});
+    if(!r.ok) throw 0;
+    const items=await r.json();
+    if(!items.length){
+      card.innerHTML='<div class="empty"><b>No saved opportunities yet</b>'
+        +'Click the ★ next to any opportunity on <a href="/dashboard">the dashboard</a> to save it here.</div>';
+      return;
+    }
+    card.innerHTML=items.map(o=>`
+      <div class="saveditem" id="saved-${o.id}">
+        <button class="unsave" title="Remove bookmark" onclick="unsave(${o.id})">★</button>
+        <div class="flex1">
+          <div class="nm">${esc(o.program_name)||'Untitled scheme'}</div>
+          <div class="meta">
+            ${o.funding_amount?`<b>${esc(o.funding_amount)}</b> · `:''}
+            ${o.deadline?`Deadline ${esc(o.deadline)} · `:''}
+            ${esc(o.status||'unknown')}
+          </div>
+        </div>
+        ${o.application_link?`<a class="apply" href="${esc(o.application_link)}" target="_blank" rel="noopener">Apply ↗</a>`:''}
+      </div>`).join('');
+  }catch(_){
+    card.innerHTML='<div class="empty">Could not load saved opportunities.</div>';
+  }
+}
+
+async function unsave(id){
+  try{
+    const r=await fetch('/auth/saved/'+id,{method:'DELETE',credentials:'include'});
+    if(r.ok){const el=$('saved-'+id); if(el) el.remove();
+      if(!document.querySelector('.saveditem')) loadSaved();}
+  }catch(_){}
+}
+
 async function loadStats(){
   try{
     const s=await (await fetch('/stats')).json();
@@ -335,6 +383,7 @@ async function loadStats(){
     if(!r.ok){location.href='/dashboard';return;} // dashboard shows the login gate
     render(await r.json());
     loadStats();
+    loadSaved();
   }catch(_){location.href='/dashboard';}
 })();
 </script>

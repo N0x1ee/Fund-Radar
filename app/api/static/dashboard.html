@@ -168,7 +168,17 @@
 
   /* ---- auth gate: dashboard is blurred until the user signs in ---- */
   body.auth-locked .wrap, body.auth-locked footer{filter:blur(7px);pointer-events:none;user-select:none}
-  body.auth-locked .auth-x{display:none}
+
+  /* ---- bookmark stars ---- */
+  .star{border:none;background:none;cursor:pointer;font-size:17px;line-height:1;
+    color:#c9d6e6;transition:.15s;padding:2px 4px}
+  .star:hover{transform:scale(1.2);color:#f59e0b}
+  .star.on{color:#f59e0b}
+
+  /* ---- remember me ---- */
+  .auth-remember{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--muted);
+    margin-bottom:13px;font-weight:600;cursor:pointer;user-select:none}
+  .auth-remember input{accent-color:var(--brand);width:15px;height:15px;cursor:pointer}
 </style>
 </head>
 <body>
@@ -257,6 +267,9 @@
         <input id="au-pass" type="password" required placeholder="••••••••"/>
         <div class="hint" id="au-passhint" style="display:none">At least 8 characters.</div>
       </div>
+      <label class="auth-remember" id="row-remember">
+        <input type="checkbox" id="au-remember"/> Keep me signed in for 30 days
+      </label>
       <div id="au-msg" class="auth-msg" style="display:none"></div>
       <button id="au-submit" class="auth-submit" type="submit">Log in</button>
     </form>
@@ -266,6 +279,7 @@
 
 <script>
 let OPP=[], AG=[], AGMAP={}, view='opps', sortKey='deadline', sortDir=1;
+let SAVED=new Set();   // ids of the signed-in user's bookmarked opportunities
 const AV_COLORS=['#2563eb','#059669','#7c3aed','#db2777','#ea580c','#0891b2','#4f46e5','#0d9488'];
 function avColor(s){let h=0;for(const ch of (s||'?')) h=(h*31+ch.charCodeAt(0))>>>0; return AV_COLORS[h%AV_COLORS.length];}
 function initials(n){return (n||'?').replace(/[^A-Za-z0-9 ]/g,'').split(/\s+/).filter(Boolean).map(w=>w[0]).slice(0,2).join('').toUpperCase()||'?';}
@@ -273,7 +287,26 @@ function initials(n){return (n||'?').replace(/[^A-Za-z0-9 ]/g,'').split(/\s+/).f
 /* Authentication logic is isolated in its own module near the end of this file
    (see "FundRadar — Authentication module"), kept separate from dashboard code. */
 
+async function toggleSave(id,btn){
+  const saved=SAVED.has(id);
+  try{
+    const r=await fetch('/auth/saved/'+id,{method:saved?'DELETE':'POST',credentials:'include'});
+    if(!r.ok) return;
+    saved?SAVED.delete(id):SAVED.add(id);
+    btn.classList.toggle('on',!saved);
+    btn.title=saved?'Save for later':'Remove bookmark';
+  }catch(_){}
+}
+
+async function loadSaved(){
+  try{
+    const r=await fetch('/auth/saved/ids',{credentials:'include'});
+    if(r.ok){ SAVED=new Set((await r.json()).ids); }
+  }catch(_){}
+}
+
 async function load(){
+  await loadSaved();
   const [o,a] = await Promise.all([
     fetch('/opportunities?limit=300').then(r=>r.json()),
     fetch('/agencies?limit=300').then(r=>r.json())
@@ -344,6 +377,7 @@ function render(){
     rows.sort((a,b)=>{let x=a[sortKey]||'',y=b[sortKey]||'';return (x>y?1:x<y?-1:0)*sortDir;});
     if(!rows.length){el.innerHTML='<div class="empty">No matching opportunities.</div>';foot(0);return;}
     el.innerHTML=`<table><thead><tr>
+      <th style="width:34px" title="Saved"></th>
       <th onclick="sortBy('program_name')">Programme</th>
       <th onclick="sortBy('agency')">Agency</th>
       <th onclick="sortBy('country')">Country</th>
@@ -351,6 +385,7 @@ function render(){
       <th onclick="sortBy('deadline')">Deadline</th>
       <th onclick="sortBy('status')">Status</th>
     </tr></thead><tbody>${rows.map(o=>`<tr>
+      <td><button class="star ${SAVED.has(o.id)?'on':''}" title="${SAVED.has(o.id)?'Remove bookmark':'Save for later'}" onclick="toggleSave(${o.id},this)">★</button></td>
       <td class="prog">${o.program_name||'<span class=muted>Untitled scheme</span>'}${o.research_area?`<div class="area">${o.research_area}</div>`:''}
         ${o.application_link?`<div class="apply"><a href="${o.application_link}" target="_blank" rel="noopener">Apply / details ↗</a></div>`:''}</td>
       <td>${agencyCell(o.agency)}</td>
@@ -426,8 +461,9 @@ window.startDashboard=function(){
   function openAuth(mode){ authMode = mode || 'login'; syncAuth(); clearAuthMsg();
     $('authOverlay').classList.add('show'); setTimeout(()=>$('au-email').focus(),40); }
   function closeAuth(){
-    // While the dashboard is locked (not signed in), the modal cannot be dismissed.
-    if(document.body.classList.contains('auth-locked')) return;
+    // Dashboard requires login: closing the modal while locked returns to the
+    // public landing page instead of revealing the blurred dashboard.
+    if(document.body.classList.contains('auth-locked')){ location.href='/'; return; }
     $('authOverlay').classList.remove('show'); }
   function lockDashboard(){ document.body.classList.add('auth-locked'); openAuth('login'); }
   function unlockDashboard(){ document.body.classList.remove('auth-locked');
@@ -439,6 +475,7 @@ window.startDashboard=function(){
     $('tab-login').classList.toggle('active', login);
     $('tab-signup').classList.toggle('active', !login);
     $('row-name').style.display = login ? 'none' : '';
+    $('row-remember').style.display = login ? '' : 'none';
     $('au-passhint').style.display = login ? 'none' : '';
     $('au-submit').textContent = login ? 'Log in' : 'Create account';
     $('au-switch').innerHTML = login
@@ -471,13 +508,21 @@ window.startDashboard=function(){
       if(authMode==='signup'){
         const r = await fetch('/auth/signup', {method:'POST', headers:{'Content-Type':'application/json'},
           credentials:'include', body:JSON.stringify({email, password, full_name: full_name||null})});
-        if(r.status===201){ authMode='login'; syncAuth(); $('au-pass').value='';
-          showAuthMsg('Account created — please log in.','ok'); }
+        if(r.status===201){
+          // Log the new account straight in — no need to retype anything.
+          const l = await fetch('/auth/login', {method:'POST', headers:{'Content-Type':'application/json'},
+            credentials:'include', body:JSON.stringify({email, password})});
+          if(l.ok){ const u = await l.json(); showAuthMsg('Welcome, '+(u.full_name||u.email)+'!','ok');
+            await refreshSession(); setTimeout(closeAuth,800); }
+          else{ authMode='login'; syncAuth(); $('au-pass').value='';
+            showAuthMsg('Account created — please log in.','ok'); }
+        }
         else{ showAuthMsg(await readDetail(r,'Could not create account.'),'err'); }
       }else{
+        const remember = $('au-remember').checked;
         const r = await fetch('/auth/login', {method:'POST', headers:{'Content-Type':'application/json'},
-          credentials:'include', body:JSON.stringify({email, password})});
-        if(r.ok){ const u = await r.json(); showAuthMsg('Signed in as '+u.email+'.','ok'); refreshSession(); setTimeout(closeAuth,800); }
+          credentials:'include', body:JSON.stringify({email, password, remember_me: remember})});
+        if(r.ok){ const u = await r.json(); showAuthMsg('Signed in as '+u.email+'.','ok'); await refreshSession(); setTimeout(closeAuth,800); }
         else{ showAuthMsg(await readDetail(r,'Invalid email or password.'),'err'); }
       }
     }catch(_){ showAuthMsg('Network error — please try again.','err'); }
