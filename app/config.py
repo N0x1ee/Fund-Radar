@@ -9,9 +9,11 @@ class Settings(BaseSettings):
     database_url: str = "sqlite:///./fundradar.db"
 
     # LLM
-    llm_provider: str = "mock"          # gemini | ollama | mock
+    llm_provider: str = "mock"          # auto | gemini | groq | ollama | mock
     gemini_api_key: str = ""
     gemini_model: str = "gemini-2.0-flash"
+    groq_api_key: str = ""
+    groq_model: str = "llama-3.1-8b-instant"   # fast; big free daily allowance
     ollama_host: str = "http://localhost:11434"
     ollama_model: str = "llama3.1"
 

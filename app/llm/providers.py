@@ -81,6 +81,75 @@ class GeminiProvider(LLMProvider):
         return ""
 
 
+class GroqProvider(LLMProvider):
+    """Groq free tier — OpenAI-compatible API, extremely fast inference.
+
+    Free limits are generous (thousands of requests/day for small Llama
+    models), so this is the workhorse fallback when Gemini's daily quota runs
+    out. Uses stdlib urllib only — no extra pip dependency.
+    """
+
+    MIN_INTERVAL = 2.1   # free tier allows ~30 requests/min
+    API_URL = "https://api.groq.com/openai/v1/chat/completions"
+
+    def __init__(self):
+        if not settings.groq_api_key:
+            raise RuntimeError("GROQ_API_KEY is empty. Add it to .env "
+                               "(free key at https://console.groq.com).")
+        self._last_call = 0.0
+
+    def _throttle(self) -> None:
+        wait = self.MIN_INTERVAL - (time.monotonic() - self._last_call)
+        if wait > 0:
+            time.sleep(wait)
+
+    def complete(self, prompt: str, system: str | None = None) -> str:
+        self._throttle()
+        self._last_call = time.monotonic()
+        messages = []
+        if system:
+            messages.append({"role": "system", "content": system})
+        messages.append({"role": "user", "content": prompt})
+        payload = {"model": settings.groq_model, "messages": messages,
+                   "temperature": 0}
+        req = urllib.request.Request(
+            self.API_URL,
+            data=json.dumps(payload).encode(),
+            headers={"Content-Type": "application/json",
+                     "Authorization": f"Bearer {settings.groq_api_key}"},
+        )
+        with urllib.request.urlopen(req, timeout=60) as r:
+            data = json.loads(r.read())
+        return (data["choices"][0]["message"]["content"] or "").strip()
+
+
+class FallbackProvider(LLMProvider):
+    """Chain of providers: try each in order until one answers.
+
+    A provider that reports its DAILY quota exhausted is dropped for the rest
+    of the run (retrying it every row is pointless); transient errors just
+    fall through to the next provider for this one call.
+    """
+
+    def __init__(self, named_providers: list[tuple[str, LLMProvider]]):
+        self._providers = named_providers
+        self._dead: set[str] = set()
+
+    def complete(self, prompt: str, system: str | None = None) -> str:
+        last_err: Exception | None = None
+        for name, provider in self._providers:
+            if name in self._dead:
+                continue
+            try:
+                return provider.complete(prompt, system=system)
+            except Exception as e:
+                last_err = e
+                low = str(e).lower()
+                if "daily quota" in low or "per-day" in low or "perday" in low:
+                    self._dead.add(name)   # dead for the rest of this run
+        raise last_err or RuntimeError("No LLM provider available.")
+
+
 class OllamaProvider(LLMProvider):
     """Talks to a local Ollama server over HTTP. No pip dependency needed."""
 
@@ -103,6 +172,20 @@ def get_llm() -> LLMProvider:
     provider = settings.llm_provider.lower()
     if provider == "gemini":
         return GeminiProvider()
+    if provider == "groq":
+        return GroqProvider()
     if provider == "ollama":
         return OllamaProvider()
+    if provider == "auto":
+        # Fallback chain: every configured provider, best-first.
+        chain: list[tuple[str, LLMProvider]] = []
+        if settings.gemini_api_key:
+            try:
+                chain.append(("gemini", GeminiProvider()))
+            except Exception:
+                pass
+        if settings.groq_api_key:
+            chain.append(("groq", GroqProvider()))
+        chain.append(("ollama", OllamaProvider()))  # last resort, local
+        return FallbackProvider(chain)
     return MockProvider()
