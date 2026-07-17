@@ -67,20 +67,27 @@
   .chip{font-size:12px;padding:7px 13px;background:var(--brand-soft);color:var(--brand-d);
     border:1px solid #dbe6ff;border-radius:999px;cursor:pointer;transition:.15s}
   .chip:hover{background:#e2ebff;transform:translateY(-1px)}
-  .chatout{margin-top:14px;font-size:13.5px;line-height:1.6;
-    background:var(--green-soft);border:1px solid #c7eedd;border-left:3px solid var(--green);
-    border-radius:10px;padding:13px 15px}
-  .chatout:empty{display:none}
-  .chatout p{margin:0 0 8px}
-  .chatout p:last-child{margin-bottom:0}
-  .chatout .chatlist{margin:6px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
-  .chatout .chatlist li{position:relative;padding:9px 12px 9px 30px;background:#fff;
-    border:1px solid #d6efe2;border-radius:9px;line-height:1.5}
-  .chatout .chatlist li::before{content:"";position:absolute;left:13px;top:15px;width:7px;height:7px;
+  /* ---- chat thread (conversational bubbles) ---- */
+  .chatthread{display:flex;flex-direction:column;gap:10px;margin:4px 0 14px;
+    max-height:360px;overflow-y:auto;padding:4px 2px}
+  .cbubble{border-radius:13px;padding:10px 14px;font-size:13.5px;line-height:1.55;
+    max-width:88%;word-wrap:break-word;animation:cb .18s ease-out}
+  @keyframes cb{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  .cbubble.q{background:var(--brand);color:#fff;margin-left:auto;border-bottom-right-radius:4px}
+  .cbubble.a{background:#fff;border:1px solid var(--line);color:var(--ink);
+    border-bottom-left-radius:4px;box-shadow:0 1px 2px rgba(15,37,64,.04)}
+  .cbubble.a strong{color:var(--green-d)}
+  .cbubble.a p{margin:0 0 6px}
+  .cbubble.a p:last-child{margin-bottom:0}
+  .cbubble.a .chatlist{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column;gap:7px}
+  .cbubble.a .chatlist li{position:relative;padding-left:16px}
+  .cbubble.a .chatlist li::before{content:"";position:absolute;left:2px;top:8px;width:6px;height:6px;
     border-radius:50%;background:var(--green)}
-  .chatout .chatlist li strong{color:var(--ink)}
-  .chatout .chatlist a{color:var(--brand);font-weight:600;text-decoration:none;white-space:nowrap}
-  .chatout .chatlist a:hover{text-decoration:underline}
+  .cbubble.a a{color:var(--brand);font-weight:600;text-decoration:none}
+  .cbubble.a a:hover{text-decoration:underline}
+  .cbubble.typing{color:var(--muted);font-style:italic}
+  .cbubble.typing span{display:inline-block;animation:blink 1.2s infinite}
+  @keyframes blink{0%,100%{opacity:.3}50%{opacity:1}}
 
   /* ---- tabs + controls ---- */
   .bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
@@ -215,9 +222,8 @@
   <div class="ask">
     <div class="ask-h">💬 Ask FundRadar</div>
     <div class="ask-sub">Ask in plain English — answers come straight from the live funding database.</div>
-    <div class="ask-row">
-      <input id="chatq" placeholder="Type a question, or tap an example below…" onkeydown="if(event.key==='Enter')askBot()"/>
-      <button onclick="askBot()">Ask</button>
+    <div id="chatthread" class="chatthread">
+      <div class="cbubble a">Hi! I answer from the live funding database — amounts, deadlines and links included. Try a question below, or type your own.</div>
     </div>
     <div class="chips">
       <span class="chip" onclick="ask('What grants are open now?')">What grants are open now?</span>
@@ -226,7 +232,10 @@
       <span class="chip" onclick="ask('Opportunities in Germany')">Opportunities in Germany</span>
       <span class="chip" onclick="ask('Biotech startup funding')">Biotech startup funding</span>
     </div>
-    <div id="chatout" class="chatout"></div>
+    <div class="ask-row">
+      <input id="chatq" placeholder="Type a question, or tap an example above…" onkeydown="if(event.key==='Enter')askBot()"/>
+      <button onclick="askBot()">Ask</button>
+    </div>
   </div>
 
   <div class="bar">
@@ -429,6 +438,16 @@ function render(){
 function foot(n){document.getElementById('foot').textContent=`Showing ${n} ${view==='opps'?'opportunities':'agencies'} · data served live from the FundRadar API`;}
 
 function ask(text){ document.getElementById('chatq').value=text; askBot(); }
+function escText(s){return (s==null?'':String(s)).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function chatBubble(cls,html){
+  const t=document.getElementById('chatthread');
+  const d=document.createElement('div');
+  d.className='cbubble '+cls;
+  d.innerHTML=html;
+  t.appendChild(d);
+  t.scrollTop=t.scrollHeight;
+  return d;
+}
 function renderAnswer(text){
   // Escape HTML first (safety), then apply light markdown and turn "- " lines
   // into a real bulleted list.
@@ -453,12 +472,21 @@ function renderAnswer(text){
   return out.join('');
 }
 async function askBot(){
-  const q=document.getElementById('chatq').value.trim(); if(!q) return;
-  const out=document.getElementById('chatout'); out.textContent='Thinking…';
+  const inp=document.getElementById('chatq');
+  const q=inp.value.trim(); if(!q) return;
+  inp.value='';
+  chatBubble('q', escText(q));                                  // user message
+  const bot=chatBubble('a typing','<span>Thinking…</span>');    // placeholder
   try{
     const r=await fetch('/chat?q='+encodeURIComponent(q));
-    const d=await r.json(); out.innerHTML=renderAnswer(d.answer||'(no answer)');
-  }catch(e){ out.textContent='Could not reach the chatbot. Is the server running?'; }
+    const d=await r.json();
+    bot.className='cbubble a';
+    bot.innerHTML=renderAnswer(d.answer||'(no answer)');
+  }catch(e){
+    bot.className='cbubble a';
+    bot.textContent='Could not reach the chatbot. Is the server running?';
+  }
+  document.getElementById('chatthread').scrollTop=9e9;
 }
 
 /* Data loads only after the auth module confirms a signed-in session. */

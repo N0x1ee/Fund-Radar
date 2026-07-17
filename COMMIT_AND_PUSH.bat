@@ -20,7 +20,7 @@ git add -A
 
 echo.
 echo Committing...
-git commit -m "Email verification (Resend, opt-in); chat bullet answers; demo login on boot; automation"
+git commit -m "Conversational chatbot UI (bubble thread); email verification (opt-in); demo login; automation"
 
 echo.
 echo Pushing to GitHub...
