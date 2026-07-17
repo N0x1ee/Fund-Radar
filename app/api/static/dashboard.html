@@ -196,6 +196,28 @@
   .auth-remember{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--muted);
     margin-bottom:13px;font-weight:600;cursor:pointer;user-select:none}
   .auth-remember input{accent-color:var(--brand);width:15px;height:15px;cursor:pointer}
+
+  /* ---- opportunity detail modal ---- */
+  .orow{cursor:pointer}
+  .badge.b-rolling{background:#e0edff;color:#1d4ed8}
+  .opp-modal{position:relative;width:100%;max-width:560px;margin:auto;background:var(--card);
+    border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);border-top:3px solid var(--brand);
+    padding:24px 26px;max-height:calc(100vh - 40px);max-height:calc(100dvh - 40px);overflow-y:auto}
+  .opp-h{font-size:18px;font-weight:800;line-height:1.32;margin:0 20px 0 0;color:var(--ink)}
+  .opp-ag{display:flex;align-items:center;gap:9px;color:var(--muted);font-size:13px;margin:9px 0 14px}
+  .opp-desc{font-size:13.5px;line-height:1.6;color:var(--ink);background:var(--brand-soft);
+    border:1px solid #dbe6ff;border-radius:10px;padding:12px 14px;margin-bottom:16px}
+  .opp-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:18px}
+  .opp-field .k{color:var(--muted);font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;font-weight:700;margin-bottom:3px}
+  .opp-field .v{color:var(--ink);font-weight:600;font-size:13.5px;line-height:1.45}
+  .opp-field.full{grid-column:1 / -1}
+  .opp-actions{display:flex;gap:10px;flex-wrap:wrap}
+  .opp-btn{padding:10px 16px;border-radius:10px;font-weight:700;font-size:13px;text-decoration:none;cursor:pointer;border:none;display:inline-block}
+  .opp-btn.primary{background:var(--brand);color:#fff}
+  .opp-btn.primary:hover{background:var(--brand-d)}
+  .opp-btn.ghost{background:#fff;border:1px solid var(--line);color:var(--ink)}
+  .opp-btn.ghost:hover{border-color:#cdd9e8}
+  @media(max-width:520px){.opp-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -296,8 +318,16 @@
   </div>
 </div>
 
+<!-- ===== Opportunity detail modal ===== -->
+<div id="oppModal" class="auth-overlay" onclick="if(event.target===this)closeOpp()">
+  <div class="opp-modal" role="dialog" aria-modal="true" aria-labelledby="oppTitle">
+    <button class="auth-x" onclick="closeOpp()" aria-label="Close">&times;</button>
+    <div id="oppBody"></div>
+  </div>
+</div>
+
 <script>
-let OPP=[], AG=[], AGMAP={}, view='opps', sortKey='deadline', sortDir=1;
+let OPP=[], AG=[], AGMAP={}, view='opps', sortKey='best', sortDir=1;
 let SAVED=new Set();   // ids of the signed-in user's bookmarked opportunities
 const AV_COLORS=['#2563eb','#059669','#7c3aed','#db2777','#ea580c','#0891b2','#4f46e5','#0d9488'];
 function avColor(s){let h=0;for(const ch of (s||'?')) h=(h*31+ch.charCodeAt(0))>>>0; return AV_COLORS[h%AV_COLORS.length];}
@@ -363,7 +393,7 @@ function switchView(v){
   view=v;
   document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.view===v));
   document.getElementById('statusFilter').style.display = v==='opps'?'':'none';
-  sortKey = v==='opps'?'deadline':'name'; sortDir=1;
+  sortKey = v==='opps'?'best':'name'; sortDir=1;
   render();
 }
 
@@ -381,8 +411,51 @@ function agencyCell(name){
   if(!name) return '<span class="muted">—</span>';
   return `<span class="av"><span class="dot" style="background:${avColor(name)}">${initials(name)}</span>${name}</span>`;
 }
-function badge(s){s=s||'unknown';return `<span class="badge b-${s}">${s}</span>`;}
+function badge(s){s=s||'unknown';const isU=s==='unknown';const cls=isU?'rolling':s;const label=isU?'rolling':s;return `<span class="badge b-${cls}">${label}</span>`;}
 function sortBy(k){ if(sortKey===k){sortDir*=-1;}else{sortKey=k;sortDir=1;} render(); }
+
+/* ---- opportunity detail modal ---- */
+function escH(s){return (s==null?'':String(s)).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function fieldV(v){v=(v==null?'':String(v)).trim();return v?escH(v):null;}
+function openOpp(id){
+  const o=OPP.find(x=>x.id===id); if(!o) return;
+  const ag=AGMAP[o.agency_id]||{};
+  const amount=o.amount_value?escH((o.currency?o.currency+' ':'')+Number(o.amount_value).toLocaleString())
+    :(fieldV(o.funding_amount)||'Not specified');
+  const deadline=o.deadline?fmtDate(o.deadline):'Rolling — no fixed deadline';
+  const st=(o.status==='unknown'||!o.status)?'rolling':o.status;
+  let desc=fieldV(o.summary);
+  if(!desc){
+    let d='A funding opportunity'+(ag.name?(' offered by '+escH(ag.name)):'');
+    if(ag.country) d+=' based in '+escH(ag.country);
+    if(fieldV(o.research_area)) d+=', focused on '+fieldV(o.research_area);
+    desc=d+'. A specific amount and deadline aren’t published on the source page — use the link below for the latest details.';
+  }
+  const F=[['Amount',amount],['Deadline',escH(deadline)],['Status',st]];
+  if(fieldV(o.research_area)) F.push(['Research area',fieldV(o.research_area)]);
+  if(fieldV(o.eligibility)) F.push(['Eligibility',fieldV(o.eligibility),true]);
+  if(fieldV(o.tags)) F.push(['Tags',fieldV(o.tags).replace(/,\s*/g,', '),true]);
+  const grid=F.map(f=>`<div class="opp-field ${f[2]?'full':''}"><div class="k">${f[0]}</div><div class="v">${f[1]}</div></div>`).join('');
+  const saved=SAVED.has(o.id);
+  document.getElementById('oppBody').innerHTML=`
+    <div class="opp-h" id="oppTitle">${fieldV(o.program_name)||'Untitled scheme'}</div>
+    <div class="opp-ag"><span class="dot" style="width:26px;height:26px;border-radius:8px;display:inline-grid;place-items:center;color:#fff;font-size:10px;font-weight:800;background:${avColor(ag.name||'?')}">${initials(ag.name||'?')}</span>${escH(ag.name||'Unknown agency')}${ag.country?' · '+escH(ag.country):''}</div>
+    <div class="opp-desc">${desc}</div>
+    <div class="opp-grid">${grid}</div>
+    <div class="opp-actions">
+      ${o.application_link?`<a class="opp-btn primary" href="${escH(o.application_link)}" target="_blank" rel="noopener">Apply / details ↗</a>`:''}
+      ${o.source_url?`<a class="opp-btn ghost" href="${escH(o.source_url)}" target="_blank" rel="noopener">Source page ↗</a>`:''}
+      <button id="oppSave" class="opp-btn ghost" onclick="modalSave(${o.id})">${saved?'★ Saved':'☆ Save for later'}</button>
+    </div>`;
+  document.getElementById('oppModal').classList.add('show');
+}
+async function modalSave(id){
+  const btn=document.getElementById('oppSave');
+  await toggleSave(id,btn);
+  btn.textContent=SAVED.has(id)?'★ Saved':'☆ Save for later';
+}
+function closeOpp(){ document.getElementById('oppModal').classList.remove('show'); }
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeOpp(); });
 
 function render(){
   const q=document.getElementById('search').value.toLowerCase();
@@ -393,7 +466,17 @@ function render(){
     let rows=OPP.map(o=>({...o, agency:(AGMAP[o.agency_id]||{}).name||'', country:(AGMAP[o.agency_id]||{}).country||''}));
     rows=rows.filter(o=>(!sf||o.status===sf)&&(!cf||o.country===cf)&&
       (!q||[o.program_name,o.agency,o.research_area,o.tags].join(' ').toLowerCase().includes(q)));
-    rows.sort((a,b)=>{let x=a[sortKey]||'',y=b[sortKey]||'';return (x>y?1:x<y?-1:0)*sortDir;});
+    if(sortKey==='best'){
+      // default: fullest records first (have amount + deadline), then open, then soonest
+      const comp=o=>((o.amount_value||o.funding_amount)?1:0)+(o.deadline?1:0);
+      rows.sort((a,b)=>{
+        const d=comp(b)-comp(a); if(d) return d;
+        const oa=a.status==='open'?0:1, ob=b.status==='open'?0:1; if(oa!==ob) return oa-ob;
+        return String(a.deadline||'9999').localeCompare(String(b.deadline||'9999'));
+      });
+    }else{
+      rows.sort((a,b)=>{let x=a[sortKey]||'',y=b[sortKey]||'';return (x>y?1:x<y?-1:0)*sortDir;});
+    }
     if(!rows.length){el.innerHTML='<div class="empty">No matching opportunities.</div>';foot(0);return;}
     el.innerHTML=`<table><thead><tr>
       <th style="width:34px" title="Saved"></th>
@@ -403,10 +486,10 @@ function render(){
       <th onclick="sortBy('amount_value')">Amount</th>
       <th onclick="sortBy('deadline')">Deadline</th>
       <th onclick="sortBy('status')">Status</th>
-    </tr></thead><tbody>${rows.map(o=>`<tr>
-      <td><button class="star ${SAVED.has(o.id)?'on':''}" title="${SAVED.has(o.id)?'Remove bookmark':'Save for later'}" onclick="toggleSave(${o.id},this)">★</button></td>
+    </tr></thead><tbody>${rows.map(o=>`<tr class="orow" onclick="openOpp(${o.id})" title="Click for full details">
+      <td><button class="star ${SAVED.has(o.id)?'on':''}" title="${SAVED.has(o.id)?'Remove bookmark':'Save for later'}" onclick="event.stopPropagation();toggleSave(${o.id},this)">★</button></td>
       <td class="prog">${o.program_name||'<span class=muted>Untitled scheme</span>'}${o.research_area?`<div class="area">${o.research_area}</div>`:''}
-        ${o.application_link?`<div class="apply"><a href="${o.application_link}" target="_blank" rel="noopener">Apply / details ↗</a></div>`:''}</td>
+        ${o.application_link?`<div class="apply"><a href="${o.application_link}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Apply / details ↗</a></div>`:''}</td>
       <td>${agencyCell(o.agency)}</td>
       <td>${o.country||'<span class=muted>—</span>'}</td>
       <td class="amt ${o.amount_value?'has':''}">${amount(o)}</td>
