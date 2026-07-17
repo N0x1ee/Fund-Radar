@@ -31,7 +31,12 @@ SYSTEM_PROMPT = (
 def build_prompt(raw_text: str, *, max_chars: int = 8000) -> str:
     snippet = raw_text[:max_chars]
     return (
-        "From the funding opportunity page text below, extract these fields as JSON:\n"
+        "From the funding opportunity page text below, extract these fields as JSON.\n"
+        "IMPORTANT — WRITE EVERY FIELD IN ENGLISH. If the page is in another language "
+        "(e.g. Hindi), translate the content to English. For program_name, if the "
+        "official title is not in English, give it as \"Original title (English "
+        "translation)\". summary, eligibility, research_area and every tag must be in "
+        "English only.\n\n"
         '- is_funding_opportunity (true ONLY if the page describes ONE specific grant, '
         'fellowship, scholarship or call for proposals that someone can apply to. '
         'false for navigation/index pages, lists of links, news articles, '

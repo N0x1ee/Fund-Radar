@@ -383,39 +383,39 @@
   },
   {
     "agency_code": "IND004",
-    "program_name": "प्रधानमंत्री अनुसंधान अध्यक्ष (पीएमआरसी)",
+    "program_name": "प्रधानमंत्री अनुसंधान अध्यक्ष (पीएमआरसी) (Prime Minister's Research Chair (PMRC))",
     "funding_amount": null,
-    "eligibility": "विदेशों से अग्रणी भारतीय मूल के शोधकर्ताओं, वैज्ञानिकों और पेशेवरों",
-    "research_area": "उन्नत सामग्री, दुर्लभ-पृथ्वी और महत्वपूर्ण खनिज; ऊर्जा, स्थिरता और जलवायु परिवर्तन; कृषि एवं खाद्य प्रौद्योगिकी",
+    "eligibility": "विदेशों से अग्रणी भारतीय मूल के शोधकर्ताओं, वैज्ञानिकों और पेशेवरों (Leading researchers, scientists and professionals of Indian origin from abroad)",
+    "research_area": "उन्नत सामग्री, दुर्लभ-पृथ्वी और महत्वपूर्ण खनिज; ऊर्जा, स्थिरता और जलवायु परिवर्तन; कृषि एवं खाद्य प्रौद्योगिकी (Advanced materials, rare-earth and critical minerals; energy, sustainability and climate change; agriculture and food technology)",
     "deadline": "2026-07-15",
     "application_link": "https://pmrc.education.gov.in/",
-    "summary": "विदेशों से अग्रणी भारतीय मूल के शोधकर्ताओं, वैज्ञानिकों और पेशेवरों को आकर्षित करना और उन्हें भारत के प्रमुख सरकारी उच्च शिक्षा संस्थानों और राष्ट्रीय अनुसंधान प्रयोगशालाओं में नियुक्त करना",
+    "summary": "विदेशों से अग्रणी भारतीय मूल के शोधकर्ताओं, वैज्ञानिकों और पेशेवरों को आकर्षित करना और उन्हें भारत के प्रमुख सरकारी उच्च शिक्षा संस्थानों और राष्ट्रीय अनुसंधान प्रयोगशालाओं में नियुक्त करना (To attract leading researchers, scientists and professionals of Indian origin from abroad and appoint them at India's premier government higher-education institutions and national research laboratories)",
     "tags": [
-      "अनुसंधान",
-      "विज्ञान",
-      "प्रमाणिकता",
-      "रक्षा"
+      "अनुसंधान (Research)",
+      "विज्ञान (Science)",
+      "प्रमाणिकता (Authenticity)",
+      "रक्षा (Defence)"
     ],
     "source_url": "https://www.csir.res.in/hi/News/Call-for-proposals/Announcements/paradhaanamantarai-anausandhaana-adhayakasa-paiemaarasai"
   },
   {
     "agency_code": "IND004",
-    "program_name": "प्रधानमंत्री अनुसंधान अध्यक्ष (पीएमआरसी) योजना",
+    "program_name": "प्रधानमंत्री अनुसंधान अध्यक्ष (पीएमआरसी) योजना (Prime Minister's Research Chair (PMRC) Scheme)",
     "funding_amount": null,
     "eligibility": null,
     "research_area": null,
     "deadline": "2026-07-15",
     "application_link": "https://csirlab.gov.in/notifications",
-    "summary": "प्रस्ताव आमंत्रित",
+    "summary": "प्रस्ताव आमंत्रित (Proposals invited)",
     "tags": [
-      "अनुसंधान",
-      "विज्ञान"
+      "अनुसंधान (Research)",
+      "विज्ञान (Science)"
     ],
     "source_url": "https://www.csir.res.in/hi/news-call-for-proposals-announcements"
   },
   {
     "agency_code": "IND004",
-    "program_name": "रासायनिक हथियारों के निषेध के लिए संगठन (ओपीसीडब्ल्यू) पर प्रस्तावों के लिए आमंत्रण",
+    "program_name": "रासायनिक हथियारों के निषेध के लिए संगठन (ओपीसीडब्ल्यू) पर प्रस्तावों के लिए आमंत्रण (Invitation for Proposals on the Organisation for the Prohibition of Chemical Weapons (OPCW))",
     "funding_amount": null,
     "eligibility": null,
     "research_area": null,
@@ -423,28 +423,28 @@
     "application_link": "icb.events@vopcw.org",
     "summary": null,
     "tags": [
-      "विषैले रसायनों को सुरक्षित और पर्यावरण के अनुकूल तरीके से नष्ट करने की तकनीकें",
-      "विषैले रसायनों के संचालन और उपयोग के साथ-साथ उनके भंडारण के संबंध में प्रबंधन और जोखिम मूल्यांकन"
+      "विषैले रसायनों को सुरक्षित और पर्यावरण के अनुकूल तरीके से नष्ट करने की तकनीकें (Techniques to destroy toxic chemicals safely and in an environment-friendly way)",
+      "विषैले रसायनों के संचालन और उपयोग के साथ-साथ उनके भंडारण के संबंध में प्रबंधन और जोखिम मूल्यांकन (Management and risk assessment for the handling, use and storage of toxic chemicals)"
     ],
     "source_url": "https://www.csir.res.in/hi/News/Call-for-proposals/Announcements/raasaayanaika-hathaiyaaraon-kae-naisaedha-kae-laie-sangathana"
   },
   {
     "agency_code": "IND004",
-    "program_name": "रोलैंड फैलोशिप",
+    "program_name": "रोलैंड फैलोशिप (Rowland Fellowship)",
     "funding_amount": "$89,999/year",
-    "eligibility": "पीएचडी पूरी करने की प्रक्रिया में होना या/या 1 मई, 2025 से पीएचडी प्राप्त कर चुके होना",
-    "research_area": "विज्ञान और इंजीनियरिंग",
+    "eligibility": "पीएचडी पूरी करने की प्रक्रिया में होना या/या 1 मई, 2025 से पीएचडी प्राप्त कर चुके होना (In the process of completing a PhD, or having obtained a PhD on/after 1 May 2025)",
+    "research_area": "विज्ञान और इंजीनियरिंग (Science and Engineering)",
     "deadline": "2026-08-01",
     "application_link": "https://academicpositions.harvard.edu/postings/16238",
-    "summary": "उत्कृष्ट नवोदित प्रायोगिक वैज्ञानिकों की तलाश कर रहा है।",
+    "summary": "उत्कृष्ट नवोदित प्रायोगिक वैज्ञानिकों की तलाश कर रहा है। (Seeking outstanding budding experimental scientists.)",
     "tags": [
-      "विज्ञान और इंजीनियरिंग"
+      "विज्ञान और इंजीनियरिंग (Science and Engineering)"
     ],
     "source_url": "https://www.csir.res.in/hi/News/Call-for-proposals/Announcements/raolaainda-phaailaosaipa-antaima-taithai-01082026"
   },
   {
     "agency_code": "IND004",
-    "program_name": "वित्त वर्ष 2023-24 के दौरान सीएसआईआर को जारी अनुदान/निधि",
+    "program_name": "वित्त वर्ष 2023-24 के दौरान सीएसआईआर को जारी अनुदान/निधि (Grants/Funds released to CSIR during FY 2023-24)",
     "funding_amount": null,
     "eligibility": null,
     "research_area": null,
@@ -456,30 +456,30 @@
   },
   {
     "agency_code": "IND004",
-    "program_name": "सहयोगात्मक वैज्ञानिक अनुसंधान कार्यक्रम (सीएसआरपी)",
+    "program_name": "सहयोगात्मक वैज्ञानिक अनुसंधान कार्यक्रम (सीएसआरपी) (Collaborative Scientific Research Programme (CSRP))",
     "funding_amount": null,
     "eligibility": null,
-    "research_area": "शुद्ध एवं अनुप्रयुक्त गणित, कम्प्यूटेशनल विज्ञान, जीवन एवं स्वास्थ्य विज्ञान, शुद्ध एवं अनुप्रयुक्त भौतिकी, शुद्ध एवं अनुप्रयुक्त रसायन विज्ञान, पृथ्वी और ग्रह विज्ञान, पदार्थ विज्ञान, पर्यावरण विज्ञान, जैव प्रौद्योगिकी, जल",
+    "research_area": "शुद्ध एवं अनुप्रयुक्त गणित, कम्प्यूटेशनल विज्ञान, जीवन एवं स्वास्थ्य विज्ञान, शुद्ध एवं अनुप्रयुक्त भौतिकी, शुद्ध एवं अनुप्रयुक्त रसायन विज्ञान, पृथ्वी और ग्रह विज्ञान, पदार्थ विज्ञान, पर्यावरण विज्ञान, जैव प्रौद्योगिकी, जल (Pure and applied mathematics, computational science, life and health sciences, pure and applied physics, pure and applied chemistry, earth and planetary sciences, materials science, environmental science, biotechnology, water)",
     "deadline": "2026-07-31",
     "application_link": "https://www.cefipraonline.in/CEFIPRA",
-    "summary": "CEFIPRA उच्च गुणवत्ता वाले अनुसंधान समूहों को सहयोगात्मक अनुसंधान परियोजनाओं के माध्यम से सहायता प्रदान करता है|",
+    "summary": "CEFIPRA उच्च गुणवत्ता वाले अनुसंधान समूहों को सहयोगात्मक अनुसंधान परियोजनाओं के माध्यम से सहायता प्रदान करता है| (CEFIPRA supports high-quality research groups through collaborative research projects.)",
     "tags": [
-      "शुद्ध एवं अनुप्रयुक्त गणित",
-      "कम्प्यूटेशनल विज्ञान",
-      "जीवन एवं स्वास्थ्य विज्ञान",
-      "शुद्ध एवं अनुप्रयुक्त भौतिकी"
+      "शुद्ध एवं अनुप्रयुक्त गणित (Pure and applied mathematics)",
+      "कम्प्यूटेशनल विज्ञान (Computational science)",
+      "जीवन एवं स्वास्थ्य विज्ञान (Life and health sciences)",
+      "शुद्ध एवं अनुप्रयुक्त भौतिकी (Pure and applied physics)"
     ],
     "source_url": "https://www.csir.res.in/hi/News/Call-for-proposals/Announcements/sahayaogaatamaka-vaaijanaanaika-anausandhaana-kaarayakarama-2"
   },
   {
     "agency_code": "IND004",
-    "program_name": "स्क्रीनिंग और निदान के लिए अभूतपूर्व समाधान और लागत-प्रभावी नवाचार पर प्रस्तावों के लिए आह्वान",
+    "program_name": "स्क्रीनिंग और निदान के लिए अभूतपूर्व समाधान और लागत-प्रभावी नवाचार पर प्रस्तावों के लिए आह्वान (Call for Proposals on Breakthrough Solutions and Cost-Effective Innovations for Screening and Diagnosis)",
     "funding_amount": "$55,000",
     "eligibility": null,
     "research_area": "Artificial Intelligence",
     "deadline": "2026-07-01",
     "application_link": "https://birac.nic.in/cfp_view.php?id=118&scheme_type=6",
-    "summary": "ग्रैंड चैलेंजेस इंडिया (GCI–BIRAC) के तहत इस खुली अपील का उद्देश्य प्राथमिकता वाले संक्रामक रोग क्षेत्रों में स्वदेशी नवाचारों और परिवर्तनकारी समाधानों को सहायता प्रदान करना है।",
+    "summary": "ग्रैंड चैलेंजेस इंडिया (GCI–BIRAC) के तहत इस खुली अपील का उद्देश्य प्राथमिकता वाले संक्रामक रोग क्षेत्रों में स्वदेशी नवाचारों और परिवर्तनकारी समाधानों को सहायता प्रदान करना है। (Under Grand Challenges India (GCI–BIRAC), this open call aims to support indigenous innovations and transformative solutions in priority infectious-disease areas.)",
     "tags": [
       "Artificial Intelligence",
       "Near point-of-care",
@@ -699,7 +699,7 @@
   },
   {
     "agency_code": "IND007",
-    "program_name": "Bio-AI for establishing मूलांकुर hubs",
+    "program_name": "Bio-AI for establishing मूलांकुर (Mulankur) hubs",
     "funding_amount": null,
     "eligibility": null,
     "research_area": null,
@@ -756,13 +756,13 @@
   },
   {
     "agency_code": "IND007",
-    "program_name": "Joint Call for Proposals on Bio-AI for establishing मूलांकुर hubs under BioE3 Policy for Biomanufacturing",
+    "program_name": "Joint Call for Proposals on Bio-AI for establishing मूलांकुर (Mulankur) hubs under BioE3 Policy for Biomanufacturing",
     "funding_amount": null,
     "eligibility": null,
     "research_area": "Biomanufacturing",
     "deadline": null,
     "application_link": "https://www.birac.gov.in/",
-    "summary": "DBT BIRAC Joint Call for Proposals on Bio-AI for establishing मूलांकुर hubs under BioE3 Policy for Biomanufacturing.",
+    "summary": "DBT BIRAC Joint Call for Proposals on Bio-AI for establishing मूलांकुर (Mulankur) hubs under BioE3 Policy for Biomanufacturing.",
     "tags": [
       "Biomanufacturing",
       "Bio-AI"

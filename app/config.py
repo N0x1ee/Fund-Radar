@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     # LLM
     llm_provider: str = "mock"          # auto | gemini | groq | ollama | mock
     gemini_api_key: str = ""
-    gemini_model: str = "gemini-2.0-flash"
+    gemini_model: str = "gemini-3.1-flash-lite"   # cheap, current (2.0-flash retired Jun 2026)
     groq_api_key: str = ""
     groq_model: str = "llama-3.1-8b-instant"   # fast; big free daily allowance
     ollama_host: str = "http://localhost:11434"
