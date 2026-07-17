@@ -20,7 +20,7 @@ git add -A
 
 echo.
 echo Committing...
-git commit -m "English translations for Hindi opportunities; detail popup + labels + sort; conversational chatbot; automation"
+git commit -m "Gemini 3.1 Flash-Lite + English extraction; Hindi translations; detail popup; chatbot; automation"
 
 echo.
 echo Pushing to GitHub...
