@@ -17,14 +17,14 @@ PyJWT>=2.8
 email-validator>=2.0
 
 # ---------------------------------------------------------------------------
-# SCRAPER — needed by the live scraper and the every-2-days GitHub Action.
-# ---------------------------------------------------------------------------
-httpx>=0.27
-beautifulsoup4>=4.12
-pypdf>=4.0         # read text from PDF-based funding schemes (e.g. INSA, CEFIPRA)
-playwright>=1.47   # uncomment + run: playwright install chromium
-
-# ---------------------------------------------------------------------------
-# AI EXTRACTION — Gemini SDK (Groq needs no package, it uses stdlib urllib).
-# ---------------------------------------------------------------------------
-google-generativeai>=0.8
+# SCRAPER + AI — NOT installed in the website image (the site only serves the
+# dashboard; it never scrapes or calls the AI). These are installed only by the
+# every-2-days GitHub Action (.github/workflows/scrape.yml), which is where the
+# scraping and AI extraction actually run. Keeping them out of the web image
+# makes Render / Hugging Face builds smaller, faster and more reliable.
+#
+#   httpx>=0.27
+#   beautifulsoup4>=4.12
+#   pypdf>=4.0                # read text from PDF-based funding schemes
+#   google-generativeai>=0.8  # Gemini SDK (Groq uses stdlib urllib, no package)
+#   playwright>=1.47          # only if scraping JS-heavy sites (needs `playwright install`)

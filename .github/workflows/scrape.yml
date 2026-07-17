@@ -41,7 +41,11 @@ jobs:
           python-version: "3.12"
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        # requirements.txt = the lean website deps; the scraper + AI packages
+        # live only here (they aren't needed by the web image).
+        run: |
+          pip install -r requirements.txt
+          pip install httpx beautifulsoup4 pypdf google-generativeai
 
       - name: Restore previous database
         run: |
