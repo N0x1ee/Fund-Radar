@@ -6,11 +6,13 @@ services:
     runtime: python
     plan: free
     buildCommand: pip install -r requirements.txt
-    # Seed the database (idempotent) on every boot, then start the web server.
+    # Boot from the scraped snapshot committed by the GitHub Action (if any),
+    # then seed (idempotent) and start the web server.
     startCommand: >-
+      sh -c "if [ -f data/fundradar.db ]; then cp data/fundradar.db fundradar.db; fi &&
       python -m app.ingest.seed_agencies &&
       python -m app.ingest.load_demo_opportunities &&
-      uvicorn app.api.main:app --host 0.0.0.0 --port $PORT
+      uvicorn app.api.main:app --host 0.0.0.0 --port $PORT"
     envVars:
       - key: PYTHON_VERSION
         value: "3.12.4"

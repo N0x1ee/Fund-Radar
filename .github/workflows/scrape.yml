@@ -1,0 +1,87 @@
+# FundRadar — automated scrape + AI extraction, every 2 days.
+#
+# What it does (all in GitHub's free cloud, your PC can be off):
+#   1. Restores the last database from data/fundradar.db (if it exists)
+#   2. Seeds agencies from the Excel file (idempotent — also picks up NEW
+#      agencies you added since the last run)
+#   3. Runs the full pipeline: scrape all agencies + AI-extract new/changed pages
+#   4. Commits the updated database back to the repo
+#      -> that push automatically redeploys Hugging Face (sync-to-hf.yml) and
+#         Render (auto-deploy on push), so the live site gets the fresh data.
+#
+# Setup (one time): add repo secrets GEMINI_API_KEY and GROQ_API_KEY under
+#   GitHub -> Settings -> Secrets and variables -> Actions. See AUTOMATION_SETUP.md.
+# Test it any time: Actions tab -> "Scheduled scrape" -> "Run workflow".
+
+name: Scheduled scrape
+
+on:
+  schedule:
+    - cron: "0 2 */2 * *"   # 02:00 UTC on days 1,3,5,... of each month
+  workflow_dispatch: {}      # manual "Run workflow" button for testing
+
+permissions:
+  contents: write            # needed to commit the updated database
+
+concurrency:
+  group: scrape              # never run two scrapes at once
+  cancel-in-progress: false
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Restore previous database
+        run: |
+          if [ -f data/fundradar.db ]; then
+            cp data/fundradar.db fundradar.db
+            echo "Restored database from data/fundradar.db"
+          else
+            echo "No previous database — starting fresh"
+          fi
+
+      - name: Seed agencies + demo data (idempotent)
+        run: |
+          python -m app.ingest.seed_agencies
+          python -m app.ingest.load_demo_opportunities
+
+      - name: Run pipeline (scrape + AI extract)
+        env:
+          LLM_PROVIDER: auto                              # Gemini first, Groq fallback
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        run: python -m app.run_pipeline
+
+      - name: Commit updated database
+        run: |
+          mkdir -p data
+          cp fundradar.db data/fundradar.db
+          git config user.name  "fundradar-bot"
+          git config user.email "actions@github.com"
+          git add -f data/fundradar.db
+          if git diff --cached --quiet; then
+            echo "No data changes this run"
+          else
+            git commit -m "Auto-scrape: refresh data ($(date -u +%Y-%m-%d))"
+            git push
+          fi
+
+      - name: Upload run log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pipeline-log
+          path: logs/*.log
+          if-no-files-found: ignore

@@ -61,6 +61,9 @@ Goal: keep data fresh automatically.
 - [x] Idempotent re-runs: `content_hash` skips unchanged, refreshes changed pages
 - [x] Past-deadline rows auto-marked `closed`; per-run log in `logs/`
 - [x] Scheduling: cron + systemd-timer setup for every-2-days (`run_pipeline.sh`, `DEPLOYMENT.md`)
+- [x] Free cloud automation: GitHub Action scrapes every 2 days, commits the DB,
+      auto-redeploys HF/Render (`.github/workflows/scrape.yml`, `AUTOMATION_SETUP.md`)
+- [x] One-command agency onboarding (`app/ingest/add_agency.py`, `ADDING_WEBSITES.md`)
 - [ ] Explicit change-log table (what changed, when) for audit/history
 
 ## Phase 5 — Semantic search & chatbot  [~]

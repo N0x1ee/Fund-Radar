@@ -17,7 +17,21 @@ STOPWORDS = {
     "can","i","apply","funding","grant","grants","opportunity","opportunities","with",
     "and","or","any","there","that","do","you","have","get","find","list","give","all",
     "available","open","please","tell","about","under","whose","who","how","much",
+    # status / time words (already captured as the `status` intent, so they must
+    # NOT also count as search terms — otherwise "open now" filters everything out)
+    "now","currently","current","active","ongoing","closed","expired","past",
+    "recent","recently","latest","new","still",
+    # amount trigger + unit words (captured as the `min_amount` intent)
+    "above","over","more","than","greater","least","minimum","min","max","maximum",
+    "upto","up","lakh","lakhs","lac","crore","crores","cr","million","millions",
+    "mn","thousand","billion","billions","bn","rs","inr","usd","eur","gbp","rupee",
+    "rupees","dollar","dollars","euro","euros","amount","worth","money",
+    # misc filler
+    "need","want","looking","related","some","this","from","by","near",
 }
+# Short tokens (<=2 chars) are normally dropped as noise, but a few are meaningful
+# acronyms we want to keep as search terms.
+KEEP_SHORT = {"ai","ml","5g","hpc","iot","ev"}
 COUNTRY_WORDS = {
     "india","indian","france","french","germany","german","switzerland","swiss",
     "japan","japanese","usa","us","american","europe","european","taiwan","finland",
@@ -47,23 +61,35 @@ def parse_query(text: str) -> dict:
         min_amount = val
 
     countries = [w for w in COUNTRY_WORDS if re.search(rf"\b{w}\b", q)]
-    terms = [w for w in re.findall(r"[a-z0-9]+", q) if w not in STOPWORDS and len(w) > 2]
+    terms = [w for w in re.findall(r"[a-z0-9]+", q)
+             if w not in STOPWORDS and (len(w) > 2 or w in KEEP_SHORT)]
     return {"status": status, "min_amount": min_amount, "countries": countries, "terms": terms}
 
 
 def _haystack(o: dict) -> str:
     parts = [o.get("program_name"), o.get("research_area"), o.get("tags"),
-             o.get("eligibility"), o.get("summary"), o.get("agency_name"), o.get("country")]
+             o.get("eligibility"), o.get("summary"), o.get("agency_name"),
+             o.get("country"), o.get("funding_amount")]
     return " ".join(p for p in parts if p).lower()
+
+
+def _matches(term: str, text: str) -> bool:
+    """Match a term against text, tolerant of simple plurals (grant/grants,
+    fellowship/fellowships) in either direction."""
+    if term in text:
+        return True
+    singular = term[:-1] if term.endswith("s") and len(term) > 3 else term
+    return singular in text
 
 
 def score(o: dict, parsed: dict) -> int:
     text = _haystack(o)
+    title = (o.get("program_name", "") + " " + (o.get("research_area") or "")).lower()
     s = 0
     for term in parsed["terms"]:
-        if term in text:
+        if _matches(term, text):
             # weight matches in the title/area higher than body
-            s += 3 if term in (o.get("program_name", "") + " " + (o.get("research_area") or "")).lower() else 1
+            s += 3 if _matches(term, title) else 1
     for c in parsed["countries"]:
         if c in text:
             s += 2
