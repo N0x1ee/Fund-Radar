@@ -20,6 +20,13 @@ class Settings(BaseSettings):
     # Scraper
     use_playwright: bool = False        # render JS-heavy sites via headless browser
 
+    # Email verification (Resend API). If resend_api_key is empty, verification
+    # is DISABLED and the app behaves as before (no email sent, no login block).
+    resend_api_key: str = ""
+    email_from: str = "FundRadar <onboarding@resend.dev>"   # verified sender
+    app_base_url: str = ""              # e.g. https://fundradar.onrender.com;
+    #                                     blank = derive from the incoming request
+
     # API security / reliability
     rate_limit_per_min: int = 120       # max requests per IP per minute (0 = off)
     enable_docs: bool = True            # expose interactive /docs

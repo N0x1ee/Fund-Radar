@@ -75,3 +75,25 @@ def decode_token(token: str) -> dict:
     the token is invalid or expired — callers handle that as a 401.
     """
     return jwt.decode(token, settings.jwt_secret, algorithms=[settings.jwt_algorithm])
+
+
+# --- Email-verification tokens ---------------------------------------------
+
+def create_verification_token(user_id: str | int, *, expires_hours: int = 24) -> str:
+    """Signed, expiring token embedded in the email verification link."""
+    now = datetime.now(timezone.utc)
+    payload = {
+        "sub": str(user_id),
+        "iat": now,
+        "exp": now + timedelta(hours=expires_hours),
+        "type": "verify",
+    }
+    return jwt.encode(payload, settings.jwt_secret, algorithm=settings.jwt_algorithm)
+
+
+def decode_verification_token(token: str) -> int:
+    """Return the user id from a valid 'verify' token, else raise jwt.PyJWTError."""
+    payload = jwt.decode(token, settings.jwt_secret, algorithms=[settings.jwt_algorithm])
+    if payload.get("type") != "verify":
+        raise jwt.InvalidTokenError("not a verification token")
+    return int(payload["sub"])

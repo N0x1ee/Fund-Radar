@@ -10,7 +10,8 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 
-from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
+from fastapi.responses import HTMLResponse
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
@@ -21,19 +22,39 @@ from app.auth.models import SavedOpportunity, User
 from app.db.models import Opportunity
 from app.db.schemas import OpportunityOut
 from app.auth.schemas import (LoginIn, PasswordChangeIn, ProfileUpdateIn,
-                              SignupIn, UserOut)
+                              ResendVerificationIn, SignupIn, UserOut)
 from app.auth.deps import ACCESS_COOKIE, get_current_user
-from app.auth.security import create_access_token, hash_password, verify_password
+from app.auth.email import send_verification_email, verification_enabled
+from app.auth.security import (create_access_token, create_verification_token,
+                               decode_verification_token, hash_password,
+                               verify_password)
+import jwt  # PyJWT — for verification-token exception types
+
+
+def _base_url(request: Request) -> str:
+    """Public base URL for building links (config override, else the request)."""
+    return (settings.app_base_url or str(request.base_url)).rstrip("/")
+
+
+def _send_verification(user: User, request: Request) -> None:
+    """Generate a token and email the verification link (best-effort)."""
+    token = create_verification_token(user.id)
+    link = f"{_base_url(request)}/auth/verify?token={token}"
+    send_verification_email(user.email, user.full_name, link)
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
 @router.post("/signup", response_model=UserOut, status_code=status.HTTP_201_CREATED)
-def signup(payload: SignupIn, db: Session = Depends(get_db)) -> User:
+def signup(payload: SignupIn, request: Request, db: Session = Depends(get_db)) -> User:
     """Create a new user account.
 
     Password strength + email format are validated by SignupIn (→ 422).
     Returns the created user (never the password hash). Does not log in.
+
+    When email verification is enabled (an email provider is configured), the
+    account starts unverified and a verification link is emailed. When it is not
+    configured, the account is auto-verified so the app works with no provider.
     """
     # Email is already normalized (trimmed + lowercased) by the SignupIn schema.
     # Friendly pre-check (fast path, clear message).
@@ -47,6 +68,7 @@ def signup(payload: SignupIn, db: Session = Depends(get_db)) -> User:
         email=payload.email,
         password_hash=hash_password(payload.password),
         full_name=payload.full_name,
+        is_verified=not verification_enabled(),   # auto-verified if no email provider
     )
     db.add(user)
     try:
@@ -59,6 +81,8 @@ def signup(payload: SignupIn, db: Session = Depends(get_db)) -> User:
             detail="An account with this email already exists.",
         )
     db.refresh(user)
+    if verification_enabled():
+        _send_verification(user, request)
     return user
 
 
@@ -82,6 +106,12 @@ def login(payload: LoginIn, response: Response, db: Session = Depends(get_db)) -
             status_code=status.HTTP_403_FORBIDDEN,
             detail="This account is disabled.",
         )
+    if verification_enabled() and not user.is_verified:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Please verify your email first. Check your inbox for the "
+                   "verification link, or request a new one.",
+        )
 
     minutes = (settings.remember_me_days * 24 * 60
                if payload.remember_me else settings.access_token_minutes)
@@ -99,6 +129,62 @@ def login(payload: LoginIn, response: Response, db: Session = Depends(get_db)) -
     user.last_login_at = datetime.now(timezone.utc)
     db.commit()
     return user
+
+
+def _verify_result_page(title: str, message: str, ok: bool) -> HTMLResponse:
+    color = "#059669" if ok else "#b91c1c"
+    icon = "✓" if ok else "✕"
+    html = f"""<!doctype html><html><head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>{title} — FundRadar</title></head>
+    <body style="font-family:Segoe UI,Arial,sans-serif;background:#eef3f9;margin:0;
+      display:grid;place-items:center;min-height:100vh;color:#0f2540">
+      <div style="background:#fff;border:1px solid #e6edf5;border-radius:16px;
+        border-top:4px solid {color};padding:34px 40px;max-width:420px;text-align:center;
+        box-shadow:0 10px 30px -18px rgba(15,37,64,.3)">
+        <div style="font-size:42px;color:{color};line-height:1">{icon}</div>
+        <h1 style="font-size:20px;margin:10px 0 6px">{title}</h1>
+        <p style="color:#64798f;margin:0 0 20px">{message}</p>
+        <a href="/dashboard" style="background:#2563eb;color:#fff;text-decoration:none;
+          padding:11px 22px;border-radius:9px;font-weight:700;display:inline-block">
+          Go to FundRadar</a>
+      </div></body></html>"""
+    return HTMLResponse(html)
+
+
+@router.get("/verify", response_class=HTMLResponse, include_in_schema=False)
+def verify_email(token: str, db: Session = Depends(get_db)) -> HTMLResponse:
+    """Confirm an email from the link in the verification message."""
+    try:
+        user_id = decode_verification_token(token)
+    except jwt.ExpiredSignatureError:
+        return _verify_result_page("Link expired",
+            "This verification link has expired. Please log in and request a new one.", False)
+    except jwt.PyJWTError:
+        return _verify_result_page("Invalid link",
+            "This verification link is not valid. Please request a new one.", False)
+
+    user = db.get(User, user_id)
+    if user is None:
+        return _verify_result_page("Account not found",
+            "We couldn't find that account.", False)
+    if not user.is_verified:
+        user.is_verified = True
+        db.commit()
+    return _verify_result_page("Email verified",
+        "Your email is confirmed. You can now log in to FundRadar.", True)
+
+
+@router.post("/resend-verification", status_code=status.HTTP_202_ACCEPTED)
+def resend_verification(payload: ResendVerificationIn, request: Request,
+                        db: Session = Depends(get_db)):
+    """Send a fresh verification email. Always returns 202 (never reveals whether
+    the email is registered)."""
+    if verification_enabled():
+        user = db.scalar(select(User).where(User.email == payload.email))
+        if user and not user.is_verified:
+            _send_verification(user, request)
+    return {"detail": "If that email needs verifying, a new link is on its way."}
 
 
 @router.get("/me", response_model=UserOut)

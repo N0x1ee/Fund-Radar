@@ -20,7 +20,7 @@ git add -A
 
 echo.
 echo Committing...
-git commit -m "Lean website image (move scraper/AI deps to CI); chatbot fix; 2-day automation"
+git commit -m "Email verification (Resend, opt-in); chat bullet answers; demo login on boot; automation"
 
 echo.
 echo Pushing to GitHub...

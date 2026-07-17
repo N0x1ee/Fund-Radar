@@ -50,6 +50,7 @@ class UserOut(BaseModel):
     research_interests: str | None = None
     is_active: bool
     is_admin: bool
+    is_verified: bool = False
     created_at: datetime | None = None
 
 
@@ -68,6 +69,11 @@ class PasswordChangeIn(BaseModel):
     """Payload for changing the account password."""
     current_password: str = Field(min_length=1, max_length=128)
     new_password: str = Field(min_length=8, max_length=128)
+
+
+class ResendVerificationIn(BaseModel):
+    """Payload for requesting another verification email."""
+    email: NormalizedEmail
 
 
 class TokenOut(BaseModel):

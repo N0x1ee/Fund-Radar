@@ -12,6 +12,7 @@ services:
       sh -c "if [ -f data/fundradar.db ]; then cp data/fundradar.db fundradar.db; fi &&
       python -m app.ingest.seed_agencies &&
       python -m app.ingest.load_demo_opportunities &&
+      python -m app.ingest.seed_demo_user &&
       uvicorn app.api.main:app --host 0.0.0.0 --port $PORT"
     envVars:
       - key: PYTHON_VERSION

@@ -24,4 +24,4 @@ EXPOSE 7860
 # Boot from the scraped snapshot committed by the GitHub Action (if present),
 # then seed (idempotent) and start the server. The app also self-seeds on
 # startup if the DB is empty, so this is belt-and-suspenders.
-CMD ["sh", "-c", "if [ -f data/fundradar.db ]; then cp data/fundradar.db /tmp/fundradar.db; fi && python -m app.ingest.seed_agencies && python -m app.ingest.load_demo_opportunities && uvicorn app.api.main:app --host 0.0.0.0 --port ${PORT:-7860}"]
+CMD ["sh", "-c", "if [ -f data/fundradar.db ]; then cp data/fundradar.db /tmp/fundradar.db; fi && python -m app.ingest.seed_agencies && python -m app.ingest.load_demo_opportunities && python -m app.ingest.seed_demo_user && uvicorn app.api.main:app --host 0.0.0.0 --port ${PORT:-7860}"]

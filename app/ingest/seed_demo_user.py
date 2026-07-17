@@ -25,11 +25,13 @@ def main() -> None:
         user = db.scalar(select(User).where(User.email == DEMO_EMAIL))
         if user:
             user.password_hash = hash_password(DEMO_PASSWORD)
+            user.is_verified = True   # demo account is always loginable
             print(f"Demo account already existed — password reset. ({DEMO_EMAIL})")
         else:
             db.add(User(email=DEMO_EMAIL,
                         password_hash=hash_password(DEMO_PASSWORD),
-                        full_name="Demo User"))
+                        full_name="Demo User",
+                        is_verified=True))
             print(f"Demo account created: {DEMO_EMAIL} / {DEMO_PASSWORD}")
         db.commit()
     finally:

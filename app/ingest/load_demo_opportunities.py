@@ -21,6 +21,39 @@ from app.llm.normalize import normalize_amount, parse_deadline
 JSON_PATH = Path(__file__).resolve().parents[2] / "data" / "demo_opportunities.json"
 
 
+import ast
+
+
+def _first_meaningful(items):
+    """First non-empty, non-null element of a list (as a string), else None."""
+    for x in items:
+        if x is None:
+            continue
+        s = str(x).strip()
+        if s and s.lower() != "null":
+            return s
+    return None
+
+
+def _clean_scalar(value):
+    """Coerce a value that should be a single string.
+
+    Bad AI extractions sometimes store a Python-list *string* (e.g.
+    "['a', 'b']") in a scalar field, which then renders as raw brackets in the
+    chatbot. Turn any such value into its first meaningful element.
+    """
+    if isinstance(value, list):
+        return _first_meaningful(value)
+    if isinstance(value, str) and value.lstrip().startswith("[") and ("'" in value or '"' in value):
+        try:
+            parsed = ast.literal_eval(value)
+        except (ValueError, SyntaxError):
+            return value
+        if isinstance(parsed, list):
+            return _first_meaningful(parsed)
+    return value
+
+
 def load():
     init_db()
     data = json.loads(JSON_PATH.read_text(encoding="utf-8"))
@@ -28,6 +61,18 @@ def load():
     created = skipped = 0
     try:
         for rec in data:
+            # Drop aggregate junk rows whose program_name is itself a list of
+            # several programs (a broken extraction), and clean any scalar field
+            # that arrived as a list so it never renders as raw "[...]".
+            pn = rec.get("program_name")
+            if isinstance(pn, list) or (isinstance(pn, str) and pn.lstrip().startswith("[") and "'" in pn):
+                skipped += 1
+                continue
+            for _f in ("program_name", "funding_amount", "eligibility",
+                       "research_area", "application_link", "summary", "deadline"):
+                if _f in rec:
+                    rec[_f] = _clean_scalar(rec[_f])
+
             agency = db.scalar(select(Agency).where(Agency.agency_code == rec["agency_code"]))
             if not agency:
                 print(f"  ! no agency {rec['agency_code']} (run seed_agencies first); skipping")

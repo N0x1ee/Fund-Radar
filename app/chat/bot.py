@@ -39,19 +39,53 @@ def _load_opps(db: Session) -> list[dict]:
     return opps
 
 
+def _s(value) -> str | None:
+    """Coerce a field to a clean single string, or None.
+
+    Guards against bad data where a field is a list (or a list rendered as a
+    string like "['a','b']"), so the chat never prints raw brackets.
+    """
+    if value is None:
+        return None
+    if isinstance(value, list):
+        for x in value:
+            if x not in (None, "", "null"):
+                return str(x).strip()
+        return None
+    s = str(value).strip()
+    return s or None
+
+
 def _format_list(matches: list[dict]) -> str:
     if not matches:
         return "I couldn't find any matching opportunities in the database."
-    lines = [f"Found {len(matches)} matching opportunit{'y' if len(matches)==1 else 'ies'}:\n"]
+    n = len(matches)
+    lines = [f"Found {n} matching opportunit{'y' if n == 1 else 'ies'}:", ""]
     for o in matches:
-        amt = o.get("funding_amount") or (f"{o['amount_value']:,.0f}" if o.get("amount_value") else "amount not stated")
-        dl = o.get("deadline") or "no deadline listed"
-        lines.append(
-            f"• {o['program_name']} ({o.get('agency_name','?')})\n"
-            f"    Amount: {amt}  |  Deadline: {dl}  |  Status: {o.get('status')}\n"
-            f"    Eligibility: {o.get('eligibility') or '—'}\n"
-            f"    Apply: {o.get('link') or '—'}"
-        )
+        name = _s(o.get("program_name")) or "Untitled scheme"
+        agency = _s(o.get("agency_name"))
+        amt = _s(o.get("funding_amount"))
+        if not amt and o.get("amount_value"):
+            amt = f"{float(o['amount_value']):,.0f} {_s(o.get('currency')) or ''}".strip()
+        dl = _s(o.get("deadline"))
+        status = _s(o.get("status"))
+        link = _s(o.get("link"))
+
+        head = f"**{name}**" + (f" — {agency}" if agency else "")
+        bits = []
+        if amt:
+            bits.append(amt)
+        if dl:
+            bits.append(f"deadline {dl}")
+        if status:
+            bits.append(status)
+        detail = "  ·  ".join(bits)
+        line = f"- {head}"
+        if detail:
+            line += f" ({detail})"
+        if link:
+            line += f" — [Apply ↗]({link})"
+        lines.append(line)
     return "\n".join(lines)
 
 

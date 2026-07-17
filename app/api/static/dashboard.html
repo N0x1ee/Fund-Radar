@@ -67,10 +67,20 @@
   .chip{font-size:12px;padding:7px 13px;background:var(--brand-soft);color:var(--brand-d);
     border:1px solid #dbe6ff;border-radius:999px;cursor:pointer;transition:.15s}
   .chip:hover{background:#e2ebff;transform:translateY(-1px)}
-  .chatout{margin-top:14px;white-space:pre-wrap;font-size:13.5px;line-height:1.6;
+  .chatout{margin-top:14px;font-size:13.5px;line-height:1.6;
     background:var(--green-soft);border:1px solid #c7eedd;border-left:3px solid var(--green);
     border-radius:10px;padding:13px 15px}
   .chatout:empty{display:none}
+  .chatout p{margin:0 0 8px}
+  .chatout p:last-child{margin-bottom:0}
+  .chatout .chatlist{margin:6px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
+  .chatout .chatlist li{position:relative;padding:9px 12px 9px 30px;background:#fff;
+    border:1px solid #d6efe2;border-radius:9px;line-height:1.5}
+  .chatout .chatlist li::before{content:"";position:absolute;left:13px;top:15px;width:7px;height:7px;
+    border-radius:50%;background:var(--green)}
+  .chatout .chatlist li strong{color:var(--ink)}
+  .chatout .chatlist a{color:var(--brand);font-weight:600;text-decoration:none;white-space:nowrap}
+  .chatout .chatlist a:hover{text-decoration:underline}
 
   /* ---- tabs + controls ---- */
   .bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
@@ -420,13 +430,27 @@ function foot(n){document.getElementById('foot').textContent=`Showing ${n} ${vie
 
 function ask(text){ document.getElementById('chatq').value=text; askBot(); }
 function renderAnswer(text){
-  // Escape HTML first (safety), then apply light markdown: **bold**, links, bullets.
+  // Escape HTML first (safety), then apply light markdown and turn "- " lines
+  // into a real bulleted list.
   const esc=s=>s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  let h=esc(text);
-  h=h.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
-  h=h.replace(/(https?:\/\/[^\s<)]+)/g,'<a href="$1" target="_blank" rel="noopener">$1</a>');
-  h=h.replace(/^\s*[*•-]\s+/gm,'&bull; ');
-  return h.replace(/\n/g,'<br>');
+  const inline=s=>{
+    let h=esc(s);
+    h=h.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
+    // markdown links [text](url) first, then any bare URLs
+    h=h.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');
+    h=h.replace(/(^|[^">])(https?:\/\/[^\s<)]+)/g,'$1<a href="$2" target="_blank" rel="noopener">$2</a>');
+    return h;
+  };
+  const out=[]; let li=[];
+  const flush=()=>{ if(li.length){ out.push('<ul class="chatlist">'+li.join('')+'</ul>'); li=[]; } };
+  for(const raw of text.split('\n')){
+    const line=raw.replace(/\s+$/,'');
+    const m=line.match(/^\s*[-*•]\s+(.*)$/);
+    if(m){ li.push('<li>'+inline(m[1])+'</li>'); }
+    else{ flush(); if(line.trim()) out.push('<p>'+inline(line)+'</p>'); }
+  }
+  flush();
+  return out.join('');
 }
 async function askBot(){
   const q=document.getElementById('chatq').value.trim(); if(!q) return;
@@ -485,6 +509,14 @@ window.startDashboard=function(){
 
   function clearAuthMsg(){ const m=$('au-msg'); m.style.display='none'; m.textContent=''; }
   function showAuthMsg(text, kind){ const m=$('au-msg'); m.className='auth-msg '+kind; m.textContent=text; m.style.display='block'; }
+  function showAuthMsgHTML(html, kind){ const m=$('au-msg'); m.className='auth-msg '+kind; m.innerHTML=html; m.style.display='block'; }
+  async function resendVerification(email){
+    try{
+      await fetch('/auth/resend-verification',{method:'POST',headers:{'Content-Type':'application/json'},
+        credentials:'include',body:JSON.stringify({email})});
+      showAuthMsg('Verification email sent to '+email+'. Check your inbox.','ok');
+    }catch(_){ showAuthMsg('Could not resend right now — please try again.','err'); }
+  }
   function setAuthLoading(on){ const b=$('au-submit'); b.disabled=on;
     b.innerHTML = on ? '<span class="auth-spin"></span> Please wait…' : (authMode==='login' ? 'Log in' : 'Create account'); }
 
@@ -509,13 +541,21 @@ window.startDashboard=function(){
         const r = await fetch('/auth/signup', {method:'POST', headers:{'Content-Type':'application/json'},
           credentials:'include', body:JSON.stringify({email, password, full_name: full_name||null})});
         if(r.status===201){
-          // Log the new account straight in — no need to retype anything.
-          const l = await fetch('/auth/login', {method:'POST', headers:{'Content-Type':'application/json'},
-            credentials:'include', body:JSON.stringify({email, password})});
-          if(l.ok){ const u = await l.json(); showAuthMsg('Welcome, '+(u.full_name||u.email)+'!','ok');
-            await refreshSession(); setTimeout(closeAuth,800); }
-          else{ authMode='login'; syncAuth(); $('au-pass').value='';
-            showAuthMsg('Account created — please log in.','ok'); }
+          const u = await r.json().catch(()=>({}));
+          if(u && u.is_verified===false){
+            // Email verification is on: don't log in yet — ask them to confirm.
+            authMode='login'; syncAuth(); $('au-pass').value='';
+            showAuthMsg("Account created! We've emailed a verification link to "+email
+              +". Click it, then log in.",'ok');
+          }else{
+            // No email provider configured — log the new account straight in.
+            const l = await fetch('/auth/login', {method:'POST', headers:{'Content-Type':'application/json'},
+              credentials:'include', body:JSON.stringify({email, password})});
+            if(l.ok){ const lu = await l.json(); showAuthMsg('Welcome, '+(lu.full_name||lu.email)+'!','ok');
+              await refreshSession(); setTimeout(closeAuth,800); }
+            else{ authMode='login'; syncAuth(); $('au-pass').value='';
+              showAuthMsg('Account created — please log in.','ok'); }
+          }
         }
         else{ showAuthMsg(await readDetail(r,'Could not create account.'),'err'); }
       }else{
@@ -523,7 +563,13 @@ window.startDashboard=function(){
         const r = await fetch('/auth/login', {method:'POST', headers:{'Content-Type':'application/json'},
           credentials:'include', body:JSON.stringify({email, password, remember_me: remember})});
         if(r.ok){ const u = await r.json(); showAuthMsg('Signed in as '+u.email+'.','ok'); await refreshSession(); setTimeout(closeAuth,800); }
-        else{ showAuthMsg(await readDetail(r,'Invalid email or password.'),'err'); }
+        else{
+          const detail = await readDetail(r,'Invalid email or password.');
+          if(r.status===403 && /verify/i.test(detail)){
+            showAuthMsgHTML(esc(detail)+' <a id="resendLink" style="color:var(--brand);font-weight:600;cursor:pointer">Resend email</a>','err');
+            const rl=$('resendLink'); if(rl) rl.onclick=()=>resendVerification(email);
+          }else{ showAuthMsg(detail,'err'); }
+        }
       }
     }catch(_){ showAuthMsg('Network error — please try again.','err'); }
     finally{ setAuthLoading(false); }

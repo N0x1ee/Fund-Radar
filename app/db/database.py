@@ -49,6 +49,7 @@ def _ensure_user_profile_columns():
         "orcid": "VARCHAR(100)",
         "website": "VARCHAR(500)",
         "research_interests": "VARCHAR(1000)",
+        "is_verified": "BOOLEAN DEFAULT 0",
     }
     missing = {k: v for k, v in wanted.items() if k not in have}
     if not missing:
