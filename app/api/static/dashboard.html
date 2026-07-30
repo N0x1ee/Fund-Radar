@@ -169,6 +169,13 @@
   .auth-switch{text-align:center;font-size:12.5px;color:var(--muted);margin-top:14px}
   .auth-switch a{color:var(--brand);font-weight:600;cursor:pointer}
 
+  /* ---- Google Sign-In (hidden until /auth/config says it's configured) ---- */
+  .auth-or{display:none;align-items:center;gap:10px;margin:16px 0 14px;color:var(--muted);font-size:11.5px;
+    font-weight:600;letter-spacing:.4px;text-transform:uppercase}
+  .auth-or::before,.auth-or::after{content:"";flex:1;height:1px;background:var(--line)}
+  .auth-google{display:none;justify-content:center;min-height:42px}
+  .auth-or.show{display:flex} .auth-google.show{display:flex}
+
   /* ---- logged-in user menu (navbar) ---- */
   .usermenu{position:relative}
   .uavatar{width:24px;height:24px;border-radius:7px;background:linear-gradient(135deg,var(--brand),var(--green));
@@ -314,6 +321,10 @@
       <div id="au-msg" class="auth-msg" style="display:none"></div>
       <button id="au-submit" class="auth-submit" type="submit">Log in</button>
     </form>
+    <!-- Google Sign-In. Both elements stay hidden unless /auth/config reports a
+         configured Client ID, so nothing appears half-working if it isn't set. -->
+    <div class="auth-or" id="au-or">or</div>
+    <div class="auth-google" id="au-google"></div>
     <div class="auth-switch" id="au-switch"></div>
   </div>
 </div>
@@ -489,7 +500,7 @@ function render(){
     </tr></thead><tbody>${rows.map(o=>`<tr class="orow" onclick="openOpp(${o.id})" title="Click for full details">
       <td><button class="star ${SAVED.has(o.id)?'on':''}" title="${SAVED.has(o.id)?'Remove bookmark':'Save for later'}" onclick="event.stopPropagation();toggleSave(${o.id},this)">★</button></td>
       <td class="prog">${o.program_name||'<span class=muted>Untitled scheme</span>'}${o.research_area?`<div class="area">${o.research_area}</div>`:''}
-        ${o.application_link?`<div class="apply"><a href="${o.application_link}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Apply / details ↗</a></div>`:''}</td>
+        ${(o.application_link||o.source_url)?`<div class="apply"><a href="${escH(o.application_link||o.source_url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${o.application_link?'Apply / details':'View source page'} ↗</a></div>`:''}</td>
       <td>${agencyCell(o.agency)}</td>
       <td>${o.country||'<span class=muted>—</span>'}</td>
       <td class="amt ${o.amount_value?'has':''}">${amount(o)}</td>
@@ -594,7 +605,10 @@ window.startDashboard=function(){
   const $ = (id) => document.getElementById(id);
 
   function openAuth(mode){ authMode = mode || 'login'; syncAuth(); clearAuthMsg();
-    $('authOverlay').classList.add('show'); setTimeout(()=>$('au-email').focus(),40); }
+    $('authOverlay').classList.add('show'); setTimeout(()=>$('au-email').focus(),40);
+    // The Google button must be drawn while the modal is visible, otherwise it
+    // measures a width of 0 and renders as a sliver.
+    renderGoogleButton(); }
   function closeAuth(){
     // Dashboard requires login: closing the modal while locked returns to the
     // public landing page instead of revealing the blurred dashboard.
@@ -731,6 +745,79 @@ window.startDashboard=function(){
   }
   document.addEventListener('click', (e)=>{ if(menuOpen && !e.target.closest('.usermenu')){ menuOpen=false; const d=$('udrop'); if(d) d.style.display='none'; } });
 
+  /* ---- Google Sign-In ------------------------------------------------------
+     Progressive enhancement. We ask the server whether a Client ID is
+     configured; if it isn't, none of this runs and the modal looks and behaves
+     exactly as it did before. Any failure here (Google blocked, offline,
+     script blocked by an extension) is swallowed on purpose — email/password
+     login must never break because a third-party script didn't load. */
+  let gsiReady = false;
+
+  function loadScript(src){
+    return new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = src; s.async = true; s.defer = true;
+      s.onload = resolve; s.onerror = () => reject(new Error('script blocked'));
+      document.head.appendChild(s);
+    });
+  }
+
+  async function handleGoogleCredential(resp){
+    clearAuthMsg();
+    if(!resp || !resp.credential){ showAuthMsg('Google sign-in was cancelled.','err'); return; }
+    showAuthMsg('Signing you in with Google…','ok');
+    try{
+      const r = await fetch('/auth/google', {method:'POST', headers:{'Content-Type':'application/json'},
+        credentials:'include', body: JSON.stringify({credential: resp.credential, remember_me: true})});
+      if(r.ok){
+        const u = await r.json();
+        showAuthMsg('Signed in as ' + u.email + '.', 'ok');
+        await refreshSession();
+        setTimeout(closeAuth, 700);
+      }else{
+        showAuthMsg(await readDetail(r, 'Google sign-in failed. Please try again.'), 'err');
+      }
+    }catch(_){ showAuthMsg('Network error during Google sign-in.','err'); }
+  }
+
+  function renderGoogleButton(){
+    const box = $('au-google');
+    if(!gsiReady || !box) return;
+    // Match the button to the modal width (Google caps it at 400px).
+    const available = box.clientWidth || (box.parentElement && box.parentElement.clientWidth) || 340;
+    const width = Math.max(220, Math.min(380, available));
+    box.innerHTML = '';
+    try{
+      google.accounts.id.renderButton(box, {theme:'outline', size:'large', shape:'pill',
+        text:'continue_with', logo_alignment:'left', width: width});
+    }catch(_){ /* leave the area empty rather than showing a broken button */ }
+  }
+
+  async function initGoogle(){
+    try{
+      const r = await fetch('/auth/config', {credentials:'include'});
+      if(!r.ok) return;
+      const cfg = await r.json();
+      if(!cfg.google_enabled || !cfg.google_client_id) return;   // not set up — stay hidden
+      await loadScript('https://accounts.google.com/gsi/client');
+      if(!(window.google && google.accounts && google.accounts.id)) return;
+      google.accounts.id.initialize({
+        client_id: cfg.google_client_id,
+        callback: handleGoogleCredential,
+        auto_select: false,
+        cancel_on_tap_outside: true,
+      });
+      gsiReady = true;
+      $('au-or').classList.add('show');
+      $('au-google').classList.add('show');
+      if($('authOverlay').classList.contains('show')) renderGoogleButton();
+    }catch(_){ /* Google unavailable — password login still works normally. */ }
+  }
+
+  window.addEventListener('resize', () => {
+    if(gsiReady && $('authOverlay').classList.contains('show')) renderGoogleButton();
+  });
+
   // Expose ONLY the handlers referenced by the modal / navbar markup; everything else stays private.
   window.openAuth = openAuth;
   window.closeAuth = closeAuth;
@@ -741,6 +828,7 @@ window.startDashboard=function(){
 
   renderLoggedOut();   // show Sign in immediately, then reflect real session
   refreshSession();
+  initGoogle();        // adds the Google button only if the server has a Client ID
 })();
 </script>
 </body>

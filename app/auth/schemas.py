@@ -76,6 +76,26 @@ class ResendVerificationIn(BaseModel):
     email: NormalizedEmail
 
 
+class GoogleAuthIn(BaseModel):
+    """The signed ID token ("credential") returned by Google Identity Services.
+
+    Length-capped so a malformed or hostile request is rejected by validation
+    before any network call to Google is made.
+    """
+    credential: str = Field(min_length=1, max_length=8192)
+    remember_me: bool = False
+
+
+class AuthConfigOut(BaseModel):
+    """Public, non-secret auth settings the sign-in page needs to render itself.
+
+    The Google Client ID is designed to be public (it is embedded in the page
+    by every Google Sign-In integration); no secret is exposed here.
+    """
+    google_enabled: bool = False
+    google_client_id: str = ""
+
+
 class TokenOut(BaseModel):
     """Returned when an access token is issued."""
     access_token: str

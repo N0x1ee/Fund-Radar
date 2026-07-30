@@ -86,3 +86,63 @@ def parse_deadline(text: str | None) -> date | None:
         except ValueError:
             continue
     return None
+
+
+# --- Language tidy-up -------------------------------------------------------
+
+# Devanagari block: covers Hindi/Marathi/Sanskrit text.
+_DEVANAGARI = re.compile(r"[ऀ-ॿ]")
+
+# "देवनागरी शीर्षक (English Title)" -> capture the trailing parenthesised part.
+# Non-greedy body + end anchor so we take the LAST bracketed group, which is
+# where the translation sits.
+_TRAILING_PARENS = re.compile(r"^(?P<head>.*?)\s*\((?P<inside>[^()]*(?:\([^()]*\)[^()]*)*)\)\s*$",
+                              re.DOTALL)
+
+
+def has_devanagari(text: str | None) -> bool:
+    """True if the string contains Hindi/Devanagari characters."""
+    return bool(text) and bool(_DEVANAGARI.search(text))
+
+
+def english_first(text: str | None) -> str | None:
+    """Promote a bracketed English translation to the front of the string.
+
+    Several Indian agency sites (notably CSIR) are scraped from their Hindi
+    (/hi/) pages, so the AI returns titles shaped like:
+
+        "रोलैंड फैलोशिप (Rowland Fellowship)"
+
+    An English-speaking reviewer should see the English first, so this rewrites
+    it to:
+
+        "Rowland Fellowship (रोलैंड फैलोशिप)"
+
+    Rules — deliberately conservative, because a wrong swap is worse than no
+    swap: only act when the head really is Devanagari AND the bracketed part
+    really is not. Anything else (ordinary acronyms like "(PMRC)", pure-English
+    titles, pure-Hindi titles with no translation) is returned untouched.
+    """
+    if not text:
+        return text
+    s = str(text).strip()
+    if not has_devanagari(s):
+        return s                      # already English — nothing to do
+
+    match = _TRAILING_PARENS.match(s)
+    if not match:
+        return s                      # no bracketed translation available
+
+    head = match.group("head").strip()
+    inside = match.group("inside").strip()
+
+    # Only swap when the two halves are genuinely different scripts.
+    if not head or not inside:
+        return s
+    if not has_devanagari(head) or has_devanagari(inside):
+        return s
+    # Require the translation to contain real words, not just "(2026)" or "(a)".
+    if not re.search(r"[A-Za-z]{3}", inside):
+        return s
+
+    return f"{inside} ({head})"

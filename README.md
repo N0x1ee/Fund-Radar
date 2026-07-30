@@ -154,6 +154,21 @@ safe (parameterised) database access are built in — see `SECURITY.md`. Secrets
 in `.env` (git-ignored). Configurable via `.env`: `RATE_LIMIT_PER_MIN`, `ENABLE_DOCS`,
 `CORS_ALLOW_ORIGINS`.
 
+Accounts use bcrypt password hashing and a JWT in an httpOnly, SameSite=lax cookie
+(marked `Secure` in production).
+
+### Sign in with Google (optional)
+
+Set `GOOGLE_CLIENT_ID` and a "Continue with Google" button appears on the sign-in
+modal; leave it blank and the button stays hidden with email/password login
+unaffected. The server verifies Google's ID token *and* checks it was issued for
+this app specifically. Step-by-step setup: **`GOOGLE_SIGNIN_SETUP.md`**.
+
+## How it all fits together
+
+**`HOW_IT_ALL_WORKS.md`** is a plain-language walkthrough of the whole system —
+what scrapes, what hosts what, how the chatbot answers, and where the data lives.
+
 ## Scraping JavaScript-heavy sites
 
 Set `USE_PLAYWRIGHT=true` in `.env`, then install the browser engine:

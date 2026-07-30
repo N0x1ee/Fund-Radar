@@ -19,3 +19,16 @@ services:
         value: "3.12.4"
       - key: LLM_PROVIDER
         value: mock
+      # Sign the login tokens with a strong random value that Render generates
+      # and keeps secret, instead of the insecure development default.
+      - key: JWT_SECRET
+        generateValue: true
+      # Render always serves over HTTPS, so the login cookie should refuse to
+      # travel over plain HTTP. (Stays false locally — see .env.example.)
+      - key: COOKIE_SECURE
+        value: "true"
+      # Optional: paste an OAuth Client ID here (or in the Render dashboard) to
+      # switch on the "Continue with Google" button. Blank = button hidden and
+      # email/password login is completely unaffected. See GOOGLE_SIGNIN_SETUP.md
+      - key: GOOGLE_CLIENT_ID
+        value: ""

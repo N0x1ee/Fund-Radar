@@ -39,5 +39,14 @@ class Settings(BaseSettings):
     remember_me_days: int = 30                   # "Remember me" cookie lifetime (days)
     cookie_secure: bool = False                  # True in production (HTTPS-only auth cookie)
 
+    # Google Sign-In. Blank = the feature is OFF and the button is hidden, so the
+    # app behaves exactly as before. Create a free OAuth Client ID (type: Web
+    # application) at https://console.cloud.google.com/apis/credentials and put
+    # it here / in the GOOGLE_CLIENT_ID env var. See GOOGLE_SIGNIN_SETUP.md.
+    # Only the Client ID is needed — it is public by design (it ships to the
+    # browser). No client *secret* is used, because Google Identity Services
+    # returns a signed ID token that we verify server-side.
+    google_client_id: str = ""
+
 
 settings = Settings()

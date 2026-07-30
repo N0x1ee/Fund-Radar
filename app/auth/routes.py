@@ -8,6 +8,7 @@ in app/api/main.py.
 """
 from __future__ import annotations
 
+import logging
 from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
@@ -21,14 +22,19 @@ from app.config import settings
 from app.auth.models import SavedOpportunity, User
 from app.db.models import Opportunity
 from app.db.schemas import OpportunityOut
-from app.auth.schemas import (LoginIn, PasswordChangeIn, ProfileUpdateIn,
+from app.auth.schemas import (AuthConfigOut, GoogleAuthIn, LoginIn,
+                              PasswordChangeIn, ProfileUpdateIn,
                               ResendVerificationIn, SignupIn, UserOut)
 from app.auth.deps import ACCESS_COOKIE, get_current_user
 from app.auth.email import send_verification_email, verification_enabled
+from app.auth.google import (GoogleAuthError, google_enabled,
+                             unusable_password_hash, verify_google_credential)
 from app.auth.security import (create_access_token, create_verification_token,
                                decode_verification_token, hash_password,
                                verify_password)
 import jwt  # PyJWT — for verification-token exception types
+
+log = logging.getLogger("fundradar.auth")
 
 
 def _base_url(request: Request) -> str:
@@ -42,7 +48,45 @@ def _send_verification(user: User, request: Request) -> None:
     link = f"{_base_url(request)}/auth/verify?token={token}"
     send_verification_email(user.email, user.full_name, link)
 
+def _start_session(response: Response, user: User, db: Session,
+                   *, remember_me: bool) -> None:
+    """Issue the access cookie and stamp last_login_at.
+
+    Shared by password login and Google sign-in so there is exactly ONE place
+    that decides cookie lifetime and security flags — the two paths can never
+    drift apart.
+    """
+    minutes = (settings.remember_me_days * 24 * 60
+               if remember_me else settings.access_token_minutes)
+    token = create_access_token(user.id, expires_minutes=minutes)
+    response.set_cookie(
+        key=ACCESS_COOKIE,
+        value=token,
+        max_age=minutes * 60,          # cookie expires with the token
+        httponly=True,                 # not readable by JavaScript (XSS-safe)
+        secure=settings.cookie_secure, # True in production (HTTPS only)
+        samesite="lax",                # CSRF mitigation
+        path="/",
+    )
+    user.last_login_at = datetime.now(timezone.utc)
+    db.commit()
+
+
 router = APIRouter(prefix="/auth", tags=["auth"])
+
+
+@router.get("/config", response_model=AuthConfigOut)
+def auth_config() -> AuthConfigOut:
+    """Tell the sign-in page which providers are available.
+
+    The dashboard calls this on load: when Google is not configured it simply
+    never renders the button, so an unconfigured deploy looks and behaves
+    exactly as it did before Google Sign-In was added.
+    """
+    return AuthConfigOut(
+        google_enabled=google_enabled(),
+        google_client_id=settings.google_client_id.strip() if google_enabled() else "",
+    )
 
 
 @router.post("/signup", response_model=UserOut, status_code=status.HTTP_201_CREATED)
@@ -113,21 +157,81 @@ def login(payload: LoginIn, response: Response, db: Session = Depends(get_db)) -
                    "verification link, or request a new one.",
         )
 
-    minutes = (settings.remember_me_days * 24 * 60
-               if payload.remember_me else settings.access_token_minutes)
-    token = create_access_token(user.id, expires_minutes=minutes)
-    response.set_cookie(
-        key=ACCESS_COOKIE,
-        value=token,
-        max_age=minutes * 60,          # cookie expires with the token
-        httponly=True,                 # not readable by JavaScript (XSS-safe)
-        secure=settings.cookie_secure, # True in production (HTTPS only)
-        samesite="lax",                # CSRF mitigation
-        path="/",
-    )
+    _start_session(response, user, db, remember_me=payload.remember_me)
+    return user
 
-    user.last_login_at = datetime.now(timezone.utc)
-    db.commit()
+
+@router.post("/google", response_model=UserOut)
+def google_login(payload: GoogleAuthIn, response: Response,
+                 db: Session = Depends(get_db)) -> User:
+    """Sign in (or sign up) with a Google account.
+
+    Verifies the ID token with Google, then matches on the *verified* email
+    address:
+
+    - Known email  -> that account is signed in. This deliberately links a
+      Google login to an existing password account, so someone who signed up
+      with alice@gmail.com and a password can later click the Google button and
+      land in the same account with the same bookmarks — instead of silently
+      getting a second, empty account. Safe because Google has verified
+      ownership of the address (we reject unverified ones).
+    - New email    -> an account is created, already verified (Google vouched
+      for it) and with no usable password.
+
+    Returns the user and sets the normal session cookie.
+    """
+    if not google_enabled():
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Google Sign-In is not set up on this server yet.",
+        )
+
+    try:
+        info = verify_google_credential(payload.credential)
+    except GoogleAuthError as exc:
+        log.warning("Google sign-in rejected: %s", exc)
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Google sign-in could not be verified. Please try again.",
+        )
+
+    user = db.scalar(select(User).where(User.email == info["email"]))
+
+    if user is None:
+        user = User(
+            email=info["email"],
+            password_hash=unusable_password_hash(),  # no password login for this account
+            full_name=info["full_name"],
+            is_verified=True,                        # Google already verified the address
+        )
+        db.add(user)
+        try:
+            db.commit()
+        except IntegrityError:      # race: created by a parallel request
+            db.rollback()
+            user = db.scalar(select(User).where(User.email == info["email"]))
+            if user is None:
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail="Could not complete Google sign-in.",
+                )
+        else:
+            db.refresh(user)
+    else:
+        # Existing account: fill in a missing name, and treat a Google login as
+        # proof of email ownership so verification never blocks these users.
+        if not user.full_name and info["full_name"]:
+            user.full_name = info["full_name"]
+        if not user.is_verified:
+            user.is_verified = True
+
+    if not user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="This account is disabled.",
+        )
+
+    _start_session(response, user, db, remember_me=payload.remember_me)
     return user
 
 
