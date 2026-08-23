@@ -195,6 +195,20 @@ def health(db: Session = Depends(get_db)):
     return {"status": "ok", "agencies": agencies, "opportunities": opportunities}
 
 
+# Sort keys accepted by /agencies?sort=...  "code" reproduces the original
+# ordering, so omitting the parameter behaves exactly as before.
+AGENCY_SORTS = ("code", "name_asc", "name_desc", "country", "opportunities", "updated")
+
+
+def _agency_opportunity_count():
+    """Correlated sub-query: number of opportunities belonging to each agency row."""
+    return (
+        select(func.count(Opportunity.id))
+        .where(Opportunity.agency_id == Agency.id)
+        .scalar_subquery()
+    )
+
+
 @app.get("/agencies", response_model=Page[AgencyOut], tags=["agencies"])
 def list_agencies(
     db: Session = Depends(get_db),
@@ -203,6 +217,14 @@ def list_agencies(
     category: str | None = None,
     funding_type: str | None = None,
     priority: str | None = Query(None, description="Filter by scraping_priority"),
+    has_opportunities: bool | None = Query(
+        None,
+        description="true = only agencies that have funding opportunities; false = only those without",
+    ),
+    sort: str = Query(
+        "code",
+        description="code | name_asc | name_desc | country | opportunities | updated",
+    ),
     limit: int = Query(50, ge=1, le=500),
     offset: int = Query(0, ge=0),
 ):
@@ -217,9 +239,28 @@ def list_agencies(
         stmt = stmt.where(Agency.funding_type.ilike(f"%{funding_type}%"))
     if priority:
         stmt = stmt.where(Agency.scraping_priority == priority)
+    if has_opportunities is not None:
+        n_opps = _agency_opportunity_count()
+        stmt = stmt.where(n_opps > 0 if has_opportunities else n_opps == 0)
 
+    # total is computed before ordering, so sorting never affects the count
     total = db.scalar(select(func.count()).select_from(stmt.subquery()))
-    rows = db.scalars(stmt.order_by(Agency.agency_code).limit(limit).offset(offset)).all()
+
+    sort = sort if sort in AGENCY_SORTS else "code"
+    if sort == "name_asc":
+        order = (Agency.name.asc(),)
+    elif sort == "name_desc":
+        order = (Agency.name.desc(),)
+    elif sort == "country":
+        order = (Agency.country.asc(), Agency.name.asc())
+    elif sort == "opportunities":
+        order = (_agency_opportunity_count().desc(), Agency.name.asc())
+    elif sort == "updated":
+        order = (Agency.updated_at.desc(), Agency.agency_code.asc())
+    else:
+        order = (Agency.agency_code.asc(),)
+
+    rows = db.scalars(stmt.order_by(*order).limit(limit).offset(offset)).all()
     return Page[AgencyOut](total=total, limit=limit, offset=offset, items=rows)
 
 

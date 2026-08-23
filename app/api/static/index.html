@@ -275,31 +275,202 @@ function pageDashboard(){
 }
 
 /* ----- Agencies ----- */
-const AGF = {q:'',country:'',category:'',sort:'agency_code',dir:1};
+/* Filter + sort state. Client-side: all agencies are already in STATE.ag and
+   the per-agency opportunity count comes from STATE.opp, so filtering is
+   instant and needs no extra API round-trip. The same criteria are also
+   supported server-side (see the /agencies query params on the API page).   */
+const AGF_DEFAULTS = {q:'',country:'',category:'',funding_type:'',availability:'',sort:'agency_code',dir:1};
+const AGF = {...AGF_DEFAULTS};
+
+/* value = "<field>:<direction>"  ->  label shown in the Sort by dropdown */
+const AG_SORTS = [
+  ['agency_code:1',  'Agency code (default)'],
+  ['name:1',         'Name — A → Z'],
+  ['name:-1',        'Name — Z → A'],
+  ['country:1',      'Country — A → Z'],
+  ['nopp:-1',        'Most opportunities'],
+  ['nopp:1',         'Fewest opportunities'],
+  ['relevance:-1',   'Best match (search)'],
+];
+const AG_COLS = {agency_code:'Code',name:'Agency',country:'Country',category:'Category',funding_type:'Funding Type',status:'Status',nopp:'Opps'};
+const AG_FIELD_LABELS = {q:'Search',country:'Country',category:'Category',funding_type:'Funding Type',availability:'Availability'};
+const AG_AVAIL = [['has','With opportunities'],['none','None yet (monitored)']];
+
+function agActive(){ return ['q','country','category','funding_type','availability'].filter(k=>AGF[k]); }
+function agSetSort(v){ const [f,d]=v.split(':'); AGF.sort=f; AGF.dir=Number(d); renderAgencies(); }
+function agSet(k,v){ AGF[k]=v; renderAgencies(); }
+function agClear(k){ AGF[k]=AGF_DEFAULTS[k]; pageAgencies(); }
+function agResetFilters(){ Object.assign(AGF, AGF_DEFAULTS); pageAgencies(); }
+
 function pageAgencies(){
   const countries = uniq(STATE.ag.map(a=>a.country));
-  const cats = uniq(STATE.ag.map(a=>a.category));
+  const cats      = uniq(STATE.ag.map(a=>a.category));
+  const ftypes    = uniq(STATE.ag.map(a=>a.funding_type));
+  const ctl  = 'w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500';
+  const lbl  = 'block text-[11px] font-semibold uppercase tracking-wide text-slate-400 mb-1.5';
+  const opts = (list, sel) => list.map(c=>`<option value="${esc(c)}" ${sel===c?'selected':''}>${esc(c)}</option>`).join('');
+
   $('#view').innerHTML = `
   <div class="fade space-y-4">
-    <div class="flex flex-wrap gap-3">
-      <input id="agq" value="${esc(AGF.q)}" oninput="AGF.q=this.value;renderAgencies()" placeholder="Search agencies…"
-        class="flex-1 min-w-[200px] px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"/>
-      <select id="agc" onchange="AGF.country=this.value;renderAgencies()" class="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm">
-        <option value="">All countries</option>${countries.map(c=>`<option ${AGF.country===c?'selected':''}>${esc(c)}</option>`).join('')}</select>
-      <select id="agcat" onchange="AGF.category=this.value;renderAgencies()" class="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm">
-        <option value="">All categories</option>${cats.map(c=>`<option ${AGF.category===c?'selected':''}>${esc(c)}</option>`).join('')}</select>
-    </div>
+
+    <!-- ===== Filter / Sort panel ===== -->
+    <section class="${card('overflow-hidden')}">
+      <div class="flex items-center gap-3 px-4 sm:px-5 py-3 border-b border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/40">
+        <div class="h-8 w-8 shrink-0 rounded-lg bg-brand-600/10 text-brand-600 dark:text-brand-400 grid place-items-center">
+          <svg class="h-[18px] w-[18px]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 5h18M6 12h12M10 19h4"/></svg>
+        </div>
+        <div class="min-w-0">
+          <h2 class="font-semibold text-sm leading-tight">Filter &amp; Sort Agencies</h2>
+          <p class="hidden sm:block text-[11px] text-slate-400 mt-0.5">Select criteria below to narrow down the ${STATE.ag.length} funding agencies.</p>
+        </div>
+        <div class="ml-auto flex items-center gap-2 sm:gap-3 shrink-0">
+          <span id="agCount" class="hidden sm:inline text-xs text-slate-400"></span>
+          <button id="agReset" onclick="agResetFilters()" title="Remove all filters and restore the default order"
+            class="px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-300 dark:border-slate-700
+                   hover:bg-white dark:hover:bg-slate-800 transition inline-flex items-center gap-1.5">
+            <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+            Clear filters
+          </button>
+        </div>
+      </div>
+
+      <div class="p-4 sm:p-5 grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+        <div class="sm:col-span-2">
+          <label for="agq" class="${lbl}">Search</label>
+          <input id="agq" type="search" value="${esc(AGF.q)}" oninput="agSet('q',this.value)"
+            placeholder="Agency name, code, country…" class="${ctl}"/>
+        </div>
+        <div>
+          <label for="agc" class="${lbl}">Country / Region</label>
+          <select id="agc" onchange="agSet('country',this.value)" class="${ctl}">
+            <option value="">All countries</option>${opts(countries, AGF.country)}</select>
+        </div>
+        <div>
+          <label for="agcat" class="${lbl}">Category</label>
+          <select id="agcat" onchange="agSet('category',this.value)" class="${ctl}">
+            <option value="">All categories</option>${opts(cats, AGF.category)}</select>
+        </div>
+        <div>
+          <label for="agft" class="${lbl}">Funding Type</label>
+          <select id="agft" onchange="agSet('funding_type',this.value)" class="${ctl}">
+            <option value="">All funding types</option>${opts(ftypes, AGF.funding_type)}</select>
+        </div>
+        <div>
+          <label for="agav" class="${lbl}">Availability</label>
+          <select id="agav" onchange="agSet('availability',this.value)" class="${ctl}">
+            <option value="">Any availability</option>
+            ${AG_AVAIL.map(([v,l])=>`<option value="${v}" ${AGF.availability===v?'selected':''}>${l}</option>`).join('')}</select>
+        </div>
+        <div>
+          <label for="agsort" class="${lbl}">Sort by</label>
+          <select id="agsort" onchange="agSetSort(this.value)" class="${ctl}"></select>
+        </div>
+      </div>
+
+      <div id="agChipsWrap" class="hidden px-4 sm:px-5 pb-4">
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="text-[11px] font-semibold uppercase tracking-wide text-slate-400 mr-0.5">Active filters</span>
+          <span id="agChips" class="contents"></span>
+        </div>
+      </div>
+    </section>
+
     <div class="${card('overflow-hidden')}"><div class="overflow-x-auto"><div id="agTable"></div></div></div>
   </div>`;
   renderAgencies();
 }
+
 function oppCountFor(id){ return STATE.opp.filter(o=>o.agency_id===id).length; }
+
+/* relevance score against the current search term (0 when the box is empty) */
+function agScore(a,q){
+  if(!q) return 0;
+  const name=(a.name||'').toLowerCase(), code=(a.agency_code||'').toLowerCase();
+  let s=0;
+  if(name===q) s+=100;
+  if(name.startsWith(q)) s+=50;
+  if(name.includes(q)) s+=25;
+  if(code.startsWith(q)) s+=20;
+  [a.category,a.country,a.funding_type].forEach(f=>{ if((f||'').toLowerCase().includes(q)) s+=8; });
+  return s + Math.min(a.nopp,5);   // agencies that already have data break ties first
+}
+
+function agSyncControls(shown){
+  const active = agActive();
+  const cur = AGF.sort+':'+AGF.dir;
+  const known = AG_SORTS.some(([v])=>v===cur);
+  const sel = $('#agsort');
+  if(sel){
+    sel.innerHTML = AG_SORTS.map(([v,l])=>`<option value="${v}" ${cur===v?'selected':''}>${l}</option>`).join('')
+      + (known?'':`<option value="${cur}" selected>Column: ${AG_COLS[AGF.sort]||AGF.sort} ${AGF.dir>0?'▲':'▼'}</option>`);
+  }
+  const count = $('#agCount');
+  if(count) count.textContent = `${shown} of ${STATE.ag.length} agencies` + (active.length?` · ${active.length} filter${active.length>1?'s':''} active`:'');
+  const reset = $('#agReset');
+  if(reset){
+    const on = active.length>0 || AGF.sort!==AGF_DEFAULTS.sort || AGF.dir!==AGF_DEFAULTS.dir;
+    reset.disabled = !on;
+    reset.classList.toggle('opacity-40', !on);
+    reset.classList.toggle('cursor-not-allowed', !on);
+    reset.classList.toggle('text-brand-700', on);
+    reset.classList.toggle('dark:text-brand-300', on);
+    reset.classList.toggle('border-brand-300', on);
+    reset.classList.toggle('dark:border-brand-500/50', on);
+  }
+  const wrap = $('#agChipsWrap'), chips = $('#agChips');
+  if(wrap && chips){
+    wrap.classList.toggle('hidden', active.length===0);
+    const label = k => k==='availability' ? (AG_AVAIL.find(([v])=>v===AGF.availability)||[])[1] : AGF[k];
+    chips.innerHTML = active.map(k=>`
+      <span class="inline-flex items-center gap-1.5 pl-2.5 pr-1.5 py-1 rounded-full text-xs font-medium
+                   bg-brand-50 text-brand-700 dark:bg-brand-600/20 dark:text-brand-300 border border-brand-200 dark:border-brand-500/30">
+        <span class="text-brand-500/80 dark:text-brand-300/70">${AG_FIELD_LABELS[k]}:</span> ${esc(label(k))}
+        <button onclick="agClear('${k}')" title="Remove this filter"
+          class="h-4 w-4 grid place-items-center rounded-full hover:bg-brand-200/70 dark:hover:bg-brand-500/30 leading-none">×</button>
+      </span>`).join('');
+  }
+}
+
 function renderAgencies(){
-  let rows = STATE.ag.map(a=>({...a, nopp:oppCountFor(a.id), status: oppCountFor(a.id)>0?'active':'monitored'}));
-  if(AGF.q){const q=AGF.q.toLowerCase(); rows=rows.filter(a=>[a.name,a.agency_code,a.category,a.country,a.funding_type].join(' ').toLowerCase().includes(q));}
-  if(AGF.country) rows=rows.filter(a=>a.country===AGF.country);
-  if(AGF.category) rows=rows.filter(a=>a.category===AGF.category);
-  rows.sort((a,b)=>{let x=a[AGF.sort]??'',y=b[AGF.sort]??''; if(typeof x==='number')return (x-y)*AGF.dir; return (''+x).localeCompare(''+y)*AGF.dir;});
+  const q = AGF.q.trim().toLowerCase();
+  let rows = STATE.ag.map(a=>{ const n=oppCountFor(a.id); return {...a, nopp:n, status: n>0?'active':'monitored'}; });
+
+  if(q) rows = rows.filter(a=>[a.name,a.agency_code,a.category,a.country,a.funding_type].join(' ').toLowerCase().includes(q));
+  if(AGF.country)      rows = rows.filter(a=>a.country===AGF.country);
+  if(AGF.category)     rows = rows.filter(a=>a.category===AGF.category);
+  if(AGF.funding_type) rows = rows.filter(a=>a.funding_type===AGF.funding_type);
+  if(AGF.availability) rows = rows.filter(a=>AGF.availability==='has' ? a.nopp>0 : a.nopp===0);
+
+  if(AGF.sort==='relevance'){
+    rows.forEach(a=>a._score=agScore(a,q));
+    rows.sort((a,b)=> (b._score-a._score) || a.agency_code.localeCompare(b.agency_code));
+  }else{
+    rows.sort((a,b)=>{
+      const x=a[AGF.sort]??'', y=b[AGF.sort]??'';
+      if(typeof x==='number' && typeof y==='number') return (x-y)*AGF.dir;
+      return (''+x).localeCompare(''+y)*AGF.dir;
+    });
+  }
+
+  agSyncControls(rows.length);
+
+  if(!rows.length){
+    $('#agTable').innerHTML = `
+      <div class="px-6 py-16 text-center">
+        <div class="mx-auto h-12 w-12 rounded-full bg-slate-100 dark:bg-slate-800 grid place-items-center mb-4">
+          <svg class="h-6 w-6 text-slate-400" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M11 18a7 7 0 110-14 7 7 0 010 14zM8.5 8.5l5 5m0-5l-5 5"/></svg>
+        </div>
+        <div class="font-semibold">No agencies match your selected filters.</div>
+        <p class="text-sm text-slate-500 mt-1.5">Try adjusting or clearing your filters.</p>
+        <button onclick="agResetFilters()" class="mt-5 px-4 py-2 rounded-lg bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold transition">
+          Clear all filters</button>
+      </div>`;
+    return;
+  }
+
   const th=(k,l)=>`<th onclick="sortAg('${k}')" class="px-4 py-3 text-left text-[11px] uppercase tracking-wide text-slate-400 cursor-pointer hover:text-slate-600 dark:hover:text-slate-200 select-none whitespace-nowrap">${l}${AGF.sort===k?(AGF.dir>0?' ▲':' ▼'):''}</th>`;
   $('#agTable').innerHTML = `<table class="w-full text-sm">
     <thead class="bg-slate-50 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-800">
@@ -314,9 +485,12 @@ function renderAgencies(){
         <td class="px-4 py-3">${a.status==='active'?'<span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300">active</span>':'<span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-300">monitored</span>'}</td>
         <td class="px-4 py-3 font-semibold">${a.nopp}</td>
         <td class="px-4 py-3">${linkBtn(a.website,'Visit')}</td>
-      </tr>`).join('')||`<tr><td colspan="8" class="px-4 py-10 text-center text-slate-400">No matching agencies.</td></tr>`}
+      </tr>`).join('')}
     </tbody></table>
-    <div class="px-4 py-3 text-xs text-slate-400 border-t border-slate-100 dark:border-slate-800">Showing ${rows.length} of ${STATE.ag.length} agencies</div>`;
+    <div class="px-4 py-3 text-xs text-slate-400 border-t border-slate-100 dark:border-slate-800 flex flex-wrap gap-x-2">
+      <span>Showing <span class="font-semibold text-slate-500 dark:text-slate-300">${rows.length}</span> of ${STATE.ag.length} agencies</span>
+      ${AGF.sort==='relevance'&&!q?'<span class="text-amber-600 dark:text-amber-400">· best-match ordering applies once you type in the search box</span>':''}
+    </div>`;
 }
 function sortAg(k){ AGF.dir = AGF.sort===k? -AGF.dir : 1; AGF.sort=k; renderAgencies(); }
 
@@ -454,7 +628,7 @@ function pageApi(){
   const eps=[
     ['GET','/health','—','Row counts + status','{"status":"ok","agencies":41,"opportunities":25}'],
     ['GET','/stats','—','Aggregate dashboard statistics & breakdowns','{"agencies":41,"opportunities":25,"countries":18,...}'],
-    ['GET','/agencies','q, country, category, funding_type, priority, limit, offset','Paginated list of funding agencies','{"total":41,"items":[...]}'],
+    ['GET','/agencies','q, country, category, funding_type, priority, has_opportunities, sort, limit, offset','Paginated, filterable + sortable list of funding agencies. sort = code | name_asc | name_desc | country | opportunities | updated','{"total":41,"items":[...]}'],
     ['GET','/agencies/{agency_code}','agency_code (path)','Single agency by code','{"agency_code":"IND001","name":"ANRF",...}'],
     ['GET','/opportunities','q, research_area, status, min_amount, agency_code, limit, offset','Paginated, filterable opportunities','{"total":25,"items":[...]}'],
     ['GET','/scrapers','—','Per-agency scraper status + engine capabilities','{"engine":{...},"targets":[...]}'],
