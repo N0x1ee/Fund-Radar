@@ -124,38 +124,59 @@
   .sg-tag button{width:15px;height:15px;border:none;border-radius:50%;background:transparent;cursor:pointer;
     color:inherit;font-size:12px;line-height:1;display:grid;place-items:center}
   .sg-tag button:hover{background:#cfe0ff}
-  .sg-body{overflow-x:auto}
+  /* Fixed footprint: about ten rows, then scroll inside the box instead of
+     letting one segment run down the whole page. */
+  .sg-body{overflow-x:auto;position:relative}
+  .sg-body.fx-scroll{overflow-y:auto;scrollbar-width:thin;scrollbar-color:#c6d5e6 transparent}
+  .sg-body.fx-scroll::-webkit-scrollbar{width:9px;height:9px}
+  .sg-body.fx-scroll::-webkit-scrollbar-thumb{background:#c6d5e6;border-radius:9px;
+    border:2px solid #fff;background-clip:padding-box}
+  .sg-body.fx-scroll::-webkit-scrollbar-thumb:hover{background:#a8bdd4;background-clip:padding-box}
+  .sg-body.fx-scroll::-webkit-scrollbar-track{background:transparent}
   .sg-empty{padding:26px 17px;text-align:center;color:var(--muted);font-size:13px}
+  .sg-more{font-size:11px;font-weight:700;color:var(--brand-d);background:var(--brand-soft);
+    border:1px solid #dbe6ff;border-radius:999px;padding:2px 9px}
 
   /* ============================ table polish ============================ */
-  .sg table{width:100%;border-collapse:collapse;font-size:13.5px}
-  .sg thead th{position:relative;padding:10px 16px;text-align:left;font-size:10px;font-weight:800;
-    letter-spacing:.6px;text-transform:uppercase;color:var(--muted);
-    background:#f8fbff;border-top:1px solid var(--line);border-bottom:1px solid var(--line);white-space:nowrap}
-  .sg tbody td{padding:13px 16px;border-bottom:1px solid #f1f5fa;vertical-align:top}
+  /* fixed layout + a colgroup: long bilingual programme names can no longer
+     force the table wider than its box */
+  .sg table{width:100%;border-collapse:collapse;font-size:13.5px;table-layout:fixed}
+  .sg td,.sg th{overflow:hidden;text-overflow:ellipsis}
+  /* header stays put while you scroll inside the box */
+  .sg thead th{position:sticky;top:0;z-index:2;padding:9px 16px;text-align:left;font-size:10px;
+    font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);
+    background:#f4f8fd;box-shadow:inset 0 -1px 0 var(--line),inset 0 1px 0 var(--line);white-space:nowrap}
+  .sg tbody td{padding:11px 16px;border-bottom:1px solid #f1f5fa;vertical-align:middle}
   .sg tbody tr{cursor:pointer;transition:background .12s}
   .sg tbody tr:hover{background:#f8fbff}
   .sg tbody tr:last-child td{border-bottom:none}
-  .sg .c-name{width:34%;min-width:230px}
-  .sg .c-amt{min-width:158px}
-  .sg .nm{font-weight:700;color:var(--ink);line-height:1.35}
-  .sg .ar{margin-top:4px;font-size:11.5px;color:var(--muted);line-height:1.4}
-  .sg .lk{margin-top:5px;font-size:11.5px}
-  .sg .lk a{color:var(--brand);font-weight:700;text-decoration:none}
-  .sg .lk a:hover{text-decoration:underline}
+  .sg .c-name{width:38%;min-width:220px}
+  .sg .c-amt{min-width:150px}
+  .sg .c-go{width:34px}
+  /* clamp to two lines so one giant title cannot blow the row height out */
+  .sg .nm{font-weight:700;color:var(--ink);line-height:1.35;overflow-wrap:anywhere;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  /* research area on one clipped line - it was the main source of row height */
+  .sg .ar{margin-top:2px;font-size:11px;color:var(--muted);line-height:1.35;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
   .sg .ag{display:flex;align-items:center;gap:8px;font-weight:600;line-height:1.3}
-  .sg .av{width:26px;height:26px;border-radius:8px;flex:0 0 auto;display:grid;place-items:center;
-    color:#fff;font-size:10px;font-weight:800}
-  .sg .amt-v{font-weight:700;color:var(--green-d)}
+  .sg .av{width:24px;height:24px;border-radius:7px;flex:0 0 auto;display:grid;place-items:center;
+    color:#fff;font-size:9.5px;font-weight:800}
+  .sg .amt-v{font-weight:700;color:var(--green-d);display:block;line-height:1.35}
   .sg .amt-v.none{color:var(--muted);font-weight:500}
-  .fx-sz{display:block;width:fit-content;margin-top:6px;padding:2px 9px;border-radius:999px;font-size:9.5px;
-    font-weight:800;letter-spacing:.4px;text-transform:uppercase;color:#fff}
-  .fx-yr{display:block;font-size:10.5px;color:var(--muted);margin-top:3px}
+  /* tier + yearly figure collapsed onto one quiet line with a colour dot */
+  .sg .amt-m{display:flex;align-items:center;gap:6px;margin-top:3px;font-size:10.5px;color:var(--muted);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .sg .amt-m i{width:7px;height:7px;border-radius:50%;flex:0 0 auto}
+  .sg .amt-m b{font-weight:700;color:var(--ink)}
   .sg .dl{white-space:nowrap;font-weight:600}
-  .sg .dl small{display:block;font-weight:600;font-size:10.5px;margin-top:2px}
+  .sg .dl small{display:block;font-weight:700;font-size:10px;margin-top:1px}
   .sg .star{background:none;border:none;cursor:pointer;font-size:15px;color:#d6dfea;padding:0;transition:.15s}
   .sg .star:hover{color:#fbbf24;transform:scale(1.15)}
   .sg .star.on{color:#f59e0b}
+  .sg .go{display:grid;place-items:center;width:26px;height:26px;border-radius:8px;color:var(--brand);
+    text-decoration:none;transition:.15s}
+  .sg .go:hover{background:var(--brand-soft)}
   .sg .pill{display:inline-block;padding:3px 10px;border-radius:999px;font-size:10.5px;font-weight:800;
     letter-spacing:.2px;text-transform:lowercase}
   .p-open{background:#d6f5e6;color:#047857}
@@ -611,33 +632,62 @@ function drawDrawer(all){
 }
 
 /* ------------------------------ one segment ------------------------------ */
-function rowsHtml(rows){
+var ROW_LIMIT = 10;          // rows visible before a box starts scrolling
+
+function rowsHtml(rows, showSize, showCountry){
   return rows.map(function(o){
     var t=TIER_BY[o._tier];
-    var amtText = o.funding_amount ? escH(String(o.funding_amount).slice(0,48))
+    var amtText = o.funding_amount ? escH(String(o.funding_amount).slice(0,42))
                 : (o.amount_value ? escH((o.currency||'')+' '+Number(o.amount_value).toLocaleString()) : 'Not published');
     var st=(o.status==='unknown'||!o.status)?'roll':o.status;
-    var stLabel=st==='roll'?'rolling':st;
     var n=daysTo(o.deadline), urgent = n!==null && n>=0 && n<=31;
+
+    /* tier + yearly figure collapsed onto one quiet line with a colour dot.
+       The tier name is dropped when the whole box is already that tier. */
+    var meta=[];
+    if(showSize) meta.push('<b>'+t.label+'</b>');
+    if(o._inr!=null) meta.push(inrShort(o._inr).replace('≈ ',''));
+    var metaLine = meta.length
+      ? '<span class="amt-m"><i style="background:'+t.color+'"></i>'+meta.join(' · ')+
+        (o._monthly?' <span title="scaled up from a monthly figure">/mo→yr</span>':'')+'</span>'
+      : '';
+
     return '<tr onclick="openOpp('+o.id+')" title="Click for full details">'+
-      '<td style="width:36px"><button class="star '+(SAVED.has(o.id)?'on':'')+'" '+
+      '<td style="width:34px"><button class="star '+(SAVED.has(o.id)?'on':'')+'" '+
         'onclick="event.stopPropagation();toggleSave('+o.id+',this)" '+
         'title="'+(SAVED.has(o.id)?'Remove bookmark':'Save for later')+'">★</button></td>'+
       '<td class="c-name"><div class="nm">'+(o.program_name?escH(o.program_name):'Untitled scheme')+'</div>'+
-        (o.research_area?'<div class="ar">'+escH(o.research_area)+'</div>':'')+
-        (o.application_link?'<div class="lk"><a href="'+escA(o.application_link)+'" target="_blank" rel="noopener" '+
-          'onclick="event.stopPropagation()">Apply / details ↗</a></div>':'')+'</td>'+
+        (o.research_area?'<div class="ar" title="'+escA(o.research_area)+'">'+escH(o.research_area)+'</div>':'')+'</td>'+
       '<td><div class="ag"><span class="av" style="background:'+avColor(o.agency)+'">'+escH(initials(o.agency))+'</span>'+
         '<span>'+escH(o.agency||'—')+'</span></div></td>'+
-      '<td>'+escH(o.country||'—')+'</td>'+
-      '<td class="c-amt"><span class="amt-v'+(o._inr==null?' none':'')+'">'+amtText+'</span>'+
-        '<span class="fx-sz" style="background:'+t.color+'">'+t.label+'</span>'+
-        (o._inr!=null?'<span class="fx-yr">'+inrShort(o._inr)+(o._monthly?' · from a monthly figure':'')+'</span>':'')+'</td>'+
+      (showCountry?'<td>'+escH(o.country||'—')+'</td>':'')+
+      '<td class="c-amt"><span class="amt-v'+(o._inr==null?' none':'')+'">'+amtText+'</span>'+metaLine+'</td>'+
       '<td class="dl">'+(o.deadline?fmtDate(o.deadline):'<span style="color:var(--muted);font-weight:500">Rolling</span>')+
-        (urgent?'<small style="color:'+(n<=7?'#dc2626':'#ea580c')+'">'+(n===0?'today':n+' days left')+'</small>':'')+'</td>'+
-      '<td><span class="pill p-'+st+'">'+stLabel+'</span></td>'+
+        (urgent?'<small style="color:'+(n<=7?'#dc2626':'#ea580c')+'">'+(n===0?'today':n+'d left')+'</small>':'')+'</td>'+
+      '<td><span class="pill p-'+st+'">'+(st==='roll'?'rolling':st)+'</span></td>'+
+      '<td class="c-go">'+(o.application_link
+        ? '<a class="go" href="'+escA(o.application_link)+'" target="_blank" rel="noopener" '+
+          'onclick="event.stopPropagation()" title="Apply / details">'+
+          '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" '+
+          'stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></a>'
+        : '')+'</td>'+
     '</tr>';
   }).join('');
+}
+
+/* Give every over-long list the height of exactly ROW_LIMIT rows and let it
+   scroll inside its own box. Measured rather than guessed, because row height
+   varies with how the programme name wraps. */
+function capBoxes(host){
+  Array.prototype.forEach.call(host.querySelectorAll('.sg-body'),function(box){
+    box.style.maxHeight='';
+    box.classList.remove('fx-scroll');
+    var rows=box.querySelectorAll('tbody tr');
+    if(rows.length<=ROW_LIMIT) return;
+    var head=box.querySelector('thead');
+    var h=(head?head.offsetHeight:0)+(rows[ROW_LIMIT].offsetTop-rows[0].offsetTop);
+    if(h>0){ box.style.maxHeight=h+'px'; box.classList.add('fx-scroll'); }
+  });
 }
 
 function segmentHtml(g){
@@ -645,8 +695,19 @@ function segmentHtml(g){
   var shown=sortRows(segFilter(g.rows,s),s.sort);
   var dirty=segDirty(s);
 
-  var head='<thead><tr><th></th><th class="c-name">Programme</th><th>Agency</th><th>Country</th>'+
-           '<th class="c-amt">Amount</th><th>Deadline</th><th>Status</th></tr></thead>';
+  /* drop columns the box already answers: the tier when segmented by size,
+     the country when segmented by country */
+  var showSize    = F.seg!=='size';
+  var showCountry = F.seg!=='country';
+  var cols = showCountry
+    ? ['34px','30%','14%','10%','20%','12%','9%','34px']
+    : ['34px','35%','16%','23%','13%','10%','34px'];
+  var colgroup='<colgroup>'+cols.map(function(w){
+    return '<col style="width:'+w+'">';
+  }).join('')+'</colgroup>';
+  var head='<thead><tr><th></th><th class="c-name">Programme</th><th>Agency</th>'+
+           (showCountry?'<th>Country</th>':'')+
+           '<th class="c-amt">Amount</th><th>Deadline</th><th>Status</th><th class="c-go"></th></tr></thead>';
 
   var ctl=
     '<div class="sg-ctl'+(s.ctl?' open':'')+'">'+
@@ -678,16 +739,18 @@ function segmentHtml(g){
   var panel = (s.ctl || tags) ? '<div class="sg-panel">'+ctl+tags+'</div>' : '';
 
   var body = shown.length
-    ? '<div class="sg-body"><table>'+head+'<tbody>'+rowsHtml(shown)+'</tbody></table></div>'
+    ? '<div class="sg-body"><table>'+colgroup+head+'<tbody>'+rowsHtml(shown,showSize,showCountry)+'</tbody></table></div>'
     : '<div class="sg-empty">Nothing in this segment matches its filters.</div>';
 
   /* closing strip - makes it unmistakable where this box ends */
   var foot = s.shut ? '' :
     '<div class="sg-f"><span class="sw" style="background:'+g.color+'"></span>'+
       'End of <b>'+escH(g.label)+'</b>'+
-      (shown.length?' · '+shown.length+' listed':'')+
+      (shown.length>ROW_LIMIT
+        ? ' · <span class="sg-more">'+ROW_LIMIT+' of '+shown.length+' — scroll inside this box</span>'
+        : (shown.length?' · '+shown.length+' listed':''))+
       '<span class="sp"></span>'+
-      '<a class="up" data-act="shut" href="#">Collapse this box ↑</a></div>';
+      '<a class="up" data-act="shut" href="#">Collapse ↑</a></div>';
 
   return '<section class="sg'+(s.shut?' shut':'')+'" data-seg="'+escA(g.key)+'">'+
     '<div class="sg-cap" style="background:'+g.color+'"></div>'+
@@ -775,6 +838,7 @@ window.render=function(){
   } else {
     host.innerHTML=groups.map(segmentHtml).join('');
     wireSegments(host);
+    capBoxes(host);
   }
 
   var visible=0;
@@ -788,15 +852,25 @@ window.render=function(){
 
   if(DRAWER){
     var unknown=rows.filter(function(o){ return o._tier==='unknown'; }).length;
-    var pct=rows.length?Math.round(100*unknown/rows.length):0;
     document.getElementById('fxHint').innerHTML=
-      'Fund size comes from the published amount — monthly stipends are scaled to a yearly figure and non-INR '+
-      'amounts are converted at approximate rates, for bucketing only. <b>'+unknown+'</b> of the '+rows.length+
-      ' matching ('+pct+'%) publish no usable amount, so they never fall inside an amount range.';
+      '<b>'+unknown+'</b> of '+rows.length+' publish no amount, so they sit outside every size range. '+
+      '<span title="Monthly stipends are scaled to a yearly figure and non-INR amounts are converted at '+
+      'approximate rates. Used only to pick a size bucket, never for display." '+
+      'style="cursor:help;text-decoration:underline dotted">How sizes are worked out</span>';
   }
 
   if(typeof foot==='function') foot(visible);
 };
+
+/* row heights change when the window narrows, so re-measure the caps */
+var resizeTimer=null;
+window.addEventListener('resize',function(){
+  clearTimeout(resizeTimer);
+  resizeTimer=setTimeout(function(){
+    var host=document.getElementById('table');
+    if(host && view==='opps') capBoxes(host);
+  },160);
+});
 })();
 </script>
 <!-- FR-BLOCK:filters END -->
