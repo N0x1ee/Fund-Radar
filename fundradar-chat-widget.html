@@ -1,0 +1,294 @@
+<!-- FR-BLOCK:chat START -->
+<!-- FundRadar floating chat - opens as a docked right-hand rail (split screen);
+     the page shrinks to make room instead of being covered.
+     Installed by INSTALL_FUNDRADAR_UI.bat - re-run it to upgrade. -->
+<style>
+  :root{ --fr-rail: 380px; }
+
+  /* ---- split screen: the page gives up room on the right ---- */
+  body{transition:padding-right .26s cubic-bezier(.22,1,.36,1)}
+  body.fr-split{padding-right:var(--fr-rail)}
+
+  /* ---------- launcher button ---------- */
+  #fr-launch{position:fixed;right:20px;bottom:20px;z-index:9998;width:54px;height:54px;padding:0;
+    border:none;border-radius:50%;cursor:pointer;display:grid;place-items:center;color:#fff;
+    background:linear-gradient(135deg,#2563eb,#059669);
+    box-shadow:0 9px 22px -6px rgba(37,99,235,.55);
+    transition:right .26s cubic-bezier(.22,1,.36,1),transform .18s ease,box-shadow .18s ease}
+  /* while the rail is open the header's X is the way out, so the bubble hides */
+  body.fr-split #fr-launch{right:calc(var(--fr-rail) + 20px);opacity:0;pointer-events:none;transform:scale(.8)}
+  #fr-launch:hover{transform:translateY(-3px) scale(1.05);box-shadow:0 14px 30px -8px rgba(37,99,235,.68)}
+  #fr-launch svg{width:24px;height:24px;transition:opacity .15s,transform .25s}
+  #fr-launch .fr-ico-close{position:absolute;opacity:0;transform:rotate(-90deg) scale(.6)}
+  #fr-launch.fr-open .fr-ico-chat{opacity:0;transform:rotate(90deg) scale(.6)}
+  #fr-launch.fr-open .fr-ico-close{opacity:1;transform:none}
+  #fr-dot{position:absolute;top:2px;right:2px;width:13px;height:13px;border-radius:50%;
+    background:#22c55e;border:2.5px solid #fff;animation:fr-pulse 2s infinite}
+  #fr-launch.fr-seen #fr-dot{display:none}
+  @keyframes fr-pulse{0%{box-shadow:0 0 0 0 rgba(34,197,94,.55)}70%{box-shadow:0 0 0 8px rgba(34,197,94,0)}100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}}
+
+  /* ---------- the docked rail ---------- */
+  #fr-panel{position:fixed;top:0;right:0;bottom:0;z-index:9999;width:var(--fr-rail);
+    background:#fff;border-left:1px solid #e6edf5;
+    display:flex;flex-direction:column;font-size:13px;line-height:1.5;
+    color:#0f2540;font-family:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    box-shadow:-14px 0 40px -22px rgba(15,37,64,.5);
+    transform:translateX(100%);transition:transform .26s cubic-bezier(.22,1,.36,1)}
+  #fr-panel.fr-on{transform:none}
+
+  /* drag handle to resize the rail */
+  #fr-grip{position:absolute;left:-3px;top:0;bottom:0;width:7px;cursor:col-resize;z-index:2}
+  #fr-grip:hover,#fr-grip.fr-drag{background:rgba(37,99,235,.28)}
+
+  .fr-head{display:flex;align-items:center;gap:9px;padding:12px 13px;color:#fff;flex:0 0 auto;
+    background:linear-gradient(115deg,#1e40af 0%,#2563eb 45%,#0e9f6e 125%)}
+  .fr-head-logo{width:30px;height:30px;border-radius:9px;flex:0 0 auto;display:grid;place-items:center;
+    background:rgba(255,255,255,.18)}
+  .fr-head-txt{min-width:0;flex:1}
+  .fr-head-txt b{display:block;font-size:14px;font-weight:700;letter-spacing:-.15px}
+  .fr-head-txt span{display:flex;align-items:center;gap:5px;font-size:10.5px;opacity:.85;font-weight:500}
+  .fr-live{width:6px;height:6px;border-radius:50%;background:#4ade80}
+  .fr-x{background:rgba(255,255,255,.15);border:none;color:#fff;width:27px;height:27px;border-radius:7px;
+    cursor:pointer;display:grid;place-items:center;transition:.15s;flex:0 0 auto}
+  .fr-x:hover{background:rgba(255,255,255,.3)}
+
+  .fr-thread{flex:1;overflow-y:auto;padding:12px 12px 4px;background:#f6fafd;
+    display:flex;flex-direction:column;gap:9px;scroll-behavior:smooth}
+  .fr-thread::-webkit-scrollbar{width:6px}
+  .fr-thread::-webkit-scrollbar-thumb{background:#cfdcea;border-radius:9px}
+  .fr-thread::-webkit-scrollbar-track{background:transparent}
+
+  .fr-b{max-width:92%;padding:9px 12px;border-radius:13px;font-size:12.5px;line-height:1.55;
+    word-wrap:break-word;animation:fr-in .2s ease-out}
+  @keyframes fr-in{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+  .fr-b.q{align-self:flex-end;background:#2563eb;color:#fff;border-bottom-right-radius:4px;
+    box-shadow:0 3px 9px -3px rgba(37,99,235,.5)}
+  .fr-b.a{align-self:flex-start;background:#fff;border:1px solid #e6edf5;border-bottom-left-radius:4px;
+    box-shadow:0 1px 2px rgba(15,37,64,.05)}
+  .fr-b.a strong{color:#047857}
+  .fr-b.a p{margin:0 0 5px}
+  .fr-b.a p:last-child{margin-bottom:0}
+  .fr-b.a a{color:#2563eb;font-weight:600;text-decoration:none}
+  .fr-b.a a:hover{text-decoration:underline}
+  .fr-b.a ul.fr-list{list-style:none;margin:5px 0 0;padding:0;display:flex;flex-direction:column;gap:6px}
+  .fr-b.a ul.fr-list li{position:relative;padding-left:14px}
+  .fr-b.a ul.fr-list li::before{content:"";position:absolute;left:2px;top:7px;width:5px;height:5px;
+    border-radius:50%;background:#059669}
+  .fr-typing{display:flex;gap:4px;align-items:center;padding:11px 12px!important}
+  .fr-typing i{width:5px;height:5px;border-radius:50%;background:#94a9bf;animation:fr-bounce 1.3s infinite}
+  .fr-typing i:nth-child(2){animation-delay:.18s}
+  .fr-typing i:nth-child(3){animation-delay:.36s}
+  @keyframes fr-bounce{0%,60%,100%{opacity:.3;transform:translateY(0)}30%{opacity:1;transform:translateY(-4px)}}
+
+  .fr-chips{flex:0 0 auto;display:flex;gap:6px;padding:8px 12px 3px;overflow-x:auto;background:#f6fafd;
+    scrollbar-width:none}
+  .fr-chips::-webkit-scrollbar{display:none}
+  .fr-chips button{flex:0 0 auto;font-size:11px;padding:5px 10px;border-radius:999px;cursor:pointer;
+    background:#eef4ff;color:#1d4ed8;border:1px solid #dbe6ff;font-weight:600;white-space:nowrap;transition:.15s}
+  .fr-chips button:hover{background:#e2ebff;transform:translateY(-1px)}
+
+  .fr-foot{flex:0 0 auto;display:flex;gap:7px;align-items:center;padding:10px 11px;
+    background:#fff;border-top:1px solid #e6edf5}
+  .fr-foot input{flex:1;min-width:0;padding:9px 12px;font-size:12.5px;border:1px solid #e6edf5;
+    border-radius:10px;outline:none;background:#f8fbfe;color:#0f2540;transition:.15s;font-family:inherit}
+  .fr-foot input:focus{border-color:#2563eb;background:#fff;box-shadow:0 0 0 3px rgba(37,99,235,.11)}
+  .fr-send{width:35px;height:35px;flex:0 0 auto;border:none;border-radius:10px;cursor:pointer;color:#fff;
+    display:grid;place-items:center;background:linear-gradient(135deg,#2563eb,#059669);transition:.15s}
+  .fr-send:hover{filter:brightness(1.08);transform:translateY(-1px)}
+  .fr-send:disabled{opacity:.45;cursor:not-allowed;transform:none;filter:none}
+
+  .ask{display:none!important}
+  #authOverlay.show ~ #fr-launch,
+  #authOverlay.show ~ #fr-panel{display:none!important}
+
+  /* ---- narrow screens: no room to split, fall back to a bottom sheet ---- */
+  @media (max-width:900px){
+    body.fr-split{padding-right:0}
+    body.fr-split #fr-launch{right:14px}
+    #fr-panel{top:auto;left:0;right:0;width:100%;height:78vh;border-left:none;
+      border-top:1px solid #e6edf5;border-radius:16px 16px 0 0;
+      transform:translateY(100%)}
+    #fr-panel.fr-on{transform:none}
+    #fr-grip{display:none}
+    #fr-launch{right:14px;bottom:14px;width:50px;height:50px}
+  }
+  @media print{#fr-launch,#fr-panel{display:none!important} body.fr-split{padding-right:0}}
+</style>
+
+<button id="fr-launch" aria-label="Open FundRadar chat" title="Ask FundRadar">
+  <span id="fr-dot"></span>
+  <svg class="fr-ico-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+       stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9 9 0 0 1-3.6-.7L3 21l1.9-5A8.4 8.4 0 0 1 12 3.1a8.4 8.4 0 0 1 9 8.4z"/>
+    <path d="M8.5 10.5h7M8.5 14h4.5"/>
+  </svg>
+  <svg class="fr-ico-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
+       stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+</button>
+
+<div id="fr-panel" role="complementary" aria-label="FundRadar chat">
+  <div id="fr-grip" title="Drag to resize"></div>
+  <div class="fr-head">
+    <div class="fr-head-logo">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.1"
+           stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/><path d="M11 8v3l2 1.5"/>
+      </svg>
+    </div>
+    <div class="fr-head-txt">
+      <b>Ask FundRadar</b>
+      <span><i class="fr-live"></i> Live funding database</span>
+    </div>
+    <button class="fr-x" id="fr-close" aria-label="Close chat" title="Close">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
+
+  <div class="fr-thread" id="fr-thread"></div>
+  <div class="fr-chips" id="fr-chips"></div>
+
+  <div class="fr-foot">
+    <input id="fr-q" type="text" autocomplete="off" placeholder="Ask about grants, deadlines, amounts…"/>
+    <button class="fr-send" id="fr-send" aria-label="Send" title="Send">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21.5 12L3 4.5l3 7.5-3 7.5z"/><path d="M6 12h15.5"/></svg>
+    </button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var GREET = "Hi! I answer from the live funding database — amounts, deadlines and links included. " +
+              "Ask me anything, or tap a suggestion below.";
+  var CHIPS = ["What grants are open now?","Fellowships for PhD students","Funding above 10 lakh",
+               "Opportunities in Germany","Biotech startup funding"];
+
+  var launch = document.getElementById('fr-launch'),
+      panel  = document.getElementById('fr-panel'),
+      grip   = document.getElementById('fr-grip'),
+      thread = document.getElementById('fr-thread'),
+      chips  = document.getElementById('fr-chips'),
+      input  = document.getElementById('fr-q'),
+      sendB  = document.getElementById('fr-send'),
+      closeB = document.getElementById('fr-close'),
+      open   = false, greeted = false, busy = false;
+
+  function esc(s){
+    return (s==null?'':String(s)).replace(/[&<>"']/g,function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+
+  function renderAnswer(text){
+    function inline(s){
+      var h = esc(s);
+      h = h.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
+      h = h.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');
+      h = h.replace(/(^|[^">])(https?:\/\/[^\s<)]+)/g,'$1<a href="$2" target="_blank" rel="noopener">$2</a>');
+      return h;
+    }
+    var out=[], li=[];
+    function flush(){ if(li.length){ out.push('<ul class="fr-list">'+li.join('')+'</ul>'); li=[]; } }
+    text.split('\n').forEach(function(raw){
+      var line = raw.replace(/\s+$/,''), m = line.match(/^\s*[-*•]\s+(.*)$/);
+      if(m){ li.push('<li>'+inline(m[1])+'</li>'); }
+      else { flush(); if(line.trim()) out.push('<p>'+inline(line)+'</p>'); }
+    });
+    flush();
+    return out.join('');
+  }
+
+  function bubble(cls, html){
+    var d = document.createElement('div');
+    d.className = 'fr-b ' + cls;
+    d.innerHTML = html;
+    thread.appendChild(d);
+    thread.scrollTop = thread.scrollHeight;
+    return d;
+  }
+
+  function buildChips(){
+    chips.innerHTML = '';
+    CHIPS.forEach(function(c){
+      var b = document.createElement('button');
+      b.type = 'button'; b.textContent = c;
+      b.onclick = function(){ input.value = c; send(); };
+      chips.appendChild(b);
+    });
+  }
+
+  function setOpen(v){
+    open = v;
+    panel.classList.toggle('fr-on', v);
+    launch.classList.toggle('fr-open', v);
+    document.body.classList.toggle('fr-split', v);          // <- pushes the page over
+    launch.setAttribute('aria-label', v ? 'Close FundRadar chat' : 'Open FundRadar chat');
+    if(v){
+      launch.classList.add('fr-seen');
+      if(!greeted){ greeted = true; bubble('a', renderAnswer(GREET)); }
+      setTimeout(function(){ input.focus(); }, 220);
+      thread.scrollTop = thread.scrollHeight;
+    }
+  }
+
+  async function send(){
+    if(busy) return;
+    var q = input.value.trim();
+    if(!q) return;
+    input.value = '';
+    busy = true; sendB.disabled = true;
+    chips.style.display = 'none';
+    bubble('q', esc(q));
+    var bot = bubble('a fr-typing', '<i></i><i></i><i></i>');
+    try{
+      var r = await fetch('/chat?q=' + encodeURIComponent(q));
+      var d = await r.json();
+      bot.className = 'fr-b a';
+      bot.innerHTML = renderAnswer(d.answer || '(no answer)');
+    }catch(e){
+      bot.className = 'fr-b a';
+      bot.textContent = 'Could not reach the chatbot. Is the server running?';
+    }
+    busy = false; sendB.disabled = false;
+    thread.scrollTop = thread.scrollHeight;
+    input.focus();
+  }
+
+  /* --- drag the left edge to make the rail wider or narrower --- */
+  (function(){
+    var dragging = false;
+    function width(px){
+      var w = Math.max(300, Math.min(window.innerWidth * 0.6, px));
+      document.documentElement.style.setProperty('--fr-rail', w + 'px');
+    }
+    grip.addEventListener('mousedown', function(e){
+      dragging = true; grip.classList.add('fr-drag');
+      document.body.style.userSelect = 'none';
+      panel.style.transition = 'none';
+      e.preventDefault();
+    });
+    window.addEventListener('mousemove', function(e){
+      if(dragging) width(window.innerWidth - e.clientX);
+    });
+    window.addEventListener('mouseup', function(){
+      if(!dragging) return;
+      dragging = false; grip.classList.remove('fr-drag');
+      document.body.style.userSelect = '';
+      panel.style.transition = '';
+    });
+  })();
+
+  launch.onclick = function(){ setOpen(!open); };
+  closeB.onclick = function(){ setOpen(false); };
+  sendB.onclick  = send;
+  input.addEventListener('keydown', function(e){ if(e.key === 'Enter') send(); });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && open) setOpen(false); });
+
+  buildChips();
+  window.ask = function(t){ input.value = t; setOpen(true); send(); };
+  window.openFundRadarChat = function(){ setOpen(true); };
+})();
+</script>
+<!-- FR-BLOCK:chat END -->

@@ -1,0 +1,802 @@
+<!-- FR-BLOCK:filters START -->
+<!-- FundRadar - segmented opportunity board.
+     Default segmentation is ownership / funder type: Government first, then
+     Private, University, Foundation, International. Each segment carries its
+     own search, filters and sorting. Global filters live in a drawer so the
+     page stays calm until you open it.
+     Installed by INSTALL_FUNDRADAR_UI.bat - re-run it to upgrade. -->
+<style>
+  #statusFilter,#countryFilter{display:none!important}
+  .bar .controls{gap:10px}
+
+  /* The dashboard wraps #table in a white .panel card. Our segments are cards
+     already, so that backdrop has to go - otherwise one big white sheet sits
+     behind every box and the gaps between them are white instead of the page
+     colour. Only stripped on the Opportunities view; the Agencies view still
+     needs its card. */
+  .panel.fx-bare{background:none!important;border:none!important;border-radius:0!important;
+    box-shadow:none!important;overflow:visible!important}
+
+  /* ============================ toolbar ============================ */
+  .fxbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    background:#fff;border:1px solid var(--line);border-radius:14px;
+    padding:10px 12px;margin-bottom:18px;box-shadow:var(--shadow)}
+  .fxbar .grow{flex:1;min-width:10px}
+  .fx-seg{display:flex;align-items:center;gap:8px;padding:5px 6px 5px 12px;border-radius:11px;
+    background:linear-gradient(120deg,var(--brand-soft),var(--green-soft));border:1px solid #dbe6ff}
+  .fx-seg span{font-size:10px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--brand-d);white-space:nowrap}
+  .fx-seg select{border:1px solid #dbe6ff;background:#fff;border-radius:8px;padding:6px 9px;font-size:12.5px;
+    font-weight:700;color:var(--brand-d);cursor:pointer;outline:none;font-family:inherit}
+  .fx-b{display:inline-flex;align-items:center;gap:7px;padding:8px 13px;border-radius:11px;
+    font-size:12.5px;font-weight:700;cursor:pointer;border:1px solid var(--line);background:#fff;
+    color:var(--ink);transition:.15s;white-space:nowrap;font-family:inherit}
+  .fx-b:hover:not(:disabled){border-color:#cdd9e8;box-shadow:var(--shadow);transform:translateY(-1px)}
+  .fx-b:disabled{opacity:.4;cursor:not-allowed}
+  .fx-b.on{background:var(--brand);border-color:var(--brand);color:#fff}
+  .fx-b .cnt{min-width:18px;padding:1px 6px;border-radius:999px;font-size:10.5px;
+    background:var(--brand);color:#fff}
+  .fx-b.on .cnt{background:rgba(255,255,255,.28)}
+  .fx-tot{font-size:12px;color:var(--muted);white-space:nowrap;font-weight:600}
+  .fx-tot b{color:var(--ink)}
+
+  /* ========================== global drawer ========================== */
+  .fxdraw{background:#fff;border:1px solid var(--line);border-radius:14px;margin:-8px 0 18px;
+    box-shadow:var(--shadow);overflow:hidden;display:none}
+  .fxdraw.open{display:block;animation:fxdrop .18s ease-out}
+  @keyframes fxdrop{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+  .fxdraw .in{display:grid;gap:13px;padding:15px;grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+  .fxdraw label{display:block;font-size:10px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;
+    color:var(--muted);margin-bottom:6px}
+  .fxdraw select{width:100%;padding:9px 11px;font-size:12.5px;border:1px solid var(--line);border-radius:10px;
+    background:#fff;color:var(--ink);outline:none;font-family:inherit;cursor:pointer}
+  .fxdraw select:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+  .fx-2{grid-column:span 2}
+  .fx-range{display:flex;align-items:center;gap:7px}
+  .fx-range select{flex:1;min-width:0}
+  .fx-range i{font-style:normal;font-size:11px;color:var(--muted);font-weight:700}
+  .fx-pills{display:flex;flex-wrap:wrap;align-items:center;gap:7px;padding:0 15px 14px}
+  .fx-pill{display:inline-flex;align-items:center;gap:6px;padding:4px 6px 4px 11px;border-radius:999px;
+    font-size:11.5px;font-weight:600;background:var(--brand-soft);color:var(--brand-d);border:1px solid #dbe6ff}
+  .fx-pill i{font-style:normal;opacity:.6;font-weight:500}
+  .fx-pill button{width:17px;height:17px;border:none;border-radius:50%;cursor:pointer;line-height:1;
+    background:transparent;color:inherit;font-size:13px;display:grid;place-items:center}
+  .fx-pill button:hover{background:#cfe0ff}
+  .fx-hint{padding:11px 15px;font-size:11.5px;color:var(--muted);background:#f8fbff;border-top:1px solid var(--line)}
+
+  /* =========================== segment card =========================== */
+  /* Each segment is a closed box: a coloured cap opens it, a footer closes it,
+     and a generous gap makes the boundary between two boxes obvious. */
+  .sg{background:#fff;border:1px solid var(--line);border-radius:16px;margin-bottom:26px;
+    box-shadow:0 1px 2px rgba(15,37,64,.05),0 10px 28px -20px rgba(15,37,64,.35);
+    overflow:hidden;transition:box-shadow .18s}
+  .sg:last-child{margin-bottom:6px}
+  .sg:hover{box-shadow:0 1px 2px rgba(15,37,64,.05),0 18px 44px -24px rgba(15,37,64,.34)}
+  .sg-cap{height:4px}
+  .sg-f{display:flex;align-items:center;gap:9px;padding:11px 17px;border-top:1px solid var(--line);
+    font-size:11.5px;font-weight:600;color:var(--muted);background:#fbfdff}
+  .sg-f .sw{width:7px;height:7px;border-radius:50%;flex:0 0 auto}
+  .sg-f b{color:var(--ink);font-weight:700}
+  .sg-f .sp{flex:1}
+  .sg-f .up{color:var(--brand);font-weight:700;cursor:pointer;text-decoration:none}
+  .sg-f .up:hover{text-decoration:underline}
+  .sg-h{display:flex;align-items:center;gap:13px;padding:15px 17px}
+  .sg-ic{width:42px;height:42px;border-radius:13px;flex:0 0 auto;display:grid;place-items:center;color:#fff}
+  .sg-t{min-width:0;flex:1}
+  .sg-t h3{margin:0;font-size:16px;font-weight:800;letter-spacing:-.3px;line-height:1.25}
+  .sg-t p{margin:2px 0 0;font-size:11.5px;color:var(--muted);font-weight:500}
+  .sg-n{display:flex;align-items:baseline;gap:5px;padding:5px 12px;border-radius:999px;
+    background:#f2f6fb;font-size:12px;color:var(--muted);font-weight:600;white-space:nowrap}
+  .sg-n b{font-size:15px;color:var(--ink);font-weight:800}
+  .sg-ico{width:32px;height:32px;border-radius:9px;border:1px solid var(--line);background:#fff;
+    cursor:pointer;display:grid;place-items:center;color:var(--muted);transition:.15s;flex:0 0 auto}
+  .sg-ico:hover{border-color:#cdd9e8;color:var(--ink);box-shadow:var(--shadow)}
+  .sg-ico.on{background:var(--brand);border-color:var(--brand);color:#fff}
+  .sg-ico svg{width:15px;height:15px;transition:transform .18s}
+  .sg.shut .sg-caret svg{transform:rotate(-90deg)}
+  .sg.shut .sg-body,.sg.shut .sg-panel{display:none!important}
+  /* a hard rule under the header so the list always reads as a separate part */
+  .sg-h{border-bottom:1px solid var(--line)}
+  .sg.shut .sg-h{border-bottom:none}
+
+  /* Per-segment controls sit in their own tinted band, divided from the list
+     by hard rules top and bottom - the same separation the global filter card
+     has from the page. */
+  .sg-panel{background:#f7fbff;border-top:1px solid var(--line);border-bottom:2px solid var(--line)}
+  .sg-ctl{display:none;gap:10px;flex-wrap:wrap;align-items:flex-end;padding:14px 17px 15px}
+  .sg-ctl.open{display:flex}
+  .sg-ctl .f{min-width:132px}
+  .sg-ctl .f.wide{flex:1;min-width:190px}
+  .sg-ctl label{display:block;font-size:9.5px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;
+    color:var(--muted);margin-bottom:5px}
+  .sg-ctl select,.sg-ctl input{width:100%;padding:7px 10px;font-size:12px;border:1px solid var(--line);
+    border-radius:9px;background:#fff;color:var(--ink);outline:none;font-family:inherit}
+  .sg-ctl select{cursor:pointer}
+  .sg-ctl select:focus,.sg-ctl input:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(37,99,235,.11)}
+  .sg-reset{padding:7px 12px;border-radius:9px;border:1px solid var(--line);background:#fff;cursor:pointer;
+    font-size:11.5px;font-weight:700;color:var(--muted);font-family:inherit;transition:.15s}
+  .sg-reset:hover{color:var(--ink);border-color:#cdd9e8}
+  .sg-tags{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:11px 17px}
+  .sg-ctl.open + .sg-tags{padding-top:0}
+  .sg-tags .lb{font-size:9.5px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;
+    color:var(--muted);margin-right:2px}
+  .sg-tag{display:inline-flex;align-items:center;gap:5px;padding:3px 5px 3px 9px;border-radius:999px;
+    font-size:11px;font-weight:600;background:#eef4ff;color:var(--brand-d);border:1px solid #dbe6ff}
+  .sg-tag button{width:15px;height:15px;border:none;border-radius:50%;background:transparent;cursor:pointer;
+    color:inherit;font-size:12px;line-height:1;display:grid;place-items:center}
+  .sg-tag button:hover{background:#cfe0ff}
+  .sg-body{overflow-x:auto}
+  .sg-empty{padding:26px 17px;text-align:center;color:var(--muted);font-size:13px}
+
+  /* ============================ table polish ============================ */
+  .sg table{width:100%;border-collapse:collapse;font-size:13.5px}
+  .sg thead th{position:relative;padding:10px 16px;text-align:left;font-size:10px;font-weight:800;
+    letter-spacing:.6px;text-transform:uppercase;color:var(--muted);
+    background:#f8fbff;border-top:1px solid var(--line);border-bottom:1px solid var(--line);white-space:nowrap}
+  .sg tbody td{padding:13px 16px;border-bottom:1px solid #f1f5fa;vertical-align:top}
+  .sg tbody tr{cursor:pointer;transition:background .12s}
+  .sg tbody tr:hover{background:#f8fbff}
+  .sg tbody tr:last-child td{border-bottom:none}
+  .sg .c-name{width:34%;min-width:230px}
+  .sg .c-amt{min-width:158px}
+  .sg .nm{font-weight:700;color:var(--ink);line-height:1.35}
+  .sg .ar{margin-top:4px;font-size:11.5px;color:var(--muted);line-height:1.4}
+  .sg .lk{margin-top:5px;font-size:11.5px}
+  .sg .lk a{color:var(--brand);font-weight:700;text-decoration:none}
+  .sg .lk a:hover{text-decoration:underline}
+  .sg .ag{display:flex;align-items:center;gap:8px;font-weight:600;line-height:1.3}
+  .sg .av{width:26px;height:26px;border-radius:8px;flex:0 0 auto;display:grid;place-items:center;
+    color:#fff;font-size:10px;font-weight:800}
+  .sg .amt-v{font-weight:700;color:var(--green-d)}
+  .sg .amt-v.none{color:var(--muted);font-weight:500}
+  .fx-sz{display:block;width:fit-content;margin-top:6px;padding:2px 9px;border-radius:999px;font-size:9.5px;
+    font-weight:800;letter-spacing:.4px;text-transform:uppercase;color:#fff}
+  .fx-yr{display:block;font-size:10.5px;color:var(--muted);margin-top:3px}
+  .sg .dl{white-space:nowrap;font-weight:600}
+  .sg .dl small{display:block;font-weight:600;font-size:10.5px;margin-top:2px}
+  .sg .star{background:none;border:none;cursor:pointer;font-size:15px;color:#d6dfea;padding:0;transition:.15s}
+  .sg .star:hover{color:#fbbf24;transform:scale(1.15)}
+  .sg .star.on{color:#f59e0b}
+  .sg .pill{display:inline-block;padding:3px 10px;border-radius:999px;font-size:10.5px;font-weight:800;
+    letter-spacing:.2px;text-transform:lowercase}
+  .p-open{background:#d6f5e6;color:#047857}
+  .p-closed{background:#eef2f7;color:#64748b}
+  .p-roll{background:#fef3c7;color:#b45309}
+  @media (max-width:760px){
+    .sg-h{flex-wrap:wrap}
+    .sg-t{flex:1 1 100%;order:2}
+    .fxdraw .in{grid-template-columns:1fr 1fr}
+    .fx-2{grid-column:span 2}
+  }
+</style>
+
+<script>
+(function(){
+"use strict";
+if (typeof OPP === 'undefined' || typeof render !== 'function') return;
+
+/* ============================ fund-size engine ============================
+ * Mirrors app/core/fundsize.py. Rates decide buckets only, never display.   */
+var FX_TO_INR = {INR:1, USD:88, EUR:96, GBP:112, CHF:100, JPY:0.58,
+                 AUD:58, CAD:64, SGD:66, SEK:8.4, NOK:8.3, DKK:12.9, AED:24};
+var CUR_TOKENS = [['₹','INR'],['rs.','INR'],['rs ','INR'],['inr','INR'],['rupee','INR'],
+                  ['us$','USD'],['usd','USD'],['$','USD'],['€','EUR'],['eur','EUR'],
+                  ['£','GBP'],['gbp','GBP'],['chf','CHF'],['sfr','CHF'],['¥','JPY'],['jpy','JPY'],
+                  ['aud','AUD'],['cad','CAD'],['sgd','SGD'],['sek','SEK'],['nok','NOK'],
+                  ['dkk','DKK'],['aed','AED']];
+var MULT = {lakh:1e5,lakhs:1e5,lac:1e5,lacs:1e5, crore:1e7,crores:1e7,cr:1e7,
+            k:1e3,thousand:1e3, m:1e6,mn:1e6,million:1e6, b:1e9,bn:1e9,billion:1e9};
+/* The dashboard shows Hindi translations, so amounts arrive in Devanagari too.
+   Matched by substring (\b does not work on Devanagari), longest first. */
+var DEV_MULT = {'करोड़':1e7,'करोड':1e7,'लाख':1e5,'हज़ार':1e3,'हजार':1e3,
+                'मिलियन':1e6,'बिलियन':1e9,'अरब':1e9};
+/* Devanagari that carries no scale — safe to ignore rather than bail on. */
+var DEV_OK = ['प्रति','माह','प्रतिमाह','मासिक','वर्ष','वार्षिक','सप्ताह','साप्ताहिक',
+              'रुपये','रुपए','रूपये','रु','तक','से','और','अधिक','लगभग','कुल'];
+var DEV_RE = /[ऀ-ॿ]+/;
+function devDigits(s){ return s.replace(/[०-९]/g, function(d){
+  return String.fromCharCode(d.charCodeAt(0) - 0x0966 + 48); }); }
+/* Leftover Devanagari may BE the scale ("करोड़" = 10 million), so a bare
+   number would be off by orders of magnitude. Refuse instead of guessing. */
+function devUnreadable(low){
+  var rest = low;
+  Object.keys(DEV_MULT).concat(DEV_OK).sort(function(a,b){return b.length-a.length;})
+    .forEach(function(w){ rest = rest.split(w).join(' '); });
+  return DEV_RE.test(rest);
+}
+var TIERS = [
+  {k:'small',  label:'Small',       color:'#0891b2', lo:0,   hi:5e5,      hint:'under ₹5 lakh / yr'},
+  {k:'medium', label:'Medium',      color:'#059669', lo:5e5, hi:5e6,      hint:'₹5 lakh – ₹50 lakh / yr'},
+  {k:'large',  label:'Large',       color:'#2563eb', lo:5e6, hi:5e7,      hint:'₹50 lakh – ₹5 crore / yr'},
+  {k:'xlarge', label:'Extra Large', color:'#7c3aed', lo:5e7, hi:Infinity, hint:'over ₹5 crore / yr'}
+];
+var TIER_BY = {}; TIERS.forEach(function(t){ TIER_BY[t.k]=t; });
+TIER_BY.unknown = {k:'unknown', label:'Not specified', color:'#94a3b8', hint:'no amount published'};
+var TIER_KEYS = ['small','medium','large','xlarge','unknown'];
+
+function detectCur(t){
+  var low=' '+t.toLowerCase().replace(/,/g,'')+' ';
+  for(var i=0;i<CUR_TOKENS.length;i++) if(low.indexOf(CUR_TOKENS[i][0])!==-1) return CUR_TOKENS[i][1];
+  return null;
+}
+/* A number, then whatever word sits directly after it. The scale word must be
+   ATTACHED to the number: "Rs 1,35,000 per month + Rs 15 lakh" holds two
+   amounts and the "lakh" belongs to the second. Scanning the whole string for
+   a multiplier multiplied the stipend by 100,000. */
+var NUM_UNIT = /(\d[\d,]*(?:\.\d+)?)\s*([a-zऀ-ॿ]+)?/;
+function numberAndUnit(low){
+  var m = low.match(NUM_UNIT);
+  if(!m) return [null, null];
+  var tok = m[1], val;
+  if(/^\d{1,3}\.\d{3}$/.test(tok)) val = parseFloat(tok.replace(/\./g,''));  // European 3.000
+  else val = parseFloat(tok.replace(/,/g,''));
+  return [val, m[2] || null];
+}
+function parseAmount(text){
+  var blank={value:null,currency:null,perYearInr:null,tier:'unknown',monthly:false};
+  if(!text) return blank;
+  var raw=String(text).trim(); if(!raw) return blank;
+  var currency=detectCur(raw), low=devDigits(raw.toLowerCase().replace(/\/-/g,' '));
+
+  var nu=numberAndUnit(low), value=nu[0], unit=nu[1];
+  var mult=null, hindi=false;
+  if(unit){
+    if(DEV_MULT[unit]!==undefined){ mult=DEV_MULT[unit]; hindi=true; }
+    else if(MULT[unit]!==undefined){ mult=MULT[unit]; }
+  }
+  /* a Hindi amount without a symbol ("१० लाख") is rupees */
+  if(currency===null && hindi) currency='INR';
+  if(currency===null && mult===null) return blank;         // digits are noise ("J-1 visa")
+  if(devUnreadable(low)) return blank;
+
+  if(value===null||isNaN(value)||value<=0) return blank;
+  if(mult) value*=mult;
+  var factor=1, monthly=false;
+  if(/per\s*month|\/\s*month|monthly|\bp\.?m\.?\b|a\s*month|प्रति\s*माह|प्रतिमाह|मासिक/.test(low)){ factor=12; monthly=true; }
+  else if(/per\s*week|\/\s*week|weekly|प्रति\s*सप्ताह|साप्ताहिक/.test(low)){ factor=52; monthly=true; }
+  var perYear=value*factor;
+  if(currency && FX_TO_INR[currency]) perYear*=FX_TO_INR[currency];
+  else if(currency===null) perYear=null;
+  var tier='unknown';
+  if(perYear!==null) for(var j=0;j<TIERS.length;j++)
+    if(perYear>=TIERS[j].lo && perYear<TIERS[j].hi){ tier=TIERS[j].k; break; }
+  return {value:value,currency:currency,perYearInr:perYear,tier:tier,monthly:monthly};
+}
+/* Trust the published text. amount_value only when there is no text, because
+   that column was filled by the older parser and holds junk like 1.0. */
+function sizeOf(o){
+  if(o.funding_amount) return parseAmount(o.funding_amount);
+  var v=Number(o.amount_value);
+  if(!v||v<1000) return {value:null,currency:null,perYearInr:null,tier:'unknown',monthly:false};
+  return parseAmount((o.currency||'INR')+' '+v);
+}
+function inrShort(v){
+  if(v==null) return '';
+  if(v>=1e7) return '≈ ₹'+(v/1e7).toFixed(v>=1e8?0:2).replace(/\.00$/,'')+' cr/yr';
+  if(v>=1e5) return '≈ ₹'+(v/1e5).toFixed(v>=1e6?0:1).replace(/\.0$/,'')+' lakh/yr';
+  return '≈ ₹'+Math.round(v).toLocaleString('en-IN')+'/yr';
+}
+
+window.__fxParse = parseAmount;   // exposed so the parser can be spot-checked
+
+/* ======================== ownership / funder type ======================== */
+/* funding_type is the authoritative field; category is only a fallback for
+   agencies whose funding_type is blank. Reading both at once wrongly filed
+   government agencies with an academic-sounding category as universities. */
+function classify(s){
+  if(!s) return null;
+  if(/private|industr|corporate|public-private|company|business/.test(s)) return 'private';
+  if(/foundation|ngo|charit|trust|philanthrop/.test(s))                  return 'foundation';
+  if(/bilateral|multilateral|international/.test(s))                     return 'international';
+  if(/government|public sector|ministry|\bstate\b|national/.test(s))     return 'government';
+  if(/universit|academ|college|institut/.test(s))                        return 'university';
+  return null;
+}
+function sectorOf(a){
+  return classify(((a&&a.funding_type)||'').toLowerCase())
+      || classify(((a&&a.category)||'').toLowerCase())
+      || 'other';
+}
+var ICON = {
+  government:'<path d="M3 21h18M4 21V10m4 11V10m8 11V10m4 11V10M12 2l9 5H3l9-5z"/>',
+  private:'<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 12h18"/>',
+  university:'<path d="M12 3L2 8l10 5 10-5-10-5z"/><path d="M6 10.5V16c0 1.7 2.7 3 6 3s6-1.3 6-3v-5.5"/>',
+  foundation:'<path d="M20.8 5.6a5 5 0 0 0-7.1 0L12 7.3l-1.7-1.7a5 5 0 1 0-7.1 7.1L12 21.5l8.8-8.8a5 5 0 0 0 0-7.1z"/>',
+  international:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18z"/>',
+  other:'<circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/>'
+};
+var SECTORS = {
+  government:   {label:'Government funds',        color:'#2563eb', hint:'national, state & ministry agencies'},
+  private:      {label:'Private & Industry funds',color:'#ea580c', hint:'corporate and public-private funders'},
+  university:   {label:'University & Academic',   color:'#7c3aed', hint:'universities, academies and institutes'},
+  foundation:   {label:'Foundation & NGO',        color:'#059669', hint:'philanthropic and non-profit funders'},
+  international:{label:'International & Bilateral',color:'#0891b2',hint:'cross-border and multilateral programmes'},
+  other:        {label:'Other funders',           color:'#94a3b8', hint:'ownership not classified yet'}
+};
+/* the order the user asked for: government first, then private, then the rest */
+var SECTOR_ORDER = ['government','private','university','foundation','international','other'];
+
+/* ============================== derived bits ============================= */
+function typeOf(o){
+  var s=[o.program_name,o.tags,o.research_area].join(' ').toLowerCase();
+  if(/fellowship/.test(s))                return 'fellowship';
+  if(/scholarship|studentship/.test(s))   return 'scholarship';
+  if(/internship|traineeship/.test(s))    return 'internship';
+  if(/\bprize\b|\baward\b|medal/.test(s)) return 'award';
+  if(/grant|funding|call for proposal/.test(s)) return 'grant';
+  return 'programme';
+}
+function eligOf(o){
+  var s=[o.eligibility,o.program_name,o.tags].join(' ').toLowerCase(), out=[];
+  if(/ph\.?d|doctoral|doctorate/.test(s))                           out.push('phd');
+  if(/post-?doc|early career|early-career/.test(s))                 out.push('postdoc');
+  if(/faculty|professor|scientist|researcher|investigator/.test(s)) out.push('faculty');
+  if(/student|undergrad|graduate|master/.test(s))                   out.push('student');
+  if(/start-?up|compan|industr|entrepreneur|sme\b/.test(s))         out.push('startup');
+  if(/institut|universit|college|organis|organiz/.test(s))          out.push('institution');
+  return out;
+}
+function daysTo(d){
+  if(!d) return null;
+  var dt=new Date(d); if(isNaN(dt)) return null;
+  var t=new Date(); t.setHours(0,0,0,0);
+  return Math.round((dt-t)/86400000);
+}
+function windowOf(o){
+  var n=daysTo(o.deadline);
+  if(n===null) return 'rolling';
+  if(n<0) return 'past';
+  if(n<=7) return 'week';
+  if(n<=31) return 'month';
+  if(n<=92) return 'q';
+  return 'later';
+}
+var WINDOWS={week:{label:'Closing within 7 days',color:'#dc2626'},
+             month:{label:'Closing within 30 days',color:'#ea580c'},
+             q:{label:'Closing within 3 months',color:'#2563eb'},
+             later:{label:'More than 3 months away',color:'#059669'},
+             rolling:{label:'Rolling / no fixed date',color:'#0891b2'},
+             past:{label:'Already closed',color:'#94a3b8'}};
+var WINDOW_ORDER=['week','month','q','later','rolling','past'];
+
+/* =============================== state =============================== */
+var AMT_STEPS=[['1e5','₹1 lakh'],['5e5','₹5 lakh'],['1e6','₹10 lakh'],['5e6','₹50 lakh'],
+               ['1e7','₹1 crore'],['5e7','₹5 crore'],['1e8','₹10 crore'],['5e8','₹50 crore']];
+var TYPES=[['fellowship','Fellowship'],['scholarship','Scholarship'],['grant','Grant'],
+           ['award','Award / Prize'],['internship','Internship'],['programme','Programme']];
+var ELIGS=[['phd','PhD student'],['postdoc','Postdoc / early career'],['faculty','Faculty / researcher'],
+           ['student','Student'],['startup','Startup / company'],['institution','Institution']];
+var SORTS=[['best','Best matches first'],['amount_desc','Largest funds first'],
+           ['amount_asc','Smallest funds first'],['deadline_asc','Deadline — soonest'],
+           ['deadline_desc','Deadline — latest'],['name_asc','Name — A → Z'],['agency_asc','Agency — A → Z']];
+var SEGMENTS=[['sector','Ownership / funder type'],['size','Fund size'],['country','Country'],
+              ['area','Research area'],['type','Opportunity type'],['agency','Agency'],
+              ['deadline','Deadline window'],['status','Status'],['none','No segments — one list']];
+
+/* global filters (drawer) - default segmentation is ownership type */
+var DEF={min:'',max:'',deadline:'',status:'',country:'',sector:'',area:'',type:'',elig:'',seg:'sector'};
+var F=Object.assign({},DEF);
+var LABELS={min:'Amount from',max:'Amount up to',deadline:'Deadline',status:'Status',country:'Country',
+            sector:'Funder type',area:'Research area',type:'Type',elig:'Eligibility'};
+var DRAWER=false;
+
+/* per-segment state, keyed by "<segmentation>::<segment key>" */
+var SEG={};
+var SEG_DEF={q:'',size:'all',status:'',deadline:'',sort:'best',ctl:false,shut:false};
+function segState(k){
+  if(!SEG[k]) SEG[k]=Object.assign({},SEG_DEF);
+  return SEG[k];
+}
+function segDirty(s){ return !!(s.q || s.size!=='all' || s.status || s.deadline || s.sort!=='best'); }
+
+/* ============================= data plumbing ============================ */
+function agencyIndex(){
+  /* AGMAP keeps only {name,country,code}; AG holds the full agency records. */
+  var ix={};
+  (typeof AG!=='undefined'?AG:[]).forEach(function(a){ ix[a.id]=a; });
+  return ix;
+}
+function decorate(){
+  var IX=agencyIndex();
+  return OPP.map(function(o){
+    var ag=IX[o.agency_id]||AGMAP[o.agency_id]||{}, sz=sizeOf(o);
+    return Object.assign({},o,{
+      agency:ag.name||'', country:ag.country||'',
+      _tier:sz.tier, _inr:sz.perYearInr, _monthly:sz.monthly,
+      _sector:sectorOf(ag), _type:typeOf(o), _elig:eligOf(o), _win:windowOf(o)
+    });
+  });
+}
+function globalFilter(rows){
+  var q=(document.getElementById('search')||{value:''}).value.toLowerCase();
+  return rows.filter(function(o){
+    if(q && [o.program_name,o.agency,o.research_area,o.tags,o.funding_amount].join(' ').toLowerCase().indexOf(q)===-1) return false;
+    if(F.min||F.max){
+      if(o._inr==null) return false;
+      if(F.min && o._inr <  parseFloat(F.min)) return false;
+      if(F.max && o._inr >= parseFloat(F.max)) return false;
+    }
+    if(F.status   && o.status!==F.status)     return false;
+    if(F.country  && o.country!==F.country)   return false;
+    if(F.sector   && o._sector!==F.sector)    return false;
+    if(F.area     && o.research_area!==F.area) return false;
+    if(F.type     && o._type!==F.type)        return false;
+    if(F.elig     && o._elig.indexOf(F.elig)===-1) return false;
+    if(F.deadline && o._win!==F.deadline)     return false;
+    return true;
+  });
+}
+function segFilter(rows,s){
+  var q=s.q.toLowerCase();
+  return rows.filter(function(o){
+    if(q && [o.program_name,o.agency,o.research_area,o.tags,o.funding_amount].join(' ').toLowerCase().indexOf(q)===-1) return false;
+    if(s.size!=='all' && o._tier!==s.size) return false;
+    if(s.status && o.status!==s.status)    return false;
+    if(s.deadline && o._win!==s.deadline)  return false;
+    return true;
+  });
+}
+function sortRows(rows,key){
+  var num=function(v){ return v==null?-1:v; },
+      dl=function(o){ return String(o.deadline||'9999-99-99'); };
+  var r=rows.slice();
+  if(key==='amount_desc')       r.sort(function(a,b){ return num(b._inr)-num(a._inr); });
+  else if(key==='amount_asc')   r.sort(function(a,b){ return (a._inr==null?1:0)-(b._inr==null?1:0)||num(a._inr)-num(b._inr); });
+  else if(key==='deadline_asc') r.sort(function(a,b){ return dl(a).localeCompare(dl(b)); });
+  else if(key==='deadline_desc')r.sort(function(a,b){ return dl(b).localeCompare(dl(a)); });
+  else if(key==='name_asc')     r.sort(function(a,b){ return String(a.program_name||'').localeCompare(String(b.program_name||'')); });
+  else if(key==='agency_asc')   r.sort(function(a,b){ return String(a.agency||'').localeCompare(String(b.agency||'')); });
+  else r.sort(function(a,b){
+    var comp=function(o){ return ((o._inr!=null||o.funding_amount)?1:0)+(o.deadline?1:0); };
+    return comp(b)-comp(a)||(a.status==='open'?0:1)-(b.status==='open'?0:1)||dl(a).localeCompare(dl(b));
+  });
+  return r;
+}
+
+/* ============================== segmenting ============================== */
+var PALETTE=['#2563eb','#059669','#7c3aed','#ea580c','#0891b2','#db2777','#4f46e5','#0d9488',
+             '#b45309','#be123c','#15803d','#6d28d9'];
+function segmentsOf(rows,key){
+  if(key==='none') return [{key:'all',label:'All opportunities',hint:'',color:'#2563eb',icon:ICON.other,rows:rows}];
+  if(key==='sector')
+    return SECTOR_ORDER.map(function(k){
+      return {key:k,label:SECTORS[k].label,hint:SECTORS[k].hint,color:SECTORS[k].color,icon:ICON[k],
+              rows:rows.filter(function(o){ return o._sector===k; })};
+    }).filter(function(g){ return g.rows.length; });
+  if(key==='size')
+    return ['xlarge','large','medium','small','unknown'].map(function(k){
+      var t=TIER_BY[k];
+      return {key:k,label:(k==='unknown'?'Amount not specified':t.label+' funds'),hint:t.hint,color:t.color,
+              icon:ICON.other,rows:rows.filter(function(o){ return o._tier===k; })};
+    }).filter(function(g){ return g.rows.length; });
+  if(key==='deadline')
+    return WINDOW_ORDER.map(function(k){
+      return {key:k,label:WINDOWS[k].label,hint:'',color:WINDOWS[k].color,icon:ICON.other,
+              rows:rows.filter(function(o){ return o._win===k; })};
+    }).filter(function(g){ return g.rows.length; });
+  if(key==='type')
+    return TYPES.map(function(p,i){
+      return {key:p[0],label:p[1]+'s',hint:'',color:PALETTE[i%PALETTE.length],icon:ICON.other,
+              rows:rows.filter(function(o){ return o._type===p[0]; })};
+    }).filter(function(g){ return g.rows.length; });
+
+  var field = key==='country'?'country' : key==='area'?'research_area' : key==='agency'?'agency' : 'status';
+  var map={};
+  rows.forEach(function(o){
+    var v=(o[field]==null||o[field]==='')?'—':String(o[field]);
+    (map[v]=map[v]||[]).push(o);
+  });
+  return Object.keys(map).sort(function(a,b){ return map[b].length-map[a].length||a.localeCompare(b); })
+    .map(function(v,i){
+      return {key:v,label:(v==='—'?'Not specified':v),hint:'',color:PALETTE[i%PALETTE.length],
+              icon:ICON.other,rows:map[v]};
+    });
+}
+
+/* ================================= UI ================================== */
+function escH(s){ return (s==null?'':String(s)).replace(/[&<>"']/g,function(c){
+  return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function escA(s){ return String(s).replace(/"/g,'&quot;'); }
+function uniqSorted(l){ return l.filter(function(v,i,a){ return v && a.indexOf(v)===i; }).sort(); }
+function pair(v){ return [v,v]; }
+function initials(n){ return (n||'?').split(/\s+/).slice(0,2).map(function(w){return w[0];}).join('').toUpperCase(); }
+function avColor(n){
+  var h=0; for(var i=0;i<(n||'').length;i++) h=(h*31+n.charCodeAt(i))>>>0;
+  return PALETTE[h%PALETTE.length];
+}
+function opts(list,cur){
+  return list.map(function(p){
+    return '<option value="'+escA(p[0])+'"'+(cur===p[0]?' selected':'')+'>'+escH(p[1])+'</option>';
+  }).join('');
+}
+
+function buildShell(){
+  if(document.getElementById('fxBar')) return;
+  var host=document.querySelector('.panel');
+  if(!host||!host.parentNode) return;
+
+  var bar=document.createElement('div');
+  bar.className='fxbar'; bar.id='fxBar';
+  bar.innerHTML =
+    '<label class="fx-seg"><span>Segment by</span><select id="fxSeg">'+
+      SEGMENTS.map(function(p){ return '<option value="'+p[0]+'">'+p[1]+'</option>'; }).join('')+
+    '</select></label>'+
+    '<button class="fx-b" id="fxDraw">'+
+      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" '+
+        'stroke-linecap="round"><path d="M3 5h18M6 12h12M10 19h4"/></svg>'+
+      'Filters<span class="cnt" id="fxCnt" style="display:none"></span></button>'+
+    '<button class="fx-b" id="fxAll" title="Expand or collapse every segment">'+
+      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" '+
+        'stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h13M8 12h13M8 20h13M3 4l1.5 1.5L3 7"/></svg>'+
+      'Collapse all</button>'+
+    '<span class="grow"></span>'+
+    '<span class="fx-tot" id="fxTot"></span>'+
+    '<button class="fx-b" id="fxReset">Reset</button>';
+
+  var draw=document.createElement('div');
+  draw.className='fxdraw'; draw.id='fxDrawer';
+
+  host.parentNode.insertBefore(bar,host);
+  host.parentNode.insertBefore(draw,host);
+
+  document.getElementById('fxSeg').onchange=function(){ F.seg=this.value; SEG={}; render(); };
+  document.getElementById('fxDraw').onclick=function(){ DRAWER=!DRAWER; render(); };
+  document.getElementById('fxReset').onclick=function(){
+    var seg=F.seg; F=Object.assign({},DEF); F.seg=seg; SEG={};
+    var s=document.getElementById('search'); if(s) s.value='';
+    render();
+  };
+  document.getElementById('fxAll').onclick=function(){
+    var groups=window.__fxGroups||[];
+    var anyOpen=groups.some(function(g){ return !segState(F.seg+'::'+g.key).shut; });
+    groups.forEach(function(g){ segState(F.seg+'::'+g.key).shut=anyOpen; });
+    render();
+  };
+}
+
+function drawDrawer(all){
+  var d=document.getElementById('fxDrawer');
+  d.classList.toggle('open',DRAWER);
+  var f=function(k,blank,list,cls){
+    return '<div class="'+(cls||'')+'"><label for="fx-'+k+'">'+LABELS[k]+'</label>'+
+      '<select id="fx-'+k+'" data-k="'+k+'"><option value="">'+blank+'</option>'+opts(list,F[k])+'</select></div>';
+  };
+  if(DRAWER){
+    d.innerHTML =
+      '<div class="in">'+
+        '<div class="fx-2"><label>Amount range — per year, converted to ₹</label><div class="fx-range">'+
+          '<select id="fx-min" data-k="min"><option value="">No minimum</option>'+opts(AMT_STEPS,F.min)+'</select>'+
+          '<i>to</i>'+
+          '<select id="fx-max" data-k="max"><option value="">No maximum</option>'+opts(AMT_STEPS,F.max)+'</select>'+
+        '</div></div>'+
+        f('sector','All funder types', SECTOR_ORDER.map(function(k){ return [k,SECTORS[k].label]; })) +
+        f('country','All countries', uniqSorted(all.map(function(o){return o.country;})).map(pair)) +
+        f('deadline','Any deadline', WINDOW_ORDER.map(function(k){ return [k,WINDOWS[k].label]; })) +
+        f('status','Any status',[['open','Open'],['closed','Closed'],['unknown','Rolling / unknown']]) +
+        f('area','All research areas', uniqSorted(all.map(function(o){return o.research_area;})).map(pair)) +
+        f('type','All types',TYPES) +
+        f('elig','Anyone eligible',ELIGS) +
+      '</div>'+
+      '<div class="fx-pills" id="fxPills"></div>'+
+      '<div class="fx-hint" id="fxHint"></div>';
+    Array.prototype.forEach.call(d.querySelectorAll('select'),function(s){
+      s.onchange=function(){ F[s.dataset.k]=s.value; render(); };
+    });
+  } else {
+    d.innerHTML='';
+  }
+
+  var active=Object.keys(LABELS).filter(function(k){ return !!F[k]; });
+  var cnt=document.getElementById('fxCnt');
+  cnt.style.display=active.length?'':'none';
+  cnt.textContent=active.length;
+  document.getElementById('fxDraw').classList.toggle('on',DRAWER||active.length>0);
+
+  if(DRAWER){
+    var look=function(list,v){ var h=list.filter(function(p){return p[0]===v;})[0]; return h?h[1]:v; };
+    var pills=document.getElementById('fxPills');
+    pills.innerHTML = active.length
+      ? active.map(function(k){
+          var v=F[k], text = (k==='min'||k==='max')?look(AMT_STEPS,v)
+            : k==='type'?look(TYPES,v) : k==='elig'?look(ELIGS,v)
+            : k==='sector'?SECTORS[v].label : k==='deadline'?WINDOWS[v].label : v;
+          return '<span class="fx-pill"><i>'+LABELS[k]+':</i> '+escH(text)+
+                 '<button data-k="'+k+'" title="Remove">&times;</button></span>';
+        }).join('')
+      : '<span style="font-size:11.5px;color:var(--muted)">No global filters set — each segment can still filter itself.</span>';
+    Array.prototype.forEach.call(pills.querySelectorAll('button'),function(b){
+      b.onclick=function(){ F[b.dataset.k]=DEF[b.dataset.k]; render(); };
+    });
+  }
+  return active.length;
+}
+
+/* ------------------------------ one segment ------------------------------ */
+function rowsHtml(rows){
+  return rows.map(function(o){
+    var t=TIER_BY[o._tier];
+    var amtText = o.funding_amount ? escH(String(o.funding_amount).slice(0,48))
+                : (o.amount_value ? escH((o.currency||'')+' '+Number(o.amount_value).toLocaleString()) : 'Not published');
+    var st=(o.status==='unknown'||!o.status)?'roll':o.status;
+    var stLabel=st==='roll'?'rolling':st;
+    var n=daysTo(o.deadline), urgent = n!==null && n>=0 && n<=31;
+    return '<tr onclick="openOpp('+o.id+')" title="Click for full details">'+
+      '<td style="width:36px"><button class="star '+(SAVED.has(o.id)?'on':'')+'" '+
+        'onclick="event.stopPropagation();toggleSave('+o.id+',this)" '+
+        'title="'+(SAVED.has(o.id)?'Remove bookmark':'Save for later')+'">★</button></td>'+
+      '<td class="c-name"><div class="nm">'+(o.program_name?escH(o.program_name):'Untitled scheme')+'</div>'+
+        (o.research_area?'<div class="ar">'+escH(o.research_area)+'</div>':'')+
+        (o.application_link?'<div class="lk"><a href="'+escA(o.application_link)+'" target="_blank" rel="noopener" '+
+          'onclick="event.stopPropagation()">Apply / details ↗</a></div>':'')+'</td>'+
+      '<td><div class="ag"><span class="av" style="background:'+avColor(o.agency)+'">'+escH(initials(o.agency))+'</span>'+
+        '<span>'+escH(o.agency||'—')+'</span></div></td>'+
+      '<td>'+escH(o.country||'—')+'</td>'+
+      '<td class="c-amt"><span class="amt-v'+(o._inr==null?' none':'')+'">'+amtText+'</span>'+
+        '<span class="fx-sz" style="background:'+t.color+'">'+t.label+'</span>'+
+        (o._inr!=null?'<span class="fx-yr">'+inrShort(o._inr)+(o._monthly?' · from a monthly figure':'')+'</span>':'')+'</td>'+
+      '<td class="dl">'+(o.deadline?fmtDate(o.deadline):'<span style="color:var(--muted);font-weight:500">Rolling</span>')+
+        (urgent?'<small style="color:'+(n<=7?'#dc2626':'#ea580c')+'">'+(n===0?'today':n+' days left')+'</small>':'')+'</td>'+
+      '<td><span class="pill p-'+st+'">'+stLabel+'</span></td>'+
+    '</tr>';
+  }).join('');
+}
+
+function segmentHtml(g){
+  var key=F.seg+'::'+g.key, s=segState(key);
+  var shown=sortRows(segFilter(g.rows,s),s.sort);
+  var dirty=segDirty(s);
+
+  var head='<thead><tr><th></th><th class="c-name">Programme</th><th>Agency</th><th>Country</th>'+
+           '<th class="c-amt">Amount</th><th>Deadline</th><th>Status</th></tr></thead>';
+
+  var ctl=
+    '<div class="sg-ctl'+(s.ctl?' open':'')+'">'+
+      '<div class="f wide"><label>Search in this segment</label>'+
+        '<input type="search" data-sk="q" value="'+escA(s.q)+'" placeholder="Programme, agency, topic…"/></div>'+
+      '<div class="f"><label>Fund size</label><select data-sk="size"><option value="all">Any size</option>'+
+        opts(TIER_KEYS.map(function(k){ return [k,TIER_BY[k].label]; }),s.size)+'</select></div>'+
+      '<div class="f"><label>Deadline</label><select data-sk="deadline"><option value="">Any deadline</option>'+
+        opts(WINDOW_ORDER.map(function(k){ return [k,WINDOWS[k].label]; }),s.deadline)+'</select></div>'+
+      '<div class="f"><label>Status</label><select data-sk="status"><option value="">Any status</option>'+
+        opts([['open','Open'],['closed','Closed'],['unknown','Rolling / unknown']],s.status)+'</select></div>'+
+      '<div class="f"><label>Sort</label><select data-sk="sort">'+opts(SORTS,s.sort)+'</select></div>'+
+      '<button class="sg-reset" data-sk="__reset">Reset segment</button>'+
+    '</div>';
+
+  var tags='';
+  if(dirty){
+    var bits=[];
+    if(s.q)        bits.push(['q','Search',s.q]);
+    if(s.size!=='all') bits.push(['size','Size',TIER_BY[s.size].label]);
+    if(s.deadline) bits.push(['deadline','Deadline',WINDOWS[s.deadline].label]);
+    if(s.status)   bits.push(['status','Status',s.status]);
+    if(s.sort!=='best') bits.push(['sort','Sort',(SORTS.filter(function(p){return p[0]===s.sort;})[0]||[,''])[1]]);
+    tags='<div class="sg-tags"><span class="lb">Applied here</span>'+bits.map(function(b){
+      return '<span class="sg-tag">'+b[1]+': '+escH(b[2])+'<button data-sk="'+b[0]+'" data-clear="1">&times;</button></span>';
+    }).join('')+'</div>';
+  }
+  /* the controls band only exists when there is something in it */
+  var panel = (s.ctl || tags) ? '<div class="sg-panel">'+ctl+tags+'</div>' : '';
+
+  var body = shown.length
+    ? '<div class="sg-body"><table>'+head+'<tbody>'+rowsHtml(shown)+'</tbody></table></div>'
+    : '<div class="sg-empty">Nothing in this segment matches its filters.</div>';
+
+  /* closing strip - makes it unmistakable where this box ends */
+  var foot = s.shut ? '' :
+    '<div class="sg-f"><span class="sw" style="background:'+g.color+'"></span>'+
+      'End of <b>'+escH(g.label)+'</b>'+
+      (shown.length?' · '+shown.length+' listed':'')+
+      '<span class="sp"></span>'+
+      '<a class="up" data-act="shut" href="#">Collapse this box ↑</a></div>';
+
+  return '<section class="sg'+(s.shut?' shut':'')+'" data-seg="'+escA(g.key)+'">'+
+    '<div class="sg-cap" style="background:'+g.color+'"></div>'+
+    '<div class="sg-h">'+
+      '<div class="sg-ic" style="background:'+g.color+'">'+
+        '<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" '+
+        'stroke-linecap="round" stroke-linejoin="round">'+g.icon+'</svg></div>'+
+      '<div class="sg-t"><h3>'+escH(g.label)+'</h3>'+(g.hint?'<p>'+escH(g.hint)+'</p>':'')+'</div>'+
+      '<span class="sg-n"><b>'+shown.length+'</b>'+(shown.length!==g.rows.length?' of '+g.rows.length:'')+
+        ' opportunit'+(shown.length===1?'y':'ies')+'</span>'+
+      '<button class="sg-ico'+(s.ctl||dirty?' on':'')+'" data-act="ctl" title="Filter &amp; sort this segment">'+
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round">'+
+        '<path d="M3 5h18M6 12h12M10 19h4"/></svg></button>'+
+      '<button class="sg-ico sg-caret" data-act="shut" title="Show or hide this list">'+
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" '+
+        'stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>'+
+    '</div>'+ panel + body + foot +
+  '</section>';
+}
+
+function wireSegments(host){
+  Array.prototype.forEach.call(host.querySelectorAll('.sg'),function(card){
+    var key=F.seg+'::'+card.dataset.seg, s=segState(key);
+    Array.prototype.forEach.call(card.querySelectorAll('[data-act]'),function(b){
+      b.onclick=function(e){
+        e.preventDefault(); e.stopPropagation();
+        if(b.dataset.act==='ctl'){ s.ctl=!s.ctl; if(s.ctl) s.shut=false; }
+        else s.shut=!s.shut;
+        var top=card.getBoundingClientRect().top;
+        render();
+        /* keep the box you clicked under the cursor instead of jumping */
+        var again=document.querySelector('.sg[data-seg="'+escA(card.dataset.seg)+'"]');
+        if(again) window.scrollBy(0, again.getBoundingClientRect().top - top);
+      };
+    });
+    Array.prototype.forEach.call(card.querySelectorAll('[data-sk]'),function(el){
+      var k=el.dataset.sk;
+      if(el.dataset.clear){ el.onclick=function(){ s[k]=SEG_DEF[k]; render(); }; return; }
+      if(k==='__reset'){ el.onclick=function(){ var open=s.ctl; SEG[key]=Object.assign({},SEG_DEF); SEG[key].ctl=open; render(); }; return; }
+      if(el.tagName==='INPUT'){
+        el.oninput=function(){
+          s.q=el.value;
+          var pos=el.selectionStart;
+          render();
+          var again=document.querySelector('.sg[data-seg="'+escA(card.dataset.seg)+'"] input[data-sk="q"]');
+          if(again){ again.focus(); try{ again.setSelectionRange(pos,pos); }catch(err){} }
+        };
+      } else {
+        el.onchange=function(){ s[k]=el.value; render(); };
+      }
+    });
+  });
+}
+
+/* ------------------------------- override -------------------------------- */
+var originalRender=render;
+
+window.render=function(){
+  var bar=document.getElementById('fxBar'), draw=document.getElementById('fxDrawer');
+  var wrap=document.querySelector('.panel');
+  if(view!=='opps'){
+    if(bar) bar.style.display='none';
+    if(draw) draw.style.display='none';
+    if(wrap) wrap.classList.remove('fx-bare');       // agencies view keeps its card
+    var cf=document.getElementById('countryFilter'); if(cf) cf.value=F.country;
+    return originalRender.apply(this,arguments);
+  }
+  if(wrap) wrap.classList.add('fx-bare');            // segments are their own cards
+  buildShell();
+  bar=document.getElementById('fxBar'); draw=document.getElementById('fxDrawer');
+  if(bar) bar.style.display='';
+  if(draw) draw.style.display='';
+
+  var all=decorate();
+  drawDrawer(all);
+  document.getElementById('fxSeg').value=F.seg;
+
+  var rows=globalFilter(all);
+  var groups=segmentsOf(rows,F.seg);
+  window.__fxGroups=groups;
+
+  var host=document.getElementById('table');
+  if(!groups.length){
+    host.innerHTML='<div class="sg"><div class="sg-empty">No opportunities match the current filters.</div></div>';
+  } else {
+    host.innerHTML=groups.map(segmentHtml).join('');
+    wireSegments(host);
+  }
+
+  var visible=0;
+  groups.forEach(function(g){ visible+=segFilter(g.rows,segState(F.seg+'::'+g.key)).length; });
+  document.getElementById('fxTot').innerHTML=
+    '<b>'+visible+'</b> of '+all.length+' · <b>'+groups.length+'</b> segment'+(groups.length===1?'':'s');
+
+  var anyOpen=groups.some(function(g){ return !segState(F.seg+'::'+g.key).shut; });
+  var allBtn=document.getElementById('fxAll');
+  if(allBtn) allBtn.lastChild.textContent = anyOpen?'Collapse all':'Expand all';
+
+  if(DRAWER){
+    var unknown=rows.filter(function(o){ return o._tier==='unknown'; }).length;
+    var pct=rows.length?Math.round(100*unknown/rows.length):0;
+    document.getElementById('fxHint').innerHTML=
+      'Fund size comes from the published amount — monthly stipends are scaled to a yearly figure and non-INR '+
+      'amounts are converted at approximate rates, for bucketing only. <b>'+unknown+'</b> of the '+rows.length+
+      ' matching ('+pct+'%) publish no usable amount, so they never fall inside an amount range.';
+  }
+
+  if(typeof foot==='function') foot(visible);
+};
+})();
+</script>
+<!-- FR-BLOCK:filters END -->
